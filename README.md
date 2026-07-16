@@ -1,16 +1,17 @@
-# Tag Team Gauntlet Sprint 1
+# Tag Team Gauntlet v0.3 — Founding Twenty
 
-Open index.html to play.
+Playable static web game for GitHub Pages.
 
-Includes 20 original illustrated character cards, factions, titles, signature moves, legendary teams, hidden chemistry/loyalty/resilience/versatility, rewards and Second Wind.
+## v0.3 changes
+- Replaced the full prototype roster with the finalized Founding Twenty.
+- Updated every name, nickname, faction, overall rating and signature move.
+- Added the seven finalized factions: Renegades, Royal Dynasty, Superstars, Dark Dominion, Titans, Excellence, Skyborne and Guardians.
+- Moved Hollowman to Dark Dominion.
+- Rebuilt legendary teams, alliances and rivalries around the finalized roster.
+- Preserved the existing Gauntlet gameplay loop, Second Wind reward and opponent duplicate protection.
 
-## Mason Creed artwork update
-- Replaced Mason Creed placeholder with the approved Classic Saturday Morning cartoon card.
-- Updated display name to "Iceman" Mason Creed.
+## Artwork
+The approved Jack Mercer and Victor Royale cards remain in place. Existing prototype artwork is temporarily reused for the other 18 roster slots until each final Saturday-morning-cartoon card is approved and inserted. File names already match the final roster, so future art replacement is drag-and-drop.
 
-
-## v0.2 character update
-- Installed the final approved “Iceman” Mason Creed card.
-- Renamed his signature move from Creed Breaker to Ice Breaker throughout the game.
-- Installed the final approved long-haired Victor Royale card.
-- Updated Victor Royale to Royal Dynasty and OVR 98 to match the card.
+## Run
+Open `index.html`, or publish the folder through GitHub Pages.
