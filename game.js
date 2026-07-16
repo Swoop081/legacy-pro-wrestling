@@ -30,7 +30,58 @@ function card(w,onclick='',compact=false){
 }
 function render(x){app.classList.remove('screen-enter');app.innerHTML=x;document.getElementById('streak').textContent=S.streak;requestAnimationFrame(()=>app.classList.add('screen-enter'))}
 function clearStoryTimer(){if(storyTimer){clearTimeout(storyTimer);storyTimer=null}}
-function home(){clearStoryTimer();M=null;S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,venue:null,attendance:null};const featured=one(WRESTLERS);render(`<section class="panel home home-broadcast"><div class="actions top-actions"><button class="btn" onclick="start()">START GAUNTLET</button></div><div class="home-copy"><div class="tv-kicker">FOUNDING TWENTY SPOTLIGHT</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team and survive the Gauntlet. Every match unfolds as a live wrestling broadcast where your decisions can change the outcome.</p></div><div class="home-hero">${card(featured,'',true)}</div></section>`)}
+const PROFILE_LINES={
+ 'jack-mercer':'Cold as ice. Tough as steel.',
+ 'victor-royale':'Royalty does not ask for the spotlight.',
+ 'jett-valentine':'Every arena is his stage.',
+ 'revenant':'You cannot stop what refuses to die.',
+ 'nightwatch':'The shadows always strike on time.',
+ 'titan':'Every match is a blockbuster.',
+ 'cameron-tremblay':'Precision turns pressure into victory.',
+ 'hollowman':'Some legends should remain unseen.',
+ 'damian-blackwell':'One opening is all he needs.',
+ 'elias-crowe':'Chaos is where he feels at home.',
+ 'el-rey-del-cielo':'The sky has a king.',
+ 'max-justice':'The hero always answers the call.',
+ 'primal':'Raw power has no limits.',
+ 'lucas-bennett':'Excellence is earned every night.',
+ 'marcus-king':'The street taught him how to survive.',
+ 'mateo-vega':'By the time you see the trick, it is over.',
+ 'ryder-phoenix':'The Rockstar always steals the show.',
+ 'sterling-sinclair':'Style, wealth and victory.',
+ 'dave-maddox':'Outwork everyone. Outlast everything.',
+ 'logan-steele':'Legends never need an introduction.'
+};
+function unlockedIds(){
+ const key='ttg-unlocked-wrestlers';
+ try{
+  const saved=JSON.parse(localStorage.getItem(key)||'null');
+  if(Array.isArray(saved)&&saved.length)return new Set(saved);
+  const all=WRESTLERS.map(w=>w.id);localStorage.setItem(key,JSON.stringify(all));return new Set(all);
+ }catch(e){return new Set(WRESTLERS.map(w=>w.id))}
+}
+function isUnlocked(w){return unlockedIds().has(w.id)}
+function menuButton(label,sub,action,disabled=false){return `<button class="mode-tile${disabled?' disabled':''}" ${disabled?'disabled':`onclick="${action}"`}><b>${label}</b><small>${sub}</small>${disabled?'<em>COMING SOON</em>':''}</button>`}
+function profileBio(w){return `${w.name} is known throughout Tag Team Gauntlet as ${w.title}. Representing ${w.faction}, ${w.name.split(' ')[0]} combines elite athletic ability with a distinctive presence that can change the course of any broadcast. When the match reaches its defining moment, ${w.finisher} is the move opponents fear most.`}
+function showCollection(){
+ clearStoryTimer();M=null;const unlocked=unlockedIds();
+ render(`<section class="panel collection-screen"><div class="actions top-actions"><button class="btn ghost" onclick="home()">BACK TO MENU</button></div><div class="section-heading"><div><div class="tv-kicker">THE ROSTER</div><h1 class="title">Founding Twenty</h1></div><strong>${unlocked.size}/${WRESTLERS.length} UNLOCKED</strong></div><p class="sub">Select a wrestler to open their full profile.</p><div class="collection-grid">${WRESTLERS.map(w=>isUnlocked(w)?`<button class="collection-item" onclick="showProfile('${w.id}')">${card(w,'',true)}</button>`:`<article class="collection-item locked"><div class="locked-silhouette">?</div><b>LOCKED</b></article>`).join('')}</div></section>`)
+}
+function showProfile(id){
+ const w=WRESTLERS.find(x=>x.id===id);if(!w)return showCollection();
+ render(`<section class="panel profile-screen"><div class="actions top-actions"><button class="btn ghost" onclick="showCollection()">BACK TO COLLECTION</button><button class="btn disabled-action" disabled>PLAY NOW · BUILD 2</button></div><div class="profile-layout"><div class="profile-art"><img src="${w.image}" alt="${w.name}"></div><div class="profile-copy"><div class="tv-kicker">FOUNDING TWENTY</div><small>${w.title}</small><h1>${w.name}</h1><p class="profile-line">${PROFILE_LINES[w.id]||w.title}</p><div class="profile-facts"><span><small>FACTION</small><b>${w.faction}</b></span><span><small>SIGNATURE MOVE</small><b>${w.finisher}</b></span><span><small>RARITY</small><b>${w.rarity}</b></span></div><p class="profile-bio">${profileBio(w)}</p><div class="profile-stats"><span>POWER <b>${w.power}</b></span><span>SPEED <b>${w.speed}</b></span><span>TECHNIQUE <b>${w.technique}</b></span><span>CHARISMA <b>${w.charisma}</b></span></div></div></div></section>`)
+}
+function showQuickMatch(){
+ const featured=one(WRESTLERS.filter(isUnlocked));
+ render(`<section class="panel coming-screen"><div class="actions top-actions"><button class="btn ghost" onclick="home()">BACK TO MENU</button></div><div class="coming-art">${card(featured,'',true)}</div><div class="coming-copy"><div class="tv-kicker">EXHIBITION MODE</div><h1>Quick Match</h1><p>Choose Singles or Tag Team, select any unlocked wrestlers and create the dream match you want. Match selection and gameplay arrive in Build 2.</p><div class="quick-framework"><article><b>SINGLES</b><small>One-on-one exhibition</small></article><article><b>TAG TEAM</b><small>Choose all four wrestlers</small></article></div><button class="btn disabled-action" disabled>AVAILABLE IN BUILD 2</button></div></section>`)
+}
+function showStatistics(){
+ render(`<section class="panel stats-framework"><div class="actions top-actions"><button class="btn ghost" onclick="home()">BACK TO MENU</button></div><div class="tv-kicker">YOUR LEGACY</div><h1 class="title">Statistics</h1><p class="sub">Persistent records are being prepared for Build 3.</p><div class="stat-categories"><article><small>CAREER</small><b>Total Matches</b><span>—</span></article><article><small>RECORDS</small><b>Longest Streak</b><span>—</span></article><article><small>WRESTLERS</small><b>Most Used</b><span>—</span></article><article><small>TEAMS</small><b>Best Partnership</b><span>—</span></article></div></section>`)
+}
+function showOptions(){
+ render(`<section class="panel simple-screen"><div class="actions top-actions"><button class="btn ghost" onclick="home()">BACK TO MENU</button></div><div class="tv-kicker">SYSTEM</div><h1 class="title">Options</h1><p class="sub">Audio, pacing and accessibility controls will be added in a later build.</p></section>`)
+}
+function home(){clearStoryTimer();M=null;S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,venue:null,attendance:null};const unlocked=WRESTLERS.filter(isUnlocked),featured=one(unlocked.length?unlocked:WRESTLERS);render(`<section class="panel home home-shell"><div class="home-menu"><div class="tv-kicker">TAG TEAM GAUNTLET LIVE</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build your team, survive the Gauntlet and unlock the full Founding Twenty.</p><div class="mode-grid">${menuButton('Classic Gauntlet','Lose once and the run is over.','start()')}${menuButton('Quick Match','Create Singles and Tag Team exhibitions.','showQuickMatch()')}${menuButton('Collection',`${unlocked.length}/${WRESTLERS.length} Founding Twenty unlocked.`,'showCollection()')}${menuButton('Statistics','Your career, wrestlers and team records.','showStatistics()')}${menuButton('Options','Presentation and accessibility.','showOptions()')}</div></div><div class="featured-superstar"><div class="featured-label"><small>FEATURED SUPERSTAR</small><b>${featured.title}</b></div>${card(featured,'',true)}<p>${PROFILE_LINES[featured.id]||featured.title}</p></div></section>`)}
 function start(){let captain=one(WRESTLERS);S.team=[captain];window.opts=pick(WRESTLERS.filter(w=>w.id!==captain.id),2);render(`<section class="panel"><h1 class="title">Choose Your Partner</h1><p class="sub">Your first wrestler is ${captain.name}</p><div class="cards two">${opts.map((w,i)=>card(w,`partner(${i})`)).join('')}</div><div class="actions" style="max-width:320px;margin:25px auto">${card(captain)}</div></section>`)}
 function partner(i){S.team.push(opts[i]);discover(()=>team())}
 function discover(next){let r=S.team.length>1?rel(...S.team):null;if(r&&r.type==='legendary'){overlay.innerHTML=`<div class="overlay unlock-overlay"><div class="discover unlock-discover"><div class="actions top-actions"><button class="btn" id="continue">CONTINUE</button></div><div class="tv-kicker">FOUNDING TWENTY</div><p>LEGENDARY TEAM DISCOVERED</p><div class="pair unlock-pair">${card(S.team[0])}${card(S.team[1])}</div><h1>${r.teamName}</h1></div></div>`;document.getElementById('continue').onclick=()=>{overlay.innerHTML='';next()}}else next()}
