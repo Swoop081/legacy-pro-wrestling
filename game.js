@@ -11,77 +11,49 @@ const MATCH_LABELS=['MAIN EVENT','FEATURED CONTEST','GAUNTLET SHOWCASE','PRIME-T
 function currentVenue(){if(!S.venue)S.venue=one(VENUES);return S.venue}
 function attendance(){if(!S.attendance)S.attendance=Math.floor(rnd(11800,19800));return S.attendance.toLocaleString()}
 function teamName(team){return team.length>1?(rel(...team)?.teamName||team.map(x=>x.name).join(' & ')):team[0].name}
-function heroPortrait(w,side=''){return `<article class="hero-portrait ${side}"><img src="${w.image}" alt="${w.name}" onerror="this.closest('.hero-portrait').classList.add('missing-art');this.style.display='none'"><div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
+function wrestlerPng(w){return `assets/${w.id}.png`}
+function heroPortrait(w,side=''){return `<article class="hero-portrait ${side}"><img src="${wrestlerPng(w)}" alt="${w.name}" onerror="this.closest('.hero-portrait').classList.add('missing-art');this.style.display='none'"><div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
 function tvSting(label,title,subtitle=''){overlay.innerHTML=`<div class="overlay tv-sting-overlay"><section class="tv-sting"><small>${label}</small><h1>${title}</h1>${subtitle?`<p>${subtitle}</p>`:''}<div class="tv-scan"></div></section></div>`;setTimeout(()=>{if(overlay.querySelector('.tv-sting-overlay'))overlay.innerHTML=''},850)}
 function rel(a,b){return RELATIONSHIPS.find(r=>(r.a===a.id&&r.b===b.id)||(r.a===b.id&&r.b===a.id))}
 function chemistry(a,b){let r=rel(a,b);return r?r.chemistry:Math.round((a.versatility+b.versatility)/2)}
 function score(t){let[a,b]=t;if(!b)return a.overall*.34+a.technique*.2+a.power*.14+a.speed*.12+a.charisma*.1+a.resilience*.1+S.momentum;let av=k=>(a[k]+b[k])/2;return av('overall')*.3+av('tag')*.25+(chemistry(a,b)+S.chem)*.2+av('technique')*.1+av('power')*.05+av('speed')*.05+av('charisma')*.05+S.momentum}
-function imageFallback(img,name){
- const wrap=img.closest('.superstar');if(!wrap)return;
- img.style.display='none';wrap.classList.add('missing-art');
- let ph=wrap.querySelector('.art-placeholder');
- if(!ph){ph=document.createElement('div');ph.className='art-placeholder';ph.innerHTML=`<b>${name.split(/\s+/).map(x=>x.replace(/[^A-Za-z]/g,'')[0]||'').join('').slice(0,3)}</b><small>ADD WRESTLER PNG</small>`;wrap.insertBefore(ph,wrap.firstChild)}
-}
-function card(w,onclick='',compact=false){
- return `<article class="superstar${compact?' compact':''}${onclick?' selectable':''}" ${onclick?`onclick="${onclick}" role="button" tabindex="0"`:''}>
-   <div class="superstar-art"><img src="${w.image}" alt="${w.name}" onerror="imageFallback(this,'${w.name.replace(/'/g,"\\'")}')"></div>
-   <div class="superstar-lower-third"><small>${w.title}</small><div class="name">${w.name}</div><span>${w.finisher}</span></div>
- </article>`
-}
+function imageFallback(img,name){const wrap=img.closest('.card');if(!wrap)return;img.style.display='none';wrap.classList.add('missing-art');let ph=wrap.querySelector('.art-placeholder');if(!ph){ph=document.createElement('div');ph.className='art-placeholder';ph.innerHTML=`<b>${name.split(/\s+/).map(x=>x.replace(/[^A-Za-z]/g,'')[0]||'').join('').slice(0,3)}</b><small>ADD WRESTLER ART</small>`;wrap.insertBefore(ph,wrap.firstChild)}}
+function card(w,onclick='',compact=false){return `<article class="card character-tile${compact?' compact':''}" ${onclick?`onclick="${onclick}"`:''}><img src="${wrestlerPng(w)}" alt="${w.name}" onerror="imageFallback(this,'${w.name.replace(/'/g,"\\'")}')"><div class="name">${w.name}<small>${w.title} · ${w.faction}</small></div></article>`}
 function render(x){app.classList.remove('screen-enter');app.innerHTML=x;document.getElementById('streak').textContent=S.streak;requestAnimationFrame(()=>app.classList.add('screen-enter'))}
 function clearStoryTimer(){if(storyTimer){clearTimeout(storyTimer);storyTimer=null}}
-const PROFILE_LINES={
- 'jack-mercer':'Cold as ice. Tough as steel.',
- 'victor-royale':'Royalty does not ask for the spotlight.',
- 'jett-valentine':'Every arena is his stage.',
- 'revenant':'You cannot stop what refuses to die.',
- 'nightwatch':'The shadows always strike on time.',
- 'titan':'Every match is a blockbuster.',
- 'cameron-tremblay':'Precision turns pressure into victory.',
- 'hollowman':'Some legends should remain unseen.',
- 'damian-blackwell':'One opening is all he needs.',
- 'elias-crowe':'Chaos is where he feels at home.',
- 'el-rey-del-cielo':'The sky has a king.',
- 'max-justice':'The hero always answers the call.',
- 'primal':'Raw power has no limits.',
- 'lucas-bennett':'Excellence is earned every night.',
- 'marcus-king':'The street taught him how to survive.',
- 'mateo-vega':'By the time you see the trick, it is over.',
- 'ryder-phoenix':'The Rockstar always steals the show.',
- 'sterling-sinclair':'Style, wealth and victory.',
- 'dave-maddox':'Outwork everyone. Outlast everything.',
- 'logan-steele':'Legends never need an introduction.'
-};
-function unlockedIds(){
- const key='ttg-unlocked-wrestlers';
- try{
-  const saved=JSON.parse(localStorage.getItem(key)||'null');
-  if(Array.isArray(saved)&&saved.length)return new Set(saved);
-  const all=WRESTLERS.map(w=>w.id);localStorage.setItem(key,JSON.stringify(all));return new Set(all);
- }catch(e){return new Set(WRESTLERS.map(w=>w.id))}
+const FEATURE_LINES={
+'jack-mercer':'Cold as ice. Tough as steel.','victor-royale':'Every kingdom needs a Kingmaker.','jett-valentine':'The spotlight always finds the Heartbreaker.','revenant':'You cannot defeat what refuses to die.','nightwatch':'When darkness falls, the Sentinel is watching.','titan':'Every match is another Hollywood blockbuster.','cameron-tremblay':'Precision is the difference between good and excellent.','hollowman':'Some legends are better left undiscovered.','damian-blackwell':'One opening. One strike. One Kill Shot.','elias-crowe':'Chaos is not a strategy. It is a lifestyle.','el-rey-del-cielo':'The sky has only one king.','max-justice':'When the fight is hardest, the Hero stands tallest.','primal':'There is no plan for surviving raw instinct.','lucas-bennett':'Gold is earned through flawless preparation.','marcus-king':'The streets taught him how to survive.','mateo-vega':'By the time you see the trick, the match is over.','ryder-phoenix':'Every arena becomes his stage.','sterling-sinclair':'Class, confidence and the Golden Touch.','dave-maddox':'Nobody outworks the Workhorse.','logan-steele':'Legends do not fade. They set the standard.'};
+const BIOS={
+'jack-mercer':'A rebellious brawler who thrives under pressure, Jack Mercer fights with equal parts toughness, instinct and defiance.','victor-royale':'The calculating leader of Royal Dynasty treats every contest like a kingdom to be conquered.','jett-valentine':'Charisma, speed and swagger make Jett Valentine one of the most magnetic stars in the Gauntlet.','revenant':'The silent ruler of Dark Dominion absorbs punishment and advances with supernatural calm.','nightwatch':'Dark Dominion’s patient enforcer waits for the exact moment to deliver Midnight Mass.','titan':'A blockbuster personality with main-event power, Titan believes every camera belongs to him.','cameron-tremblay':'The Canadian Icon turns technical wrestling into an exact science.','hollowman':'A masked urban legend whose relentless advance turns every arena into a horror story.','damian-blackwell':'Royal Dynasty’s silent assassin wastes no motion and never misses an opening.','elias-crowe':'The Lunatic embraces danger, pain and disorder with a smile that unsettles everyone around him.','el-rey-del-cielo':'A heroic luchador whose speed and aerial brilliance make the impossible look effortless.','max-justice':'The Guardians’ inspirational hero meets every challenge with courage and overwhelming strength.','primal':'An untamed powerhouse who grows more dangerous as the fight becomes more physical.','lucas-bennett':'The Olympian combines discipline, athleticism and championship-level precision.','marcus-king':'A battle-tested street veteran who earned his reputation through toughness and grit.','mateo-vega':'The Con Artist wins with aerial skill, misdirection and one more trick than his opponent expects.','ryder-phoenix':'A fearless Rockstar who transforms every entrance and every comeback into a headline moment.','sterling-sinclair':'The Playboy brings effortless luxury, athleticism and supreme self-confidence to Royal Dynasty.','dave-maddox':'The Workhorse earns every victory through stamina, reliability and the decisive Maddox Cutter.','logan-steele':'The Living Legend carries decades of experience and the respect of an entire generation.'};
+function resetClassicState(){clearStoryTimer();M=null;S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,venue:null,attendance:null};}
+function shellBack(){return `<button class="shell-back" onclick="home()">← MAIN MENU</button>`}
+function featuredSuperstar(){return one(WRESTLERS)}
+function home(){
+ clearStoryTimer();M=null;overlay.innerHTML='';
+ const w=featuredSuperstar();
+ render(`<section class="game-hub"><div class="hub-copy"><div class="tv-kicker">WELCOME TO THE GAUNTLET</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team, survive the broadcast and unlock the Founding Twenty.</p><nav class="hub-menu"><button class="hub-option primary" onclick="classicHome()"><b>CLASSIC GAUNTLET</b><small>One loss ends the run.</small></button><button class="hub-option" onclick="quickMatchMenu()"><b>QUICK MATCH</b><small>Singles and Tag Team exhibition framework.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the Founding Twenty.</small></button><button class="hub-option" onclick="statisticsMenu()"><b>STATISTICS</b><small>Your legacy framework.</small></button><button class="hub-option muted" onclick="optionsMenu()"><b>OPTIONS</b><small>Presentation settings coming soon.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED SUPERSTAR</div><img src="${wrestlerPng(w)}" alt="${w.name}"><div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)
 }
-function isUnlocked(w){return unlockedIds().has(w.id)}
-function menuButton(label,sub,action,disabled=false){return `<button class="mode-tile${disabled?' disabled':''}" ${disabled?'disabled':`onclick="${action}"`}><b>${label}</b><small>${sub}</small>${disabled?'<em>COMING SOON</em>':''}</button>`}
-function profileBio(w){return `${w.name} is known throughout Tag Team Gauntlet as ${w.title}. Representing ${w.faction}, ${w.name.split(' ')[0]} combines elite athletic ability with a distinctive presence that can change the course of any broadcast. When the match reaches its defining moment, ${w.finisher} is the move opponents fear most.`}
-function showCollection(){
- clearStoryTimer();M=null;const unlocked=unlockedIds();
- render(`<section class="panel collection-screen"><div class="actions top-actions"><button class="btn ghost" onclick="home()">BACK TO MENU</button></div><div class="section-heading"><div><div class="tv-kicker">THE ROSTER</div><h1 class="title">Founding Twenty</h1></div><strong>${unlocked.size}/${WRESTLERS.length} UNLOCKED</strong></div><p class="sub">Select a wrestler to open their full profile.</p><div class="collection-grid">${WRESTLERS.map(w=>isUnlocked(w)?`<button class="collection-item" onclick="showProfile('${w.id}')">${card(w,'',true)}</button>`:`<article class="collection-item locked"><div class="locked-silhouette">?</div><b>LOCKED</b></article>`).join('')}</div></section>`)
+function classicHome(){
+ resetClassicState();
+ render(`<section class="panel mode-landing"><div class="actions top-actions"><button class="btn" onclick="start()">START GAUNTLET</button>${shellBack()}</div><div class="mode-landing-art"><img src="${wrestlerPng(one(WRESTLERS))}" alt="Founding Twenty wrestler"></div><div class="mode-landing-copy"><div class="tv-kicker">CLASSIC MODE</div><h1>SURVIVE THE GAUNTLET</h1><p>Build a team and survive as long as possible. Every broadcast, decision and reward matters. Lose once and the run is over.</p></div></section>`)
 }
-function showProfile(id){
- const w=WRESTLERS.find(x=>x.id===id);if(!w)return showCollection();
- render(`<section class="panel profile-screen"><div class="actions top-actions"><button class="btn ghost" onclick="showCollection()">BACK TO COLLECTION</button><button class="btn disabled-action" disabled>PLAY NOW · BUILD 2</button></div><div class="profile-layout"><div class="profile-art"><img src="${w.image}" alt="${w.name}"></div><div class="profile-copy"><div class="tv-kicker">FOUNDING TWENTY</div><small>${w.title}</small><h1>${w.name}</h1><p class="profile-line">${PROFILE_LINES[w.id]||w.title}</p><div class="profile-facts"><span><small>FACTION</small><b>${w.faction}</b></span><span><small>SIGNATURE MOVE</small><b>${w.finisher}</b></span><span><small>RARITY</small><b>${w.rarity}</b></span></div><p class="profile-bio">${profileBio(w)}</p><div class="profile-stats"><span>POWER <b>${w.power}</b></span><span>SPEED <b>${w.speed}</b></span><span>TECHNIQUE <b>${w.technique}</b></span><span>CHARISMA <b>${w.charisma}</b></span></div></div></div></section>`)
+function collection(){
+ render(`<section class="collection-screen">${shellBack()}<header class="section-heading"><div><div class="tv-kicker">THE FOUNDING TWENTY</div><h1>COLLECTION</h1><p>Character profiles, signatures and future career history.</p></div><strong>${WRESTLERS.length}/${WRESTLERS.length}</strong></header><div class="collection-grid">${WRESTLERS.map(w=>`<button class="collection-tile" onclick="collectionProfile('${w.id}')"><img src="${wrestlerPng(w)}" alt="${w.name}"><span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
 }
-function showQuickMatch(){
- const featured=one(WRESTLERS.filter(isUnlocked));
- render(`<section class="panel coming-screen"><div class="actions top-actions"><button class="btn ghost" onclick="home()">BACK TO MENU</button></div><div class="coming-art">${card(featured,'',true)}</div><div class="coming-copy"><div class="tv-kicker">EXHIBITION MODE</div><h1>Quick Match</h1><p>Choose Singles or Tag Team, select any unlocked wrestlers and create the dream match you want. Match selection and gameplay arrive in Build 2.</p><div class="quick-framework"><article><b>SINGLES</b><small>One-on-one exhibition</small></article><article><b>TAG TEAM</b><small>Choose all four wrestlers</small></article></div><button class="btn disabled-action" disabled>AVAILABLE IN BUILD 2</button></div></section>`)
+function collectionProfile(id){
+ const w=WRESTLERS.find(x=>x.id===id);if(!w)return collection();
+ render(`<section class="profile-screen"><div class="profile-nav"><button class="shell-back" onclick="collection()">← COLLECTION</button><button class="profile-play" disabled title="Connected in Build 2">PLAY NOW · BUILD 2</button></div><div class="profile-art"><img src="${wrestlerPng(w)}" alt="${w.name}"></div><div class="profile-copy"><div class="profile-status">FOUNDING TWENTY · AVAILABLE</div><small>${w.title}</small><h1>${w.name}</h1><div class="profile-signature"><span>SIGNATURE MOVE</span><b>${w.signature}</b></div><p>${BIOS[w.id]||`${w.name} is a ${w.faction} competitor in Tag Team Gauntlet.`}</p><div class="profile-facts"><div><small>FACTION</small><b>${w.faction}</b></div><div><small>STYLE</small><b>${(typeof profileFor==='function'?profileFor(w).archetype:'Wrestler')}</b></div><div><small>OVERALL</small><b>${w.overall}</b></div><div><small>RARITY</small><b>${w.rarity}</b></div></div></div></section>`)
 }
-function showStatistics(){
- render(`<section class="panel stats-framework"><div class="actions top-actions"><button class="btn ghost" onclick="home()">BACK TO MENU</button></div><div class="tv-kicker">YOUR LEGACY</div><h1 class="title">Statistics</h1><p class="sub">Persistent records are being prepared for Build 3.</p><div class="stat-categories"><article><small>CAREER</small><b>Total Matches</b><span>—</span></article><article><small>RECORDS</small><b>Longest Streak</b><span>—</span></article><article><small>WRESTLERS</small><b>Most Used</b><span>—</span></article><article><small>TEAMS</small><b>Best Partnership</b><span>—</span></article></div></section>`)
+function quickMatchMenu(){
+ const w=one(WRESTLERS);
+ render(`<section class="framework-screen quick-framework">${shellBack()}<div class="framework-art"><img src="${wrestlerPng(w)}" alt="${w.name}"></div><div class="framework-copy"><div class="tv-kicker">EXHIBITION</div><h1>QUICK MATCH</h1><p>Select any available wrestler and create a dream match. Character selection and playable matches arrive in Build 2.</p><div class="framework-options"><button disabled><b>SINGLES MATCH</b><small>Choose one wrestler and one opponent.</small><em>BUILD 2</em></button><button disabled><b>TAG TEAM MATCH</b><small>Choose all four competitors.</small><em>BUILD 2</em></button></div></div></section>`)
 }
-function showOptions(){
- render(`<section class="panel simple-screen"><div class="actions top-actions"><button class="btn ghost" onclick="home()">BACK TO MENU</button></div><div class="tv-kicker">SYSTEM</div><h1 class="title">Options</h1><p class="sub">Audio, pacing and accessibility controls will be added in a later build.</p></section>`)
+function statisticsMenu(){
+ render(`<section class="stats-framework">${shellBack()}<header class="section-heading"><div><div class="tv-kicker">YOUR LEGACY</div><h1>STATISTICS</h1><p>Persistent records will begin tracking in Build 3.</p></div></header><div class="stat-cards"><article><small>CAREER</small><b>0</b><span>Total Matches</span></article><article><small>RECORD</small><b>0–0</b><span>Wins & Losses</span></article><article><small>BEST RUN</small><b>0</b><span>Longest Streak</span></article><article><small>COLLECTION</small><b>${WRESTLERS.length}</b><span>Founding Twenty Profiles</span></article></div><div class="stats-tabs"><button disabled>CAREER</button><button disabled>WRESTLERS</button><button disabled>TEAMS</button><button disabled>RECORDS</button></div><p class="coming-note">The screens are now in place. Local persistent statistics will be connected in Build 3.</p></section>`)
 }
-function home(){clearStoryTimer();M=null;S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,venue:null,attendance:null};const unlocked=WRESTLERS.filter(isUnlocked),featured=one(unlocked.length?unlocked:WRESTLERS);render(`<section class="panel home home-shell"><div class="home-menu"><div class="tv-kicker">TAG TEAM GAUNTLET LIVE</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build your team, survive the Gauntlet and unlock the full Founding Twenty.</p><div class="mode-grid">${menuButton('Classic Gauntlet','Lose once and the run is over.','start()')}${menuButton('Quick Match','Create Singles and Tag Team exhibitions.','showQuickMatch()')}${menuButton('Collection',`${unlocked.length}/${WRESTLERS.length} Founding Twenty unlocked.`,'showCollection()')}${menuButton('Statistics','Your career, wrestlers and team records.','showStatistics()')}${menuButton('Options','Presentation and accessibility.','showOptions()')}</div></div><div class="featured-superstar"><div class="featured-label"><small>FEATURED SUPERSTAR</small><b>${featured.title}</b></div>${card(featured,'',true)}<p>${PROFILE_LINES[featured.id]||featured.title}</p></div></section>`)}
+function optionsMenu(){
+ render(`<section class="panel mode-landing">${shellBack()}<div class="mode-landing-copy"><div class="tv-kicker">COMING SOON</div><h1>OPTIONS</h1><p>Broadcast speed, animation, audio and accessibility controls will live here.</p></div></section>`)
+}
 function start(){let captain=one(WRESTLERS);S.team=[captain];window.opts=pick(WRESTLERS.filter(w=>w.id!==captain.id),2);render(`<section class="panel"><h1 class="title">Choose Your Partner</h1><p class="sub">Your first wrestler is ${captain.name}</p><div class="cards two">${opts.map((w,i)=>card(w,`partner(${i})`)).join('')}</div><div class="actions" style="max-width:320px;margin:25px auto">${card(captain)}</div></section>`)}
 function partner(i){S.team.push(opts[i]);discover(()=>team())}
 function discover(next){let r=S.team.length>1?rel(...S.team):null;if(r&&r.type==='legendary'){overlay.innerHTML=`<div class="overlay unlock-overlay"><div class="discover unlock-discover"><div class="actions top-actions"><button class="btn" id="continue">CONTINUE</button></div><div class="tv-kicker">FOUNDING TWENTY</div><p>LEGENDARY TEAM DISCOVERED</p><div class="pair unlock-pair">${card(S.team[0])}${card(S.team[1])}</div><h1>${r.teamName}</h1></div></div>`;document.getElementById('continue').onclick=()=>{overlay.innerHTML='';next()}}else next()}
