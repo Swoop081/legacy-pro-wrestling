@@ -1,14 +1,16 @@
-# Tag Team Gauntlet — Television Update Test
+# Tag Team Gauntlet — Sprint 3.4 Match Score Engine
 
-This build adds the first television-style post-match presentation layer.
+This test build adds a performance-driven result system to the working Television Update build.
 
-## Changes
-- Critical Decision appears above the Match Broadcast, remains visible while active, and scrolls into view automatically.
-- Legendary Team unlock screens scale to the available phone height so the cards, team name and Continue button remain accessible.
-- A post-match Broadcast Interrupt can trigger a Featured Singles Challenge.
-- The player chooses which member of the tag team accepts the singles match.
-- Singles matches use the existing Story/Personality Engine and return to the classic Gauntlet reward loop after a win.
-- Declining the challenge continues directly to rewards.
-- A loss in either tag or singles competition still ends the Classic Gauntlet run unless Second Wind is available.
+## New in Sprint 3.4
+- Starting Match Score based on wrestler strength, chemistry, momentum, and existing run modifiers.
+- Live Match Scores for both sides during the broadcast.
+- Crowd meter that rises from personality moments, hot tags, finishers, counters, and near falls.
+- Meaningful score changes from every major event.
+- Critical decisions now add or subtract a separate Decision Bonus.
+- Failed risks and missed finishers have visible consequences.
+- Final winner is calculated after the match from Starting Score, Performance, Crowd Bonus, and Decision Bonus.
+- Decisive, competitive, and photo finishes based on final score difference.
+- Post-match Match Score Breakdown explaining the result.
 
-For testing, the first successful tag match always triggers a singles challenge. Later challenges use a lower random chance.
+Classic Gauntlet rules, the responsive unlock screen, and singles challenge flow remain intact.

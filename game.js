@@ -64,7 +64,8 @@ function match(){
  const teamPower=score(S.team),oppPower=score(S.opp)+S.streak*.7;
  let hiddenEdge=(teamPower-oppPower)/7+story.bias+rnd(-8,8);
  if(story.upset)hiddenEdge=teamPower>=oppPower?rnd(-10,-3):rnd(3,10);
- M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:12+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell',spotlight:null,personalityMoments:{}};
+ const startPlayer=Math.round(teamPower),startOpp=Math.round(oppPower);
+ M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:12+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell',spotlight:null,personalityMoments:{},startPlayer,startOpp,performancePlayer:0,performanceOpp:0,decisionPlayer:0,decisionOpp:0,crowd:8,crowdPlayer:0,crowdOpp:0,finalPlayer:0,finalOpp:0,finishType:''};
  addBroadcast('broadcast',`${S.specialSingles?'YOUR REPRESENTATIVE':'YOUR TEAM'}: ${S.team.map(wrestlerIntro).join(' / ')}`); addBroadcast('broadcast',`${S.specialSingles?'CHALLENGER':'OPPOSITION'}: ${S.opp.map(wrestlerIntro).join(' / ')}`);
  addBroadcast('phase','OPENING BELL');
  addBroadcast('normal',one(['The bell rings and both teams circle cautiously.','The crowd rises as the opening wrestlers lock up.','No feeling-out process—both teams charge immediately.','A tense stare-down gives way to the first exchange.']));
@@ -78,7 +79,8 @@ function renderMatch(){
  const p=S.team[M.activeP],o=S.opp[M.activeO],control=clamp(M.playerControl,5,95);
  render(`<section class="panel story-panel">
  <div class="broadcast-top"><div><small>MATCH BROADCAST</small><h1>${M.phaseLabel}</h1></div><div class="story-chip">${M.story.name}</div></div>
- <div class="control-strip"><div class="team-label">${S.team.map(x=>x.name).join(' & ')}</div><div class="control-meter"><i style="width:${control}%"></i><span>CONTROL</span></div><div class="team-label right">${S.opp.map(x=>x.name).join(' & ')}</div></div>
+ <div class="control-strip"><div class="team-label">${S.team.map(x=>x.name).join(' & ')}</div><div class="control-meter"><i style="width:${control}%"></i><span>CONTROL ${Math.round(control)}–${Math.round(100-control)}</span></div><div class="team-label right">${S.opp.map(x=>x.name).join(' & ')}</div></div>
+ <div class="scoreboard-strip"><div><small>MATCH SCORE</small><strong>${projectedScore('player')}</strong></div><div class="crowd-meter"><span>🔥 CROWD ${Math.round(M.crowd)}%</span><i style="width:${M.crowd}%"></i></div><div class="right"><small>MATCH SCORE</small><strong>${projectedScore('opp')}</strong></div></div>
  ${M.waiting?decisionHTML():''}
  <div class="broadcast-layout"><div class="broadcast-card">${card(p,'',true)}<small>${S.specialSingles?'YOUR WRESTLER':'LEGAL WRESTLER'}</small></div><div id="broadcastFeed" class="broadcast-feed">${M.log.slice(-10).map((e,i)=>`<div class="broadcast-line ${e.type} ${i===M.log.slice(-10).length-1?'latest':''}">${e.type==='phase'?'<b>'+e.text+'</b>':e.text}</div>`).join('')}</div><div class="broadcast-card">${card(o,'',true)}<small>${S.specialSingles?'CHALLENGER':'LEGAL WRESTLER'}</small></div></div>
  ${M.spotlight?`<div class="signature-spotlight"><small>★ SIGNATURE MOVE ★</small><h2>${M.spotlight.move}</h2><h3>${M.spotlight.name}</h3><p>${M.spotlight.tagline}</p></div>`:''}<div class="broadcast-status"><span>Moment ${Math.min(M.eventIndex+1,M.eventTarget)} of ${M.eventTarget}</span><span>${formatTime(Math.round(M.matchSeconds*(M.eventIndex/Math.max(1,M.eventTarget))))}</span></div>
@@ -107,6 +109,19 @@ async function advanceStory(){
 }
 function eventWrestler(teamSide){return teamSide==='player'?S.team[M.activeP]:S.opp[M.activeO]}
 function shiftControl(amount,reason){const before=M.playerControl;M.playerControl=clamp(M.playerControl+amount,5,95);if(Math.abs(M.playerControl-before)>=9&&!M.turningPoint)M.turningPoint=reason}
+function addMatchScore(side,amount,category='performance'){
+ if(!M)return;
+ const key=category==='decision'?(side==='player'?'decisionPlayer':'decisionOpp'):(side==='player'?'performancePlayer':'performanceOpp');
+ M[key]+=amount;
+}
+function heatCrowd(amount,side){
+ if(!M)return;M.crowd=clamp(M.crowd+amount,0,100);
+ if(side==='player')M.crowdPlayer+=Math.max(0,amount);else if(side==='opp')M.crowdOpp+=Math.max(0,amount);
+}
+function projectedScore(side){
+ const start=side==='player'?M.startPlayer:M.startOpp,perf=side==='player'?M.performancePlayer:M.performanceOpp,decision=side==='player'?M.decisionPlayer:M.decisionOpp,crowdShare=side==='player'?M.crowdPlayer:M.crowdOpp;
+ return Math.round(start+perf+decision+crowdShare*.12);
+}
 function generateAutomaticBeat(){
  const phase=PHASES[M.phaseIndex].id;let playerActs=Math.random()<(M.playerControl/100),actor=eventWrestler(playerActs?'player':'opp'),victim=eventWrestler(playerActs?'opp':'player');
  let amount=rnd(3,8)*(playerActs?1:-1);
@@ -115,36 +130,43 @@ function generateAutomaticBeat(){
  const move=one(MOVES[phase]||MOVES.control);
  addBroadcast('normal',`${actor.name} ${move}.`);
  shiftControl(amount,`${actor.name} changed the match by ${move}.`);
+ addMatchScore(playerActs?'player':'opp',Math.round(rnd(2,5)));
+ heatCrowd(Math.round(rnd(1,3)),playerActs?'player':'opp');
  if(playerActs)M.playerMom=clamp(M.playerMom+rnd(5,11),0,100);else M.oppMom=clamp(M.oppMom+rnd(5,11),0,100);
- if(Math.random()<.58){const line=personalityEvent(actor);M.personalityMoments[actor.id]=(M.personalityMoments[actor.id]||0)+1;addBroadcast('personality',`${actor.name} ${line}.`,{highlight:true,weight:1.25});}
+ if(Math.random()<.58){const line=personalityEvent(actor);M.personalityMoments[actor.id]=(M.personalityMoments[actor.id]||0)+1;addMatchScore(playerActs?'player':'opp',1);heatCrowd(2,playerActs?'player':'opp');addBroadcast('personality',`${actor.name} ${line}.`,{highlight:true,weight:1.25});}
  if(S.team.length>1&&S.opp.length>1&&(M.story.tags||Math.random()<.16)&&M.phaseIndex>0){
-   if(playerActs){const old=actor;M.activeP=1-M.activeP;const fresh=S.team[M.activeP];addBroadcast('tag',`${old.name} makes the tag—${fresh.name} explodes into the match!`,{highlight:true,weight:1.3});shiftControl(5,`${fresh.name}'s hot tag changed the momentum.`)}
-   else{const old=actor;M.activeO=1-M.activeO;const fresh=S.opp[M.activeO];addBroadcast('tag',`${old.name} tags out and ${fresh.name} storms through the ropes.`,{highlight:true,weight:1.2});shiftControl(-4,`${fresh.name}'s tag changed the momentum.`)}
+   if(playerActs){const old=actor;M.activeP=1-M.activeP;const fresh=S.team[M.activeP];addBroadcast('tag',`${old.name} makes the tag—${fresh.name} explodes into the match!`,{highlight:true,weight:1.3});shiftControl(5,`${fresh.name}'s hot tag changed the momentum.`);addMatchScore('player',6);heatCrowd(6,'player')}
+   else{const old=actor;M.activeO=1-M.activeO;const fresh=S.opp[M.activeO];addBroadcast('tag',`${old.name} tags out and ${fresh.name} storms through the ropes.`,{highlight:true,weight:1.2});shiftControl(-4,`${fresh.name}'s tag changed the momentum.`);addMatchScore('opp',6);heatCrowd(5,'opp')}
    M.tags++;
  }
  if(M.phaseIndex>=3&&Math.random()<(.1+(M.story.nearFall||0))){createNearFall(playerActs)}
  if(M.phaseIndex>=4&&Math.random()<.18){attemptAIFinisher(playerActs)}
 }
-function createNearFall(playerSide){const attacker=eventWrestler(playerSide?'player':'opp'),defender=eventWrestler(playerSide?'opp':'player');M.nearFalls++;addBroadcast('nearfall',`${attacker.name} hooks the leg—ONE... TWO... ${defender.name} kicks out!`,{highlight:true,weight:2});}
+function createNearFall(playerSide){const side=playerSide?'player':'opp',attacker=eventWrestler(side),defender=eventWrestler(playerSide?'opp':'player');M.nearFalls++;addMatchScore(side,4);heatCrowd(9,side);addBroadcast('nearfall',`${attacker.name} hooks the leg—ONE... TWO... ${defender.name} kicks out!`,{highlight:true,weight:2});}
 function attemptAIFinisher(playerSide){const attacker=eventWrestler(playerSide?'player':'opp'),defender=eventWrestler(playerSide?'opp':'player');const success=Math.random()<.62;M.finishers++;
- if(success){setSpotlight(attacker);addBroadcast('finisher',`${attacker.name} lands ${attacker.finisher} on ${defender.name}!`,{highlight:true,weight:2.8});shiftControl(playerSide?12:-12,`${attacker.name} landed ${attacker.finisher}.`);if(Math.random()<.66)createNearFall(playerSide)}else addBroadcast('counter',`${defender.name} escapes ${attacker.finisher} at the last possible second!`,{highlight:true,weight:2.2});
+ if(success){setSpotlight(attacker);addMatchScore(playerSide?'player':'opp',15);heatCrowd(12,playerSide?'player':'opp');addBroadcast('finisher',`${attacker.name} lands ${attacker.finisher} on ${defender.name}!`,{highlight:true,weight:2.8});shiftControl(playerSide?12:-12,`${attacker.name} landed ${attacker.finisher}.`);if(Math.random()<.66)createNearFall(playerSide)}else{addMatchScore(playerSide?'player':'opp',-8);addMatchScore(playerSide?'opp':'player',5);heatCrowd(7,playerSide?'opp':'player');addBroadcast('counter',`${defender.name} escapes ${attacker.finisher} at the last possible second!`,{highlight:true,weight:2.2});}
 }
 function storyChoice(id){if(!M||!M.waiting)return;M.waiting=false;M.decisionsMade++;const p=S.team[M.activeP],o=S.opp[M.activeO];
- if(id==='tag'){const old=p;M.activeP=1-M.activeP;const incoming=S.team[M.activeP];M.playerMom=clamp(M.playerMom+14,0,100);shiftControl(8,`${incoming.name}'s hot tag was the turning point.`);M.tags++;addBroadcast('choice',`${old.name} reaches the corner—${incoming.name} makes the hot tag and takes over!`,{highlight:true,weight:2});}
- else if(id==='finisher'){M.finishers++;const chance=.52+(p.technique+p.charisma-o.resilience)/520+(M.playerControl-50)/180;M.playerMom=clamp(M.playerMom-45,0,100);if(Math.random()<chance){setSpotlight(p,'THE GAMBLE PAYS OFF!');shiftControl(15,`${p.name} hit ${p.finisher}.`);addBroadcast('finisher',`${p.name} hits ${p.finisher}! The entire arena rises!`,{highlight:true,weight:3.2});if(M.phaseIndex>=4&&Math.random()<.48){M.eventIndex=Math.max(M.eventIndex,M.eventTarget-1)}else createNearFall(true)}else{shiftControl(-14,`${o.name} countered ${p.finisher}.`);addBroadcast('counter',`${o.name} counters ${p.finisher}! The gamble backfires!`,{highlight:true,weight:2.5});}}
- else if(id==='comeback'){if(Math.random()<.62){shiftControl(18,`${p.name} launched an unforgettable comeback.`);M.playerMom=clamp(M.playerMom+22,0,100);addBroadcast('choice',`${p.name} digs deep and launches a furious comeback!`,{highlight:true,weight:2.5})}else{shiftControl(-7,`${p.name}'s comeback attempt was stopped.`);addBroadcast('counter',`${p.name} tries to rally, but ${o.name} cuts the comeback off.`)}}
- else if(id==='risk'){if(Math.random()<.62){shiftControl(13,`${p.name}'s spectacular risk paid off.`);M.playerMom=clamp(M.playerMom+18,0,100);addBroadcast('choice',`${p.name} creates a breathtaking highlight and changes the match!`,{highlight:true,weight:2.4})}else{shiftControl(-11,`${p.name}'s high-risk attempt failed.`);addBroadcast('counter',`${p.name} takes a huge risk—but crashes and burns!`,{highlight:true,weight:1.8})}}
- else if(id==='survive'){shiftControl(4,`${p.name} survived the opposition's strongest stretch.`);M.playerMom=clamp(M.playerMom+8,0,100);addBroadcast('choice',`${p.name} covers up, survives the storm, and waits for an opening.`)}
- else if(id==='pressure'||id==='control'){shiftControl(7,`${p.name} controlled the decisive stretch.`);M.playerMom=clamp(M.playerMom+10,0,100);addBroadcast('choice',`${p.name} stays disciplined and keeps the match under control.`)}
+ if(id==='tag'){const old=p;M.activeP=1-M.activeP;const incoming=S.team[M.activeP];M.playerMom=clamp(M.playerMom+14,0,100);shiftControl(8,`${incoming.name}'s hot tag was the turning point.`);M.tags++;addMatchScore('player',6,'decision');heatCrowd(7,'player');addBroadcast('choice',`${old.name} reaches the corner—${incoming.name} makes the hot tag and takes over!`,{highlight:true,weight:2});}
+ else if(id==='finisher'){M.finishers++;const chance=.52+(p.technique+p.charisma-o.resilience)/520+(M.playerControl-50)/180;M.playerMom=clamp(M.playerMom-45,0,100);if(Math.random()<chance){setSpotlight(p,'THE GAMBLE PAYS OFF!');addMatchScore('player',15);addMatchScore('player',8,'decision');heatCrowd(14,'player');shiftControl(15,`${p.name} hit ${p.finisher}.`);addBroadcast('finisher',`${p.name} hits ${p.finisher}! The entire arena rises!`,{highlight:true,weight:3.2});if(M.phaseIndex>=4&&Math.random()<.48){M.eventIndex=Math.max(M.eventIndex,M.eventTarget-1)}else createNearFall(true)}else{addMatchScore('player',-10);addMatchScore('player',-6,'decision');addMatchScore('opp',5);heatCrowd(7,'opp');shiftControl(-14,`${o.name} countered ${p.finisher}.`);addBroadcast('counter',`${o.name} counters ${p.finisher}! The gamble backfires!`,{highlight:true,weight:2.5});}}
+ else if(id==='comeback'){if(Math.random()<.62){addMatchScore('player',7);addMatchScore('player',7,'decision');heatCrowd(10,'player');shiftControl(18,`${p.name} launched an unforgettable comeback.`);M.playerMom=clamp(M.playerMom+22,0,100);addBroadcast('choice',`${p.name} digs deep and launches a furious comeback!`,{highlight:true,weight:2.5})}else{addMatchScore('player',-5,'decision');addMatchScore('opp',3);shiftControl(-7,`${p.name}'s comeback attempt was stopped.`);addBroadcast('counter',`${p.name} tries to rally, but ${o.name} cuts the comeback off.`)}}
+ else if(id==='risk'){if(Math.random()<.62){addMatchScore('player',9);addMatchScore('player',6,'decision');heatCrowd(12,'player');shiftControl(13,`${p.name}'s spectacular risk paid off.`);M.playerMom=clamp(M.playerMom+18,0,100);addBroadcast('choice',`${p.name} creates a breathtaking highlight and changes the match!`,{highlight:true,weight:2.4})}else{addMatchScore('player',-8);addMatchScore('player',-5,'decision');addMatchScore('opp',3);heatCrowd(5,'opp');shiftControl(-11,`${p.name}'s high-risk attempt failed.`);addBroadcast('counter',`${p.name} takes a huge risk—but crashes and burns!`,{highlight:true,weight:1.8})}}
+ else if(id==='survive'){addMatchScore('player',3,'decision');shiftControl(4,`${p.name} survived the opposition's strongest stretch.`);M.playerMom=clamp(M.playerMom+8,0,100);addBroadcast('choice',`${p.name} covers up, survives the storm, and waits for an opening.`)}
+ else if(id==='pressure'||id==='control'){addMatchScore('player',5,'decision');addMatchScore('player',3);shiftControl(7,`${p.name} controlled the decisive stretch.`);M.playerMom=clamp(M.playerMom+10,0,100);addBroadcast('choice',`${p.name} stays disciplined and keeps the match under control.`)}
  renderMatch();scheduleNext(1250);
 }
 function resolveFinish(){
  if(M.ended)return;M.phaseIndex=5;M.phaseLabel='Finish';addBroadcast('phase','FINISH');
- const playerRating=score(S.team)+M.playerControl*.55+M.playerMom*.16+rnd(-6,6),oppRating=score(S.opp)+(100-M.playerControl)*.55+M.oppMom*.16+S.streak*.7+rnd(-6,6);
- const win=playerRating>=oppRating;const side=win?'player':'opp';const winnerTeam=win?S.team:S.opp,loserTeam=win?S.opp:S.team;
+ const crowdBonusPlayer=M.crowdPlayer*.12,crowdBonusOpp=M.crowdOpp*.12;
+ M.finalPlayer=Math.round(M.startPlayer+M.performancePlayer+M.decisionPlayer+crowdBonusPlayer+rnd(-3,3));
+ M.finalOpp=Math.round(M.startOpp+M.performanceOpp+M.decisionOpp+crowdBonusOpp+rnd(-3,3));
+ const gap=Math.abs(M.finalPlayer-M.finalOpp);M.finishType=gap>=22?'Decisive Finish':gap>=10?'Competitive Finish':'Photo Finish';
+ const win=M.finalPlayer>=M.finalOpp;const side=win?'player':'opp';const winnerTeam=win?S.team:S.opp,loserTeam=win?S.opp:S.team;
  let winner=winnerTeam[M.activeP],loser=loserTeam[M.activeO];if(!win){winner=winnerTeam[M.activeO];loser=loserTeam[M.activeP]}
  if(Math.random()<.48)winner=one(winnerTeam);if(Math.random()<.48)loser=one(loserTeam);
- M.finishers++;setSpotlight(winner,'THE MATCH ENDS HERE!');addBroadcast('finisher',`${winner.name} catches ${loser.name} with ${winner.finisher}!`,{highlight:true,weight:4});addBroadcast('pin','ONE... TWO... THREE!');addBroadcast('result',`${winnerTeam.map(x=>x.name).join(' & ')} win the match!`);
+ M.finishers++;setSpotlight(winner,M.finishType==='Photo Finish'?'A LAST-SECOND OPENING!':'THE MATCH ENDS HERE!');
+ if(M.finishType==='Photo Finish')addBroadcast('counter',`${loser.name} nearly steals it—but ${winner.name} counters at the final instant!`,{highlight:true,weight:3.4});
+ addBroadcast('finisher',`${winner.name} catches ${loser.name} with ${winner.finisher}!`,{highlight:true,weight:4});addBroadcast('pin','ONE... TWO... THREE!');addBroadcast('result',`${winnerTeam.map(x=>x.name).join(' & ')} win by ${M.finishType.toLowerCase()}!`);
  M.ended=true;M.winner=winner;M.loser=loser;M.mvp=selectMVP(winnerTeam,winner);if(win)S.streak++;
  renderMatch();storyTimer=setTimeout(()=>showSummary(win),1500);
 }
@@ -152,7 +174,8 @@ function selectMVP(team,finisherWinner){const sorted=[...team].sort((a,b)=>(b.ov
 function showSummary(win){
  clearStoryTimer();const length=formatTime(M.matchSeconds),rating=clamp(2.15+M.highlights.length*.16+M.nearFalls*.28+M.finishers*.2+M.tags*.08+M.eventTarget*.055,1,5),rounded=Math.round(rating),stars='★'.repeat(rounded)+'☆'.repeat(5-rounded);
  const highlights=[...M.highlights].slice(-5);const story=buildSummaryStory();M.lossMessage=`${M.winner.name} wins after a ${rating.toFixed(1)}-star match.`;
- render(`<section class="panel match-result summary-panel"><h1 class="title" style="color:${win?'#65e98a':'#ff6b6b'}">${win?'You Win!':'You Lose'}</h1><div class="rating"><span>${stars}</span><strong>${rating.toFixed(1)} MATCH RATING · ${length}</strong></div><div class="summary-grid"><article><small>MATCH STORY</small><p>${story}</p></article><article><small>MATCH MVP</small><h2>${M.mvp.name}</h2><p>${mvpReason(M.mvp)}</p></article><article><small>TURNING POINT</small><p>${M.turningPoint||'The match remained balanced until the final exchange.'}</p></article><article><small>BEST MOMENT</small><p>${M.bestMoment||`${M.winner.name} delivered ${M.winner.finisher} to end the match.`}</p></article></div><div class="highlight-reel"><h3>Broadcast Highlights</h3>${highlights.map(x=>`<p>${x}</p>`).join('')}</div><div class="actions">${win?`<button class="btn" onclick="postMatchFlow()">${S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST'}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`}</div></section>`)
+ const playerCrowd=Math.round(M.crowdPlayer*.12),oppCrowd=Math.round(M.crowdOpp*.12);
+ render(`<section class="panel match-result summary-panel"><h1 class="title" style="color:${win?'#65e98a':'#ff6b6b'}">${win?'You Win!':'You Lose'}</h1><div class="rating"><span>${stars}</span><strong>${rating.toFixed(1)} MATCH RATING · ${length} · ${M.finishType.toUpperCase()}</strong></div><div class="match-breakdown"><h3>Match Score Breakdown</h3><div class="breakdown-head"><strong>${S.team.map(x=>x.name).join(' & ')}</strong><b>${M.finalPlayer} – ${M.finalOpp}</b><strong>${S.opp.map(x=>x.name).join(' & ')}</strong></div><div class="breakdown-row"><span>Starting Score</span><b>${M.startPlayer}</b><i>${M.startOpp}</i></div><div class="breakdown-row"><span>Performance</span><b>${Math.round(M.performancePlayer)}</b><i>${Math.round(M.performanceOpp)}</i></div><div class="breakdown-row"><span>Crowd Bonus</span><b>${playerCrowd}</b><i>${oppCrowd}</i></div><div class="breakdown-row"><span>Decision Bonus</span><b>${Math.round(M.decisionPlayer)}</b><i>${Math.round(M.decisionOpp)}</i></div></div><div class="summary-grid"><article><small>MATCH STORY</small><p>${story}</p></article><article><small>MATCH MVP</small><h2>${M.mvp.name}</h2><p>${mvpReason(M.mvp)}</p></article><article><small>TURNING POINT</small><p>${M.turningPoint||'The match remained balanced until the final exchange.'}</p></article><article><small>BEST MOMENT</small><p>${M.bestMoment||`${M.winner.name} delivered ${M.winner.finisher} to end the match.`}</p></article></div><div class="highlight-reel"><h3>Broadcast Highlights</h3>${highlights.map(x=>`<p>${x}</p>`).join('')}</div><div class="actions">${win?`<button class="btn" onclick="postMatchFlow()">${S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST'}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`}</div></section>`)
 }
 
 function postMatchFlow(){
