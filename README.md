@@ -1,13 +1,14 @@
-# Tag Team Gauntlet — Sprint 3.2 Personality Engine
+# Tag Team Gauntlet — Television Update Test
 
-This build adds wrestler-specific personality profiles and broadcast events for all 20 Founding wrestlers.
+This build adds the first television-style post-match presentation layer.
 
-## New in Sprint 3.2
-- Six handcrafted personality events per wrestler (120 total)
-- Personality moments appear much more frequently during matches
-- Dynamic introductions using nickname, name and faction
-- Full-screen signature-move spotlight presentation
-- Personality moments tracked for the post-match MVP explanation
-- Existing Match Broadcast, Gauntlet progression, rewards, walkouts and Second Wind preserved
+## Changes
+- Critical Decision appears above the Match Broadcast, remains visible while active, and scrolls into view automatically.
+- Legendary Team unlock screens scale to the available phone height so the cards, team name and Continue button remain accessible.
+- A post-match Broadcast Interrupt can trigger a Featured Singles Challenge.
+- The player chooses which member of the tag team accepts the singles match.
+- Singles matches use the existing Story/Personality Engine and return to the classic Gauntlet reward loop after a win.
+- Declining the challenge continues directly to rewards.
+- A loss in either tag or singles competition still ends the Classic Gauntlet run unless Second Wind is available.
 
-Open `index.html` or upload all files to the GitHub Pages repository.
+For testing, the first successful tag match always triggers a singles challenge. Later challenges use a lower random chance.
