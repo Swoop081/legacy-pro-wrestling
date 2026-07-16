@@ -16,11 +16,21 @@ function tvSting(label,title,subtitle=''){overlay.innerHTML=`<div class="overlay
 function rel(a,b){return RELATIONSHIPS.find(r=>(r.a===a.id&&r.b===b.id)||(r.a===b.id&&r.b===a.id))}
 function chemistry(a,b){let r=rel(a,b);return r?r.chemistry:Math.round((a.versatility+b.versatility)/2)}
 function score(t){let[a,b]=t;if(!b)return a.overall*.34+a.technique*.2+a.power*.14+a.speed*.12+a.charisma*.1+a.resilience*.1+S.momentum;let av=k=>(a[k]+b[k])/2;return av('overall')*.3+av('tag')*.25+(chemistry(a,b)+S.chem)*.2+av('technique')*.1+av('power')*.05+av('speed')*.05+av('charisma')*.05+S.momentum}
-function imageFallback(img,name){const wrap=img.closest('.card');if(!wrap)return;img.style.display='none';wrap.classList.add('missing-art');let ph=wrap.querySelector('.art-placeholder');if(!ph){ph=document.createElement('div');ph.className='art-placeholder';ph.innerHTML=`<b>${name.split(/\s+/).map(x=>x.replace(/[^A-Za-z]/g,'')[0]||'').join('').slice(0,3)}</b><small>ADD WRESTLER ART</small>`;wrap.insertBefore(ph,wrap.firstChild)}}
-function card(w,onclick='',compact=false){return `<article class="card${compact?' compact':''}" ${onclick?`onclick="${onclick}"`:''}><img src="${w.image}" alt="${w.name}" onerror="imageFallback(this,'${w.name.replace(/'/g,"\\'")}')"><div class="name">${w.name}<small>${w.title} · ${w.faction}</small></div></article>`}
+function imageFallback(img,name){
+ const wrap=img.closest('.superstar');if(!wrap)return;
+ img.style.display='none';wrap.classList.add('missing-art');
+ let ph=wrap.querySelector('.art-placeholder');
+ if(!ph){ph=document.createElement('div');ph.className='art-placeholder';ph.innerHTML=`<b>${name.split(/\s+/).map(x=>x.replace(/[^A-Za-z]/g,'')[0]||'').join('').slice(0,3)}</b><small>ADD WRESTLER PNG</small>`;wrap.insertBefore(ph,wrap.firstChild)}
+}
+function card(w,onclick='',compact=false){
+ return `<article class="superstar${compact?' compact':''}${onclick?' selectable':''}" ${onclick?`onclick="${onclick}" role="button" tabindex="0"`:''}>
+   <div class="superstar-art"><img src="${w.image}" alt="${w.name}" onerror="imageFallback(this,'${w.name.replace(/'/g,"\\'")}')"></div>
+   <div class="superstar-lower-third"><small>${w.title}</small><div class="name">${w.name}</div><span>${w.finisher}</span></div>
+ </article>`
+}
 function render(x){app.classList.remove('screen-enter');app.innerHTML=x;document.getElementById('streak').textContent=S.streak;requestAnimationFrame(()=>app.classList.add('screen-enter'))}
 function clearStoryTimer(){if(storyTimer){clearTimeout(storyTimer);storyTimer=null}}
-function home(){clearStoryTimer();M=null;S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,venue:null,attendance:null};render(`<section class="panel home"><div class="actions top-actions"><button class="btn" onclick="start()">START GAUNTLET</button></div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team and survive the Gauntlet. Matches now play as televised wrestling stories, pausing only when your decision can change the outcome.</p></section>`)}
+function home(){clearStoryTimer();M=null;S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,venue:null,attendance:null};const featured=one(WRESTLERS);render(`<section class="panel home home-broadcast"><div class="actions top-actions"><button class="btn" onclick="start()">START GAUNTLET</button></div><div class="home-copy"><div class="tv-kicker">FOUNDING TWENTY SPOTLIGHT</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team and survive the Gauntlet. Every match unfolds as a live wrestling broadcast where your decisions can change the outcome.</p></div><div class="home-hero">${card(featured,'',true)}</div></section>`)}
 function start(){let captain=one(WRESTLERS);S.team=[captain];window.opts=pick(WRESTLERS.filter(w=>w.id!==captain.id),2);render(`<section class="panel"><h1 class="title">Choose Your Partner</h1><p class="sub">Your first wrestler is ${captain.name}</p><div class="cards two">${opts.map((w,i)=>card(w,`partner(${i})`)).join('')}</div><div class="actions" style="max-width:320px;margin:25px auto">${card(captain)}</div></section>`)}
 function partner(i){S.team.push(opts[i]);discover(()=>team())}
 function discover(next){let r=S.team.length>1?rel(...S.team):null;if(r&&r.type==='legendary'){overlay.innerHTML=`<div class="overlay unlock-overlay"><div class="discover unlock-discover"><div class="actions top-actions"><button class="btn" id="continue">CONTINUE</button></div><div class="tv-kicker">FOUNDING TWENTY</div><p>LEGENDARY TEAM DISCOVERED</p><div class="pair unlock-pair">${card(S.team[0])}${card(S.team[1])}</div><h1>${r.teamName}</h1></div></div>`;document.getElementById('continue').onclick=()=>{overlay.innerHTML='';next()}}else next()}
