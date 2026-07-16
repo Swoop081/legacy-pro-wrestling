@@ -1,12 +1,14 @@
-# Tag Team Gauntlet v0.5 — Story Engine Foundation
+# Tag Team Gauntlet — Match Broadcast Rewrite
 
-This build replaces the turn-by-turn match system with an automatically paced Match Broadcast.
+This build replaces the previous match presentation with a dedicated televised Match Broadcast screen.
 
-## New in v0.5
-- Hidden match story types: classic, war, comeback, sprint, domination, tag showcase and upset.
-- Six match phases from Opening Bell through Finish.
-- Automatic event-by-event broadcast.
-- Decisions only at major turning points.
-- Dynamic tags, character moments, finishers, counters and near falls.
-- Post-match story, MVP, turning point, best moment, length and match rating.
-- Existing Gauntlet rewards, walkouts, team relationships and Second Wind remain intact.
+## Key changes
+- `START MATCH` is now `WATCH MATCH`.
+- Every match opens in a new full-screen broadcast presentation.
+- A large Current Moment card makes each event easy to follow.
+- Match phases are shown on a timeline from Opening Bell to Finish.
+- Legal wrestlers, team momentum, match control, elapsed time and story type remain visible.
+- Use **Next Moment** to advance manually or **Auto-Play Broadcast** to watch the match unfold.
+- Major decisions interrupt the broadcast only at important turning points.
+- Finishers, near falls and results receive distinct visual treatment.
+- The existing Gauntlet roster, rewards, relationships, Second Wind and progression are preserved.

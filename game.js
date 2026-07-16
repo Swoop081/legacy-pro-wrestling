@@ -17,7 +17,7 @@ function start(){let captain=one(WRESTLERS);S.team=[captain];window.opts=pick(WR
 function partner(i){S.team.push(opts[i]);discover(()=>team())}
 function discover(next){let r=rel(...S.team);if(r&&r.type==='legendary'){overlay.innerHTML=`<div class="overlay"><div class="discover"><p>LEGENDARY TEAM DISCOVERED</p><div class="pair">${card(S.team[0])}${card(S.team[1])}</div><h1>${r.teamName}</h1><button class="btn" id="continue">CONTINUE</button></div></div>`;document.getElementById('continue').onclick=()=>{overlay.innerHTML='';next()}}else next()}
 function team(){clearStoryTimer();render(`<section class="panel"><h1 class="title">Your Team</h1><p class="sub">${rel(...S.team)?.teamName||S.team.map(x=>x.name).join(' & ')}</p><div class="cards two">${S.team.map(x=>card(x)).join('')}</div><div class="actions"><button class="btn" onclick="opponent()">FIND OPPONENT</button></div></section>`)}
-function opponent(){let ids=new Set(S.team.map(x=>x.id)),eligible=WRESTLERS.filter(x=>!ids.has(x.id));S.opp=pick(eligible,2);render(`<section class="panel"><h1 class="title">Next Match</h1><div class="battle"><div><div class="cards">${S.team.map(x=>card(x)).join('')}</div></div><div class="vs">VS</div><div><div class="cards">${S.opp.map(x=>card(x)).join('')}</div></div></div><div class="actions"><button class="btn" onclick="match()">START MATCH</button></div></section>`)}
+function opponent(){let ids=new Set(S.team.map(x=>x.id)),eligible=WRESTLERS.filter(x=>!ids.has(x.id));S.opp=pick(eligible,2);render(`<section class="panel"><div class="build-stamp">MATCH BROADCAST REWRITE</div><h1 class="title">Tonight's Main Event</h1><div class="battle"><div><div class="cards">${S.team.map(x=>card(x)).join('')}</div></div><div class="vs">VS</div><div><div class="cards">${S.opp.map(x=>card(x)).join('')}</div></div></div><div class="actions"><button class="btn watch-btn" onclick="match()">▶ WATCH MATCH</button></div></section>`)}
 function walkout(){let[a,b]=S.team,c=chemistry(a,b),risk=((100-(a.loyalty+b.loyalty)/2)*.0007)+Math.max(0,75-c)*.0008;if(rel(a,b)?.type==='rivalry')risk+=.018;if(rel(a,b)?.type==='legendary')risk*=.08;return Math.random()<risk?(a.loyalty<b.loyalty?a:b):null}
 
 const PERSONALITY={
@@ -78,26 +78,42 @@ function match(){
  const teamPower=score(S.team),oppPower=score(S.opp)+S.streak*.7;
  let hiddenEdge=(teamPower-oppPower)/7+story.bias+rnd(-8,8);
  if(story.upset)hiddenEdge=teamPower>=oppPower?rnd(-10,-3):rnd(3,10);
- M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:12+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell'};
+ M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:12+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell',auto:false,started:false};
  addBroadcast('broadcast',`${S.team[0].name} & ${S.team[1].name} face ${S.opp[0].name} & ${S.opp[1].name}.`);
  addBroadcast('phase','OPENING BELL');
  addBroadcast('normal',one(['The bell rings and both teams circle cautiously.','The crowd rises as the opening wrestlers lock up.','No feeling-out process—both teams charge immediately.','A tense stare-down gives way to the first exchange.']));
- renderMatch();scheduleNext(900);
+ renderMatch();
 }
 function decisionPoints(total,count){const pts=[];for(let i=1;i<=count;i++)pts.push(Math.round(total*(i/(count+1)))+Math.round(rnd(-1,1)));return [...new Set(pts)].filter(x=>x>1&&x<total-1).sort((a,b)=>a-b)}
 function phaseForEvent(i,total){const p=i/total;if(p<.14)return 0;if(p<.34)return 1;if(p<.55)return 2;if(p<.72)return 3;if(p<.9)return 4;return 5}
 function addBroadcast(type,text,meta={}){M.log.push({type,text,...meta});M.latest=text;if(meta.highlight){M.highlights.push(text);if(!M.bestMoment||meta.weight>=(M.bestWeight||0)){M.bestMoment=text;M.bestWeight=meta.weight||1}}}
-function scheduleNext(ms=1050){clearStoryTimer();storyTimer=setTimeout(()=>advanceStory(),ms)}
+function scheduleNext(ms=1550){clearStoryTimer();if(M&&M.auto&&!M.waiting&&!M.ended)storyTimer=setTimeout(()=>advanceStory(),ms)}
+function broadcastIcon(type){return ({phase:'◆',broadcast:'📺',personality:'✦',tag:'🤝',nearfall:'2.9',finisher:'★',counter:'↺',choice:'▶',pin:'3',result:'🏆'}[type]||'●')}
+function toggleBroadcast(){if(!M||M.ended)return;M.auto=!M.auto;M.started=true;renderMatch();if(M.auto)scheduleNext(350)}
+function nextMoment(){if(!M||M.waiting||M.ended)return;M.started=true;advanceStory()}
 function renderMatch(){
- const p=S.team[M.activeP],o=S.opp[M.activeO],control=clamp(M.playerControl,5,95);
- render(`<section class="panel story-panel">
- <div class="broadcast-top"><div><small>MATCH BROADCAST</small><h1>${M.phaseLabel}</h1></div><div class="story-chip">${M.story.name}</div></div>
- <div class="control-strip"><div class="team-label">${S.team.map(x=>x.name).join(' & ')}</div><div class="control-meter"><i style="width:${control}%"></i><span>CONTROL</span></div><div class="team-label right">${S.opp.map(x=>x.name).join(' & ')}</div></div>
- <div class="broadcast-layout"><div class="broadcast-card">${card(p,'',true)}<small>LEGAL WRESTLER</small></div><div id="broadcastFeed" class="broadcast-feed">${M.log.slice(-10).map((e,i)=>`<div class="broadcast-line ${e.type} ${i===M.log.slice(-10).length-1?'latest':''}">${e.type==='phase'?'<b>'+e.text+'</b>':e.text}</div>`).join('')}</div><div class="broadcast-card">${card(o,'',true)}<small>LEGAL WRESTLER</small></div></div>
- <div class="broadcast-status"><span>Moment ${Math.min(M.eventIndex+1,M.eventTarget)} of ${M.eventTarget}</span><span>${formatTime(Math.round(M.matchSeconds*(M.eventIndex/Math.max(1,M.eventTarget))))}</span></div>
- ${M.waiting?decisionHTML():`<div class="auto-play"><span class="live-dot"></span> MATCH IN PROGRESS</div>`}
+ const p=S.team[M.activeP],o=S.opp[M.activeO],control=clamp(M.playerControl,5,95),latest=M.log[M.log.length-1]||{type:'broadcast',text:'The broadcast is ready.'};
+ const timeline=PHASES.map((x,i)=>`<div class="phase-step ${i<M.phaseIndex?'done':''} ${i===M.phaseIndex?'active':''}"><i></i><span>${x.label}</span></div>`).join('');
+ render(`<section class="broadcast-screen">
+ <div class="broadcast-banner"><span class="live-pill">● LIVE</span><div><small>TAG TEAM GAUNTLET PRESENTS</small><h1>${S.team.map(x=>x.name).join(' & ')} <em>VS</em> ${S.opp.map(x=>x.name).join(' & ')}</h1></div><span class="build-stamp">BROADCAST BUILD</span></div>
+ <div class="phase-timeline">${timeline}</div>
+ <div class="broadcast-scoreboard">
+   <div class="corner player"><div class="corner-team">${S.team.map(x=>x.name).join(' & ')}</div><div class="legal">LEGAL: ${p.name}</div><div class="mini-meters"><span>MOMENTUM</span><b><i style="width:${M.playerMom}%"></i></b></div></div>
+   <div class="control-dial"><strong>${Math.round(control)}</strong><span>CONTROL</span></div>
+   <div class="corner enemy"><div class="corner-team">${S.opp.map(x=>x.name).join(' & ')}</div><div class="legal">LEGAL: ${o.name}</div><div class="mini-meters"><span>MOMENTUM</span><b><i style="width:${M.oppMom}%"></i></b></div></div>
+ </div>
+ <div class="broadcast-main">
+   <aside class="wrestler-portrait left">${card(p,'',true)}</aside>
+   <div class="broadcast-center">
+     <div class="on-air-label"><span>${M.phaseLabel}</span><small>${M.story.name}</small></div>
+     <article class="moment-card ${latest.type}"><div class="moment-icon">${broadcastIcon(latest.type)}</div><div><small>CURRENT MOMENT</small><h2>${latest.text}</h2></div></article>
+     <div id="broadcastFeed" class="broadcast-ticker">${M.log.slice(-6,-1).reverse().map(e=>`<p class="${e.type}"><b>${broadcastIcon(e.type)}</b>${e.text}</p>`).join('')||'<p>The teams are entering the arena...</p>'}</div>
+   </div>
+   <aside class="wrestler-portrait right">${card(o,'',true)}</aside>
+ </div>
+ <div class="broadcast-footer"><span>Moment ${Math.min(M.eventIndex+1,M.eventTarget)} / ${M.eventTarget}</span><span>${formatTime(Math.round(M.matchSeconds*(M.eventIndex/Math.max(1,M.eventTarget))))}</span></div>
+ ${M.waiting?decisionHTML():M.ended?'':`<div class="broadcast-controls"><button class="btn secondary" onclick="nextMoment()">NEXT MOMENT</button><button class="btn ${M.auto?'pause':'play'}" onclick="toggleBroadcast()">${M.auto?'Ⅱ PAUSE BROADCAST':'▶ AUTO-PLAY BROADCAST'}</button></div>`}
  </section>`);
- const feed=document.getElementById('broadcastFeed');if(feed)feed.scrollTop=feed.scrollHeight;
 }
 function decisionHTML(){const d=getDecision();return `<div class="story-decision"><small>CRITICAL DECISION</small><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid">${d.options.map(x=>`<button class="choice" onclick="storyChoice('${x.id}')"><b>${x.name}</b><small>${x.desc}</small></button>`).join('')}</div></div>`}
 function getDecision(){
@@ -114,7 +130,7 @@ async function advanceStory(){
  if(M.nextDecisionAt.includes(M.eventIndex)){M.waiting=true;renderMatch();return}
  generateAutomaticBeat();renderMatch();
  if(M.eventIndex>=M.eventTarget)return resolveFinish();
- scheduleNext(M.phaseIndex>=4?1150:900);
+ scheduleNext(M.phaseIndex>=4?1900:1550);
 }
 function eventWrestler(teamSide){return teamSide==='player'?S.team[M.activeP]:S.opp[M.activeO]}
 function shiftControl(amount,reason){const before=M.playerControl;M.playerControl=clamp(M.playerControl+amount,5,95);if(Math.abs(M.playerControl-before)>=9&&!M.turningPoint)M.turningPoint=reason}
@@ -147,7 +163,7 @@ function storyChoice(id){if(!M||!M.waiting)return;M.waiting=false;M.decisionsMad
  else if(id==='risk'){if(Math.random()<.62){shiftControl(13,`${p.name}'s spectacular risk paid off.`);M.playerMom=clamp(M.playerMom+18,0,100);addBroadcast('choice',`${p.name} creates a breathtaking highlight and changes the match!`,{highlight:true,weight:2.4})}else{shiftControl(-11,`${p.name}'s high-risk attempt failed.`);addBroadcast('counter',`${p.name} takes a huge risk—but crashes and burns!`,{highlight:true,weight:1.8})}}
  else if(id==='survive'){shiftControl(4,`${p.name} survived the opposition's strongest stretch.`);M.playerMom=clamp(M.playerMom+8,0,100);addBroadcast('choice',`${p.name} covers up, survives the storm, and waits for an opening.`)}
  else if(id==='pressure'||id==='control'){shiftControl(7,`${p.name} controlled the decisive stretch.`);M.playerMom=clamp(M.playerMom+10,0,100);addBroadcast('choice',`${p.name} stays disciplined and keeps the match under control.`)}
- renderMatch();scheduleNext(1250);
+ renderMatch();scheduleNext(1650);
 }
 function resolveFinish(){
  if(M.ended)return;M.phaseIndex=5;M.phaseLabel='Finish';addBroadcast('phase','FINISH');
