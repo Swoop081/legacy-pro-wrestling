@@ -65,19 +65,26 @@ function attendance(){if(!S.attendance)S.attendance=Math.floor(rnd(11800,19800))
 function teamName(team){return team.length>1?(rel(...team)?.teamName||team.map(x=>x.name).join(' & ')):team[0].name}
 function isSinglesMatch(){return S.team.length===1&&S.opp.length===1}
 function isTagMatch(){return S.team.length===2&&S.opp.length===2}
-// IMAGE FRAMEWORK 1.6 — corrected near-native per-wrestler sizing
-const WRESTLER_IMAGE_SETS={
- 'jack-mercer':{full:'assets/wrestlers/jack-mercer/full.png',portrait:'assets/wrestlers/jack-mercer/portrait.png',victory:'assets/wrestlers/jack-mercer/victory.png'},
- 'jett-valentine':{full:'assets/wrestlers/jett-valentine/full.png',portrait:'assets/wrestlers/jett-valentine/portrait.png',victory:'assets/wrestlers/jett-valentine/victory.png'}
+// CHARACTER IMAGE MANAGER 1.0 — assets and positioning live in one place
+// Add future wrestlers here without changing the rendering functions.
+const CHARACTER_IMAGE_MANAGER={
+ 'jack-mercer':{
+  assets:{full:'assets/wrestlers/jack-mercer/full.png',portrait:'assets/wrestlers/jack-mercer/portrait.png',victory:'assets/wrestlers/jack-mercer/victory.png'},
+  transform:{scale:1.08,x:0,y:0}
+ },
+ 'jett-valentine':{
+  assets:{full:'assets/wrestlers/jett-valentine/full.png',portrait:'assets/wrestlers/jett-valentine/portrait.png',victory:'assets/wrestlers/jett-valentine/victory.png'},
+  transform:{scale:1.12,x:0,y:0}
+ },
+ 'victor-royale':{
+  assets:{full:'assets/wrestlers/victor-royale/full.png',portrait:'assets/wrestlers/victor-royale/portrait.png',victory:'assets/wrestlers/victor-royale/victory.png'},
+  transform:{scale:1.10,x:0,y:0}
+ }
 };
-
-const WRESTLER_IMAGE_TRANSFORMS={
- 'jack-mercer':{scale:1.08,y:0},
- 'jett-valentine':{scale:1.12,y:0}
-};
+function characterImageConfig(w){return CHARACTER_IMAGE_MANAGER[w.id]||null}
 function legacyWrestlerImage(w){return `assets/${w.id}.png`}
 function wrestlerImageCandidates(w,type='full'){
- const set=WRESTLER_IMAGE_SETS[w.id];
+ const config=characterImageConfig(w),set=config?.assets;
  const list=[];
  if(set)list.push(set[type]||set.full);
  list.push(`assets/${w.id}.png`,`assets/${w.id}.webp`,`assets/wrestlers/${w.id}.png`,`assets/wrestlers/${w.id}.webp`);
@@ -91,19 +98,19 @@ function advanceImageFallback(img){
  img.style.display='none';img.parentElement?.classList.add('missing-art');
 }
 function imageWithFallback(w,type,extraClass=''){
- const sources=wrestlerImageCandidates(w,type),t=WRESTLER_IMAGE_TRANSFORMS[w.id]||{};
- const custom=WRESTLER_IMAGE_SETS[w.id]?' framework-custom':'';
- const st=`--custom-scale:${t.scale||1};--custom-y:${t.y||0}px;`;
+ const sources=wrestlerImageCandidates(w,type),config=characterImageConfig(w),t=config?.transform||{};
+ const custom=config?' framework-custom':'';
+ const st=`--custom-scale:${t.scale??1};--custom-x:${t.x??0}px;--custom-y:${t.y??0}px;`;
  return `<img class="wrestler-art wrestler-${w.id}${custom} ${extraClass}" style="${st}" src="${sources[0]}" data-sources="${sources.join('|')}" data-source-index="0" alt="${w.name}" onerror="advanceImageFallback(this)">`;
 }
 function wrestlerPng(w){return wrestlerImage(w,'full')}
-function heroPortrait(w,side='',artType='full'){return `<article class="hero-portrait ${side} image-framework ${WRESTLER_IMAGE_SETS[w.id]?'has-render':'legacy-render'}">${imageWithFallback(w,artType,`art-${artType}`)}<div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
+function heroPortrait(w,side='',artType='full'){return `<article class="hero-portrait ${side} image-framework ${characterImageConfig(w)?'has-render':'legacy-render'}">${imageWithFallback(w,artType,`art-${artType}`)}<div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
 function tvSting(label,title,subtitle=''){overlay.innerHTML=`<div class="overlay tv-sting-overlay"><section class="tv-sting"><small>${label}</small><h1>${title}</h1>${subtitle?`<p>${subtitle}</p>`:''}<div class="tv-scan"></div></section></div>`;setTimeout(()=>{if(overlay.querySelector('.tv-sting-overlay'))overlay.innerHTML=''},850)}
 function rel(a,b){return RELATIONSHIPS.find(r=>(r.a===a.id&&r.b===b.id)||(r.a===b.id&&r.b===a.id))}
 function chemistry(a,b){let r=rel(a,b);return r?r.chemistry:Math.round((a.versatility+b.versatility)/2)}
 function score(t){let[a,b]=t;if(!b)return a.overall*.34+a.technique*.2+a.power*.14+a.speed*.12+a.charisma*.1+a.resilience*.1+S.momentum;let av=k=>(a[k]+b[k])/2;return av('overall')*.3+av('tag')*.25+(chemistry(a,b)+S.chem)*.2+av('technique')*.1+av('power')*.05+av('speed')*.05+av('charisma')*.05+S.momentum}
 function imageFallback(img,name){const wrap=img.closest('.card');if(!wrap)return;img.style.display='none';wrap.classList.add('missing-art');let ph=wrap.querySelector('.art-placeholder');if(!ph){ph=document.createElement('div');ph.className='art-placeholder';ph.innerHTML=`<b>${name.split(/\s+/).map(x=>x.replace(/[^A-Za-z]/g,'')[0]||'').join('').slice(0,3)}</b><small>ADD WRESTLER ART</small>`;wrap.insertBefore(ph,wrap.firstChild)}}
-function card(w,onclick='',compact=false){const upgraded=!!WRESTLER_IMAGE_SETS[w.id],artType=compact&&upgraded?'portrait':'full';return `<article class="card character-tile${compact?' compact':''}${upgraded?' image-framework-card':' legacy-card'}" ${onclick?`onclick="${onclick}"`:''}>${imageWithFallback(w,artType,`art-${artType}`)}<div class="name">${w.name}<small>${w.title} · ${w.faction}</small></div></article>`}
+function card(w,onclick='',compact=false){const upgraded=!!characterImageConfig(w),artType=compact&&upgraded?'portrait':'full';return `<article class="card character-tile${compact?' compact':''}${upgraded?' image-framework-card':' legacy-card'}" ${onclick?`onclick="${onclick}"`:''}>${imageWithFallback(w,artType,`art-${artType}`)}<div class="name">${w.name}<small>${w.title} · ${w.faction}</small></div></article>`}
 function render(x){app.classList.remove('screen-enter');app.innerHTML=x;document.getElementById('streak').textContent=S.streak;requestAnimationFrame(()=>app.classList.add('screen-enter'))}
 function clearStoryTimer(){if(storyTimer){clearTimeout(storyTimer);storyTimer=null}}
 const FEATURE_LINES={
@@ -505,7 +512,7 @@ function showSummary(win){
  M.lossMessage=`${M.winner.name} wins after a ${rating.toFixed(1)}-star match.`;
  const playerCrowd=Math.round(M.crowdPlayer*.12),oppCrowd=Math.round(M.crowdOpp*.12);
  const winningSide=win?S.team:S.opp;
- const resultArt=winningSide.map(w=>heroPortrait(w,'winner',WRESTLER_IMAGE_SETS[w.id]?'victory':'full')).join('');
+ const resultArt=winningSide.map(w=>heroPortrait(w,'winner',characterImageConfig(w)?'victory':'full')).join('');
  render(`<section class="panel match-result summary-panel presentation-summary">
  <div class="actions top-actions">${S.exhibition?`<button class="btn" onclick="quickRematch()">REMATCH</button><button class="btn secondary" onclick="quickMatchMenu()">QUICK MATCH MENU</button>`:(win?`<button class="btn" onclick="postMatchFlow()">${S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST'}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`)}</div>
  <div class="result-broadcast-header"><small>${S.exhibition?'EXHIBITION RESULT':'GAUNTLET RESULT'} · ${isSinglesMatch()?'SINGLES':'TAG TEAM'}</small><h1>${finishHeadline()}</h1><p>${currentVenue()} · ${length}</p></div>

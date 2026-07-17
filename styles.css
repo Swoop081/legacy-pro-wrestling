@@ -187,7 +187,7 @@ html,body,#app{overflow-anchor:none}
 }
 
 
-/* IMAGE FRAMEWORK 1.4 — explicit sizing; overrides earlier generic image rules */
+/* CHARACTER IMAGE MANAGER 1.0 — per-wrestler scale and X/Y positioning */
 .collection-tile>.wrestler-art.framework-custom,
 .card.character-tile>.wrestler-art.framework-custom{
   position:absolute !important;
@@ -199,7 +199,7 @@ html,body,#app{overflow-anchor:none}
   padding:0 !important;
   object-fit:contain !important;
   object-position:center bottom !important;
-  transform:translate(-50%,var(--custom-y,0)) scale(var(--custom-scale,1)) !important;
+  transform:translate(calc(-50% + var(--custom-x,0px)),var(--custom-y,0px)) scale(var(--custom-scale,1)) !important;
   transform-origin:center bottom !important;
 }
 .collection-tile>span,.card.character-tile>.name{z-index:3}
@@ -207,7 +207,7 @@ html,body,#app{overflow-anchor:none}
 .featured-superstar>.wrestler-art.framework-custom,
 .mode-landing-art>.wrestler-art.framework-custom,
 .image-framework-profile>.wrestler-art.framework-custom{
-  transform:translateY(var(--custom-y,0)) scale(var(--custom-scale,1)) !important;
+  transform:translate(var(--custom-x,0px),var(--custom-y,0px)) scale(var(--custom-scale,1)) !important;
   transform-origin:center bottom !important;
   max-width:none !important;
 }
