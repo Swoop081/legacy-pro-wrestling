@@ -65,20 +65,20 @@ function attendance(){if(!S.attendance)S.attendance=Math.floor(rnd(11800,19800))
 function teamName(team){return team.length>1?(rel(...team)?.teamName||team.map(x=>x.name).join(' & ')):team[0].name}
 function isSinglesMatch(){return S.team.length===1&&S.opp.length===1}
 function isTagMatch(){return S.team.length===2&&S.opp.length===2}
-// CHARACTER IMAGE MANAGER 1.0 — assets and positioning live in one place
+// CHARACTER IMAGE MANAGER 1.1 — assets and positioning live in one place
 // Add future wrestlers here without changing the rendering functions.
 const CHARACTER_IMAGE_MANAGER={
  'jack-mercer':{
   assets:{full:'assets/wrestlers/jack-mercer/full.png',portrait:'assets/wrestlers/jack-mercer/portrait.png',victory:'assets/wrestlers/jack-mercer/victory.png'},
-  transform:{scale:1.08,x:0,y:0}
+  transform:{scale:1.50,x:0,y:0}
  },
  'jett-valentine':{
   assets:{full:'assets/wrestlers/jett-valentine/full.png',portrait:'assets/wrestlers/jett-valentine/portrait.png',victory:'assets/wrestlers/jett-valentine/victory.png'},
-  transform:{scale:1.12,x:0,y:0}
+  transform:{scale:1.58,x:0,y:0}
  },
  'victor-royale':{
   assets:{full:'assets/wrestlers/victor-royale/full.png',portrait:'assets/wrestlers/victor-royale/portrait.png',victory:'assets/wrestlers/victor-royale/victory.png'},
-  transform:{scale:1.10,x:0,y:0}
+  transform:{scale:1.52,x:0,y:0}
  }
 };
 function characterImageConfig(w){return CHARACTER_IMAGE_MANAGER[w.id]||null}
