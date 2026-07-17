@@ -1,5 +1,10 @@
-Character Image Manager 1.1 targeted sizing correction
+TAG TEAM GAUNTLET — CHARACTER IMAGE MANAGER 2.1 MATCH FIX
 
-Replace only game.js and index.html in the repository root. Do not replace styles.css.
+Replace only these two files in the repository root:
+- styles.css
+- index.html
 
-Scales: Jack 1.50, Jett 1.58, Victor 1.52.
+Fix:
+- Custom full-art scale no longer affects compact wrestler portraits during a match.
+- Match portraits remain contained inside the left/right broadcast cards.
+- Collection, selection, profile and entrance sizing is unchanged.
