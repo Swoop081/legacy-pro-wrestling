@@ -1,19 +1,19 @@
-3.7.2 BUILD 2 — STEP 2
+TAG TEAM GAUNTLET — 3.7.2 BUILD 2 STEP 3
 
 ADDED
-- Playable Quick Match Tag Team.
-- Four-slot wrestler selection: two player wrestlers and two opponents.
-- Duplicate wrestler prevention.
-- Undo-last-pick control.
-- Tag Team confirmation screen and broadcast.
-- Tag Team rematch support.
+- Active PLAY NOW · SINGLES button on every Collection profile.
+- The selected profile wrestler is automatically assigned as the player's Singles wrestler.
+- Opponent selection opens immediately.
+- A PROFILE back button returns to the same Collection profile before a match begins.
 
-FIXED
-- Singles and featured Gauntlet singles post-match stories now use singular wrestler language.
-- Singles MVP text no longer references tag exchanges.
-- Singles winner label now reads WINNER rather than WINNERS.
-- A single winner PNG is centered rather than occupying the left half of a two-person grid.
-- Singles opening commentary no longer says both teams.
+PRESERVED
+- Quick Match Singles
+- Quick Match Tag Team
+- Rematches
+- Classic Gauntlet
+- Step 2 singles result presentation fixes
+- All assets and wrestler data
 
-CACHE
-- index.html now loads game.js, data.js and styles.css with the version suffix 3.7.2b2-step2.
+FILES CHANGED
+- game.js
+- index.html (cache-busting only)

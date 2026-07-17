@@ -1,34 +1,27 @@
-TAG TEAM GAUNTLET 3.7.2 BUILD 2 — STEP 2
+TAG TEAM GAUNTLET 3.7.2 BUILD 2 — STEP 3
+COLLECTION PLAY NOW
 
-REPLACE ONLY THESE THREE FILES IN YOUR GITHUB PROJECT ROOT:
+REPLACE ONLY:
 1. game.js
-2. styles.css
-3. index.html
+2. index.html
 
-DO NOT DELETE OR REPLACE:
+KEEP UNTOUCHED:
 - .git
 - .nojekyll
-- assets/
+- assets folder
 - data.js
+- styles.css
 
-SAFE INSTALL:
-1. Keep your current working project as a backup.
-2. Copy game.js, styles.css and index.html from this patch into the project root.
-3. Choose Replace when Windows asks.
-4. Open index.html locally and test both Quick Match modes.
-5. Confirm the Singles post-match winner image is centered and its story uses singles wording.
-6. Only then commit and push the three changed files.
-7. Wait for the GitHub Pages Action to turn green.
-8. The index file uses ?v=3.7.2b2-step2 cache-busting so the iPhone Home Screen version should retrieve the new files.
+SAFE TEST:
+1. Back up your current game.js and index.html.
+2. Copy the new game.js and index.html into the GitHub project root.
+3. Open index.html locally.
+4. Open Collection and choose any wrestler profile.
+5. Press PLAY NOW · SINGLES.
+6. Confirm that wrestler is already selected and only the opponent must be chosen.
+7. Use the PROFILE back button and confirm it returns to the same profile.
+8. Complete the match and confirm Rematch still works.
+9. Confirm normal Quick Match Singles and Tag Team still work.
+10. Commit and push only after local testing passes.
 
-TEST CHECKLIST:
-- Quick Match > Singles Match still works.
-- Quick Match > Tag Team Match is clickable.
-- Select four different wrestlers.
-- Begin Tag Team Broadcast.
-- Rematch preserves both teams.
-- Quick Match Menu returns correctly.
-- Classic Gauntlet still begins normally.
-- Singles result says WINNER, not WINNERS.
-- Singles Match Story says wrestler/wrestlers, not team/teams.
-- Singles winner PNG is centered.
+The index file increments cache-busting to 3.7.2b2-step3.

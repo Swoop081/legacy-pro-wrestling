@@ -44,13 +44,7 @@ function collection(){
 }
 function collectionProfile(id){
  const w=WRESTLERS.find(x=>x.id===id);if(!w)return collection();
- render(`<section class="profile-screen"><div class="profile-nav"><button class="shell-back" onclick="collection()">← COLLECTION</button><button class="profile-play" onclick="playNowFromCollection('${w.id}')">PLAY NOW · SINGLES</button></div><div class="profile-art"><img src="${wrestlerPng(w)}" alt="${w.name}"></div><div class="profile-copy"><div class="profile-status">FOUNDING TWENTY · AVAILABLE</div><small>${w.title}</small><h1>${w.name}</h1><div class="profile-signature"><span>SIGNATURE MOVE</span><b>${w.signature}</b></div><p>${BIOS[w.id]||`${w.name} is a ${w.faction} competitor in Tag Team Gauntlet.`}</p><div class="profile-facts"><div><small>FACTION</small><b>${w.faction}</b></div><div><small>STYLE</small><b>${(typeof profileFor==='function'?profileFor(w).archetype:'Wrestler')}</b></div><div><small>OVERALL</small><b>${w.overall}</b></div><div><small>RARITY</small><b>${w.rarity}</b></div></div></div></section>`)
-}
-function playNowFromCollection(id){
- const w=WRESTLERS.find(x=>x.id===id);if(!w)return collection();
- clearStoryTimer();M=null;overlay.innerHTML='';
- S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,exhibition:true,quickType:'singles',quickPlayer:w,quickSelections:[],quickSourceProfile:id,venue:null,attendance:null};
- quickSinglesOpponentSelect();
+ render(`<section class="profile-screen"><div class="profile-nav"><button class="shell-back" onclick="collection()">← COLLECTION</button><button class="profile-play" disabled title="Connected in Build 2">PLAY NOW · BUILD 2</button></div><div class="profile-art"><img src="${wrestlerPng(w)}" alt="${w.name}"></div><div class="profile-copy"><div class="profile-status">FOUNDING TWENTY · AVAILABLE</div><small>${w.title}</small><h1>${w.name}</h1><div class="profile-signature"><span>SIGNATURE MOVE</span><b>${w.signature}</b></div><p>${BIOS[w.id]||`${w.name} is a ${w.faction} competitor in Tag Team Gauntlet.`}</p><div class="profile-facts"><div><small>FACTION</small><b>${w.faction}</b></div><div><small>STYLE</small><b>${(typeof profileFor==='function'?profileFor(w).archetype:'Wrestler')}</b></div><div><small>OVERALL</small><b>${w.overall}</b></div><div><small>RARITY</small><b>${w.rarity}</b></div></div></div></section>`)
 }
 function quickMatchMenu(){
  const w=one(WRESTLERS);
@@ -58,21 +52,19 @@ function quickMatchMenu(){
 }
 function beginQuickSingles(){
  clearStoryTimer();M=null;overlay.innerHTML='';
- S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,exhibition:true,quickType:'singles',quickPlayer:null,quickSelections:[],quickSourceProfile:null,venue:null,attendance:null};
+ S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,exhibition:true,quickType:'singles',quickPlayer:null,quickSelections:[],venue:null,attendance:null};
  quickSinglesPlayerSelect();
 }
 function quickSinglesPlayerSelect(){
  render(`<section class="panel"><div class="actions top-actions"><button class="btn secondary" onclick="quickMatchMenu()">← QUICK MATCH</button></div><div class="tv-kicker">QUICK MATCH · SINGLES</div><h1 class="title">Choose Your Wrestler</h1><p class="sub">Select the wrestler you want to control.</p><div class="collection-grid">${WRESTLERS.map(w=>`<button class="collection-tile" onclick="selectQuickPlayer('${w.id}')"><img src="${wrestlerPng(w)}" alt="${w.name}"><span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
 }
 function selectQuickPlayer(id){
- const w=WRESTLERS.find(x=>x.id===id);if(!w)return quickSinglesPlayerSelect();S.quickPlayer=w;S.quickSourceProfile=null;quickSinglesOpponentSelect();
+ const w=WRESTLERS.find(x=>x.id===id);if(!w)return quickSinglesPlayerSelect();S.quickPlayer=w;quickSinglesOpponentSelect();
 }
 function quickSinglesOpponentSelect(){
  const player=S.quickPlayer;if(!player)return quickSinglesPlayerSelect();
  const opponents=WRESTLERS.filter(w=>w.id!==player.id);
- const backAction=S.quickSourceProfile?`collectionProfile('${S.quickSourceProfile}')`:'quickSinglesPlayerSelect()';
- const backLabel=S.quickSourceProfile?'PROFILE':'CHANGE WRESTLER';
- render(`<section class="panel"><div class="actions top-actions"><button class="btn secondary" onclick="${backAction}">← ${backLabel}</button></div><div class="tv-kicker">QUICK MATCH · SINGLES</div><h1 class="title">Choose Your Opponent</h1><p class="sub">${player.name} is ready. Select the opposition.</p><div class="collection-grid">${opponents.map(w=>`<button class="collection-tile" onclick="selectQuickOpponent('${w.id}')"><img src="${wrestlerPng(w)}" alt="${w.name}"><span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
+ render(`<section class="panel"><div class="actions top-actions"><button class="btn secondary" onclick="quickSinglesPlayerSelect()">← CHANGE WRESTLER</button></div><div class="tv-kicker">QUICK MATCH · SINGLES</div><h1 class="title">Choose Your Opponent</h1><p class="sub">${player.name} is ready. Select the opposition.</p><div class="collection-grid">${opponents.map(w=>`<button class="collection-tile" onclick="selectQuickOpponent('${w.id}')"><img src="${wrestlerPng(w)}" alt="${w.name}"><span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
 }
 function selectQuickOpponent(id){
  const opponent=WRESTLERS.find(x=>x.id===id),player=S.quickPlayer;if(!player||!opponent||player.id===opponent.id)return quickSinglesOpponentSelect();
