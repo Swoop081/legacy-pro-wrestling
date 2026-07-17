@@ -72,12 +72,18 @@ const WRESTLER_IMAGE_SETS={
 };
 
 const WRESTLER_IMAGE_TRANSFORMS={
- 'jack-mercer':{scale:2.05,y:-8},
- 'jett-valentine':{scale:2.15,y:-10}
+ // Direct transforms are deliberately applied inline so every screen uses them.
+ 'jack-mercer':{scale:1.95,y:0},
+ 'jett-valentine':{scale:2.35,y:0}
 };
-function legacyWrestlerImage(w){return `assets/wrestlers/${w.id}.png`}
+function legacyWrestlerImage(w,ext='webp'){return `assets/wrestlers/${w.id}.${ext}`}
 function wrestlerImage(w,type='full'){const set=WRESTLER_IMAGE_SETS[w.id];return set?(set[type]||set.full||legacyWrestlerImage(w)):legacyWrestlerImage(w)}
-function imageWithFallback(w,type,extraClass=''){const primary=wrestlerImage(w,type),fallback=legacyWrestlerImage(w),t=WRESTLER_IMAGE_TRANSFORMS[w.id]||{},st=`--img-scale:${t.scale||1};--img-y:${(t.y||0)}px;`;return `<img class="wrestler-art ${extraClass}" style="${st}" src="${primary}" data-fallback="${fallback}" alt="${w.name}" onerror="if(this.src.indexOf(this.dataset.fallback)===-1){this.src=this.dataset.fallback}else{this.style.display='none';this.parentElement.classList.add('missing-art')}">`}
+function imageWithFallback(w,type,extraClass=''){
+ const primary=wrestlerImage(w,type),fallback=legacyWrestlerImage(w,'png'),t=WRESTLER_IMAGE_TRANSFORMS[w.id]||{};
+ const scale=t.scale||1,y=t.y||0;
+ const st=`transform:translateY(${y}px) scale(${scale});transform-origin:center bottom;`;
+ return `<img class="wrestler-art ${extraClass}" style="${st}" src="${primary}" data-fallback="${fallback}" alt="${w.name}" onerror="if(!this.dataset.triedFallback){this.dataset.triedFallback='1';this.src=this.dataset.fallback}else{this.style.display='none';this.parentElement.classList.add('missing-art')}">`
+}
 function wrestlerPng(w){return wrestlerImage(w,'full')}
 function heroPortrait(w,side='',artType='full'){return `<article class="hero-portrait ${side} image-framework ${WRESTLER_IMAGE_SETS[w.id]?'has-render':'legacy-render'}">${imageWithFallback(w,artType,`art-${artType}`)}<div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
 function tvSting(label,title,subtitle=''){overlay.innerHTML=`<div class="overlay tv-sting-overlay"><section class="tv-sting"><small>${label}</small><h1>${title}</h1>${subtitle?`<p>${subtitle}</p>`:''}<div class="tv-scan"></div></section></div>`;setTimeout(()=>{if(overlay.querySelector('.tv-sting-overlay'))overlay.innerHTML=''},850)}

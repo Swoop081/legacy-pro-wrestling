@@ -185,3 +185,8 @@ html,body,#app{overflow-anchor:none}
 .mode-landing-art{
   overflow:hidden;
 }
+
+/* Image Framework 1.3 — direct per-wrestler transforms and reliable legacy art */
+.wrestler-art{transform-origin:center bottom}
+.collection-tile>.wrestler-art{position:absolute;inset:0;width:100%;height:100%}
+.collection-tile{position:relative}
