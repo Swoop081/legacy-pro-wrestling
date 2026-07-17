@@ -1,8 +1,11 @@
-TAG TEAM GAUNTLET 3.8.0 BUILD 3 — ATMOSPHERE & PERSONALITY
+TAG TEAM GAUNTLET — IMAGE FRAMEWORK 1.0
 
-Replace:
-- game.js
-- styles.css
-- index.html
-
-Keep .nojekyll, .git, assets and data.js unchanged.
+Replace game.js, styles.css and index.html in the project root.
+Keep data.js, .nojekyll and all existing assets.
+Required PNG paths:
+assets/wrestlers/jack-mercer/full.png
+assets/wrestlers/jack-mercer/portrait.png
+assets/wrestlers/jack-mercer/victory.png
+assets/wrestlers/jett-valentine/full.png
+assets/wrestlers/jett-valentine/portrait.png
+assets/wrestlers/jett-valentine/victory.png

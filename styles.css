@@ -157,3 +157,19 @@ html,body,#app{overflow-anchor:none}
 .broadcast-line.entrance{border-left:3px solid #9256ff;background:rgba(146,86,255,.08);font-style:italic}.broadcast-line.commentary .commentator-name{font-size:.9em}
 .milestone-grid{display:grid;gap:14px;margin-top:22px}.milestone-grid article{padding:20px;border:1px solid #d89a32;background:linear-gradient(135deg,rgba(216,154,50,.13),rgba(255,255,255,.02));text-align:center}.milestone-grid small{color:#ffc451;letter-spacing:.14em}.milestone-grid h2{margin:8px 0;color:#fff}.milestone-grid p{margin:0;color:#ccc}
 @media(min-width:760px){.milestone-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* IMAGE FRAMEWORK 1.0 */
+.wrestler-art{display:block;max-width:100%;object-fit:contain;object-position:center bottom}
+.image-framework-card{overflow:hidden;background:radial-gradient(circle at 50% 38%,rgba(196,35,47,.22),rgba(7,8,12,.98) 68%)}
+.image-framework-card>.wrestler-art.art-full{width:100%;height:clamp(300px,58vw,620px);padding:14px 10px 0}
+.image-framework-card.compact>.wrestler-art.art-portrait{width:100%;height:180px;object-position:center 28%;padding:0}
+.hero-portrait.image-framework.has-render{overflow:hidden;background:radial-gradient(circle at 50% 35%,rgba(207,42,52,.20),rgba(8,9,13,.94) 72%)}
+.hero-portrait.image-framework.has-render>.wrestler-art.art-full{width:100%;height:clamp(260px,42vw,480px);padding:8px 6px 0}
+.hero-portrait.image-framework.has-render>.wrestler-art.art-victory{width:100%;height:clamp(300px,48vw,540px);padding:8px 6px 0}
+.hero-portrait.image-framework.has-render>.wrestler-art.art-portrait{width:100%;height:230px;object-position:center 26%}
+.broadcast-card .image-framework-card.compact>.wrestler-art.art-portrait{height:clamp(150px,28vw,230px)}
+.image-framework-profile{display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.image-framework-profile>.wrestler-art.art-full{width:100%;height:100%;min-height:420px;padding:14px;object-position:center bottom}
+.winning-team-art .hero-portrait.has-render{min-width:min(44vw,380px)}
+@media(max-width:700px){.image-framework-card>.wrestler-art.art-full{height:clamp(330px,104vw,560px)}.hero-portrait.image-framework.has-render>.wrestler-art.art-full{height:clamp(230px,63vw,390px)}.hero-portrait.image-framework.has-render>.wrestler-art.art-victory{height:clamp(260px,75vw,450px)}.image-framework-profile>.wrestler-art.art-full{min-height:360px}.winning-team-art .hero-portrait.has-render{min-width:0}}

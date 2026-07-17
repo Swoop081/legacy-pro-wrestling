@@ -65,14 +65,22 @@ function attendance(){if(!S.attendance)S.attendance=Math.floor(rnd(11800,19800))
 function teamName(team){return team.length>1?(rel(...team)?.teamName||team.map(x=>x.name).join(' & ')):team[0].name}
 function isSinglesMatch(){return S.team.length===1&&S.opp.length===1}
 function isTagMatch(){return S.team.length===2&&S.opp.length===2}
-function wrestlerPng(w){return `assets/${w.id}.png`}
-function heroPortrait(w,side=''){return `<article class="hero-portrait ${side}"><img src="${wrestlerPng(w)}" alt="${w.name}" onerror="this.closest('.hero-portrait').classList.add('missing-art');this.style.display='none'"><div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
+// IMAGE FRAMEWORK 1.0
+const WRESTLER_IMAGE_SETS={
+ 'jack-mercer':{full:'assets/wrestlers/jack-mercer/full.png',portrait:'assets/wrestlers/jack-mercer/portrait.png',victory:'assets/wrestlers/jack-mercer/victory.png'},
+ 'jett-valentine':{full:'assets/wrestlers/jett-valentine/full.png',portrait:'assets/wrestlers/jett-valentine/portrait.png',victory:'assets/wrestlers/jett-valentine/victory.png'}
+};
+function legacyWrestlerImage(w){return `assets/${w.id}.png`}
+function wrestlerImage(w,type='full'){const set=WRESTLER_IMAGE_SETS[w.id];return set?(set[type]||set.full||legacyWrestlerImage(w)):legacyWrestlerImage(w)}
+function imageWithFallback(w,type,extraClass=''){const primary=wrestlerImage(w,type),fallback=legacyWrestlerImage(w);return `<img class="wrestler-art ${extraClass}" src="${primary}" data-fallback="${fallback}" alt="${w.name}" onerror="if(this.src.indexOf(this.dataset.fallback)===-1){this.src=this.dataset.fallback}else{this.style.display='none';this.parentElement.classList.add('missing-art')}">`}
+function wrestlerPng(w){return wrestlerImage(w,'full')}
+function heroPortrait(w,side='',artType='full'){return `<article class="hero-portrait ${side} image-framework ${WRESTLER_IMAGE_SETS[w.id]?'has-render':'legacy-render'}">${imageWithFallback(w,artType,`art-${artType}`)}<div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
 function tvSting(label,title,subtitle=''){overlay.innerHTML=`<div class="overlay tv-sting-overlay"><section class="tv-sting"><small>${label}</small><h1>${title}</h1>${subtitle?`<p>${subtitle}</p>`:''}<div class="tv-scan"></div></section></div>`;setTimeout(()=>{if(overlay.querySelector('.tv-sting-overlay'))overlay.innerHTML=''},850)}
 function rel(a,b){return RELATIONSHIPS.find(r=>(r.a===a.id&&r.b===b.id)||(r.a===b.id&&r.b===a.id))}
 function chemistry(a,b){let r=rel(a,b);return r?r.chemistry:Math.round((a.versatility+b.versatility)/2)}
 function score(t){let[a,b]=t;if(!b)return a.overall*.34+a.technique*.2+a.power*.14+a.speed*.12+a.charisma*.1+a.resilience*.1+S.momentum;let av=k=>(a[k]+b[k])/2;return av('overall')*.3+av('tag')*.25+(chemistry(a,b)+S.chem)*.2+av('technique')*.1+av('power')*.05+av('speed')*.05+av('charisma')*.05+S.momentum}
 function imageFallback(img,name){const wrap=img.closest('.card');if(!wrap)return;img.style.display='none';wrap.classList.add('missing-art');let ph=wrap.querySelector('.art-placeholder');if(!ph){ph=document.createElement('div');ph.className='art-placeholder';ph.innerHTML=`<b>${name.split(/\s+/).map(x=>x.replace(/[^A-Za-z]/g,'')[0]||'').join('').slice(0,3)}</b><small>ADD WRESTLER ART</small>`;wrap.insertBefore(ph,wrap.firstChild)}}
-function card(w,onclick='',compact=false){return `<article class="card character-tile${compact?' compact':''}" ${onclick?`onclick="${onclick}"`:''}><img src="${wrestlerPng(w)}" alt="${w.name}" onerror="imageFallback(this,'${w.name.replace(/'/g,"\\'")}')"><div class="name">${w.name}<small>${w.title} · ${w.faction}</small></div></article>`}
+function card(w,onclick='',compact=false){const upgraded=!!WRESTLER_IMAGE_SETS[w.id],artType=compact&&upgraded?'portrait':'full';return `<article class="card character-tile${compact?' compact':''}${upgraded?' image-framework-card':' legacy-card'}" ${onclick?`onclick="${onclick}"`:''}>${imageWithFallback(w,artType,`art-${artType}`)}<div class="name">${w.name}<small>${w.title} · ${w.faction}</small></div></article>`}
 function render(x){app.classList.remove('screen-enter');app.innerHTML=x;document.getElementById('streak').textContent=S.streak;requestAnimationFrame(()=>app.classList.add('screen-enter'))}
 function clearStoryTimer(){if(storyTimer){clearTimeout(storyTimer);storyTimer=null}}
 const FEATURE_LINES={
@@ -96,7 +104,7 @@ function collection(){
 }
 function collectionProfile(id){
  const w=WRESTLERS.find(x=>x.id===id);if(!w)return collection();
- render(`<section class="profile-screen"><div class="profile-nav"><button class="shell-back" onclick="collection()">← COLLECTION</button><button class="profile-play" onclick="playNowFromCollection('${w.id}')">PLAY NOW · SINGLES</button></div><div class="profile-art"><img src="${wrestlerPng(w)}" alt="${w.name}"></div><div class="profile-copy"><div class="profile-status">FOUNDING TWENTY · AVAILABLE</div><small>${w.title}</small><h1>${w.name}</h1><div class="profile-signature"><span>SIGNATURE MOVE</span><b>${w.signature}</b></div><p>${BIOS[w.id]||`${w.name} is a ${w.faction} competitor in Tag Team Gauntlet.`}</p><div class="profile-facts"><div><small>FACTION</small><b>${w.faction}</b></div><div><small>STYLE</small><b>${(typeof profileFor==='function'?profileFor(w).archetype:'Wrestler')}</b></div><div><small>OVERALL</small><b>${w.overall}</b></div><div><small>RARITY</small><b>${w.rarity}</b></div></div></div></section>`)
+ render(`<section class="profile-screen"><div class="profile-nav"><button class="shell-back" onclick="collection()">← COLLECTION</button><button class="profile-play" onclick="playNowFromCollection('${w.id}')">PLAY NOW · SINGLES</button></div><div class="profile-art image-framework-profile">${imageWithFallback(w,'full','art-full')}</div><div class="profile-copy"><div class="profile-status">FOUNDING TWENTY · AVAILABLE</div><small>${w.title}</small><h1>${w.name}</h1><div class="profile-signature"><span>SIGNATURE MOVE</span><b>${w.signature}</b></div><p>${BIOS[w.id]||`${w.name} is a ${w.faction} competitor in Tag Team Gauntlet.`}</p><div class="profile-facts"><div><small>FACTION</small><b>${w.faction}</b></div><div><small>STYLE</small><b>${(typeof profileFor==='function'?profileFor(w).archetype:'Wrestler')}</b></div><div><small>OVERALL</small><b>${w.overall}</b></div><div><small>RARITY</small><b>${w.rarity}</b></div></div></div></section>`)
 }
 function playNowFromCollection(id){
  const w=WRESTLERS.find(x=>x.id===id);if(!w)return collection();
@@ -106,7 +114,7 @@ function playNowFromCollection(id){
 }
 function quickMatchMenu(){
  const w=one(WRESTLERS);
- render(`<section class="framework-screen quick-framework">${shellBack()}<div class="framework-art"><img src="${wrestlerPng(w)}" alt="${w.name}"></div><div class="framework-copy"><div class="tv-kicker">EXHIBITION</div><h1>QUICK MATCH</h1><p>Create a dream match using any wrestlers from the Founding Twenty.</p><div class="framework-options"><button onclick="beginQuickSingles()"><b>SINGLES MATCH</b><small>Choose one wrestler and one opponent.</small><em>PLAYABLE</em></button><button onclick="beginQuickTag()"><b>TAG TEAM MATCH</b><small>Choose two wrestlers and an opposing team.</small><em>NEW · PLAYABLE</em></button></div></div></section>`)
+ render(`<section class="framework-screen quick-framework">${shellBack()}<div class="framework-art image-framework-profile">${imageWithFallback(w,'full','art-full')}</div><div class="framework-copy"><div class="tv-kicker">EXHIBITION</div><h1>QUICK MATCH</h1><p>Create a dream match using any wrestlers from the Founding Twenty.</p><div class="framework-options"><button onclick="beginQuickSingles()"><b>SINGLES MATCH</b><small>Choose one wrestler and one opponent.</small><em>PLAYABLE</em></button><button onclick="beginQuickTag()"><b>TAG TEAM MATCH</b><small>Choose two wrestlers and an opposing team.</small><em>NEW · PLAYABLE</em></button></div></div></section>`)
 }
 function beginQuickSingles(){
  clearStoryTimer();M=null;overlay.innerHTML='';
@@ -474,7 +482,7 @@ function showSummary(win){
  M.lossMessage=`${M.winner.name} wins after a ${rating.toFixed(1)}-star match.`;
  const playerCrowd=Math.round(M.crowdPlayer*.12),oppCrowd=Math.round(M.crowdOpp*.12);
  const winningSide=win?S.team:S.opp;
- const resultArt=winningSide.map(w=>heroPortrait(w,'winner')).join('');
+ const resultArt=winningSide.map(w=>heroPortrait(w,'winner',WRESTLER_IMAGE_SETS[w.id]?'victory':'full')).join('');
  render(`<section class="panel match-result summary-panel presentation-summary">
  <div class="actions top-actions">${S.exhibition?`<button class="btn" onclick="quickRematch()">REMATCH</button><button class="btn secondary" onclick="quickMatchMenu()">QUICK MATCH MENU</button>`:(win?`<button class="btn" onclick="postMatchFlow()">${S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST'}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`)}</div>
  <div class="result-broadcast-header"><small>${S.exhibition?'EXHIBITION RESULT':'GAUNTLET RESULT'} · ${isSinglesMatch()?'SINGLES':'TAG TEAM'}</small><h1>${finishHeadline()}</h1><p>${currentVenue()} · ${length}</p></div>

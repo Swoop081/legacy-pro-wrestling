@@ -1,9 +1,7 @@
-3.8.0 Build 3
-- Temporary two-person commentary team framework
-- Unique entrance writing for all Founding Twenty wrestlers
-- Faction and team identity presentation
-- Branded weekly-show presentation
-- Richer opponent introductions
-- Commentary exchanges during match simulation
-- Milestone announcements after victories
-- Persistent foundations for partners, opponents, teams and faction history
+IMAGE FRAMEWORK 1.0
+- Adds full, portrait and victory image types.
+- Jack Mercer and Jett Valentine use the new artwork paths.
+- Full renders appear on selection, team, opponent, reward and profile screens.
+- Portrait renders appear in compact match simulation panels.
+- Victory renders appear on match result screens.
+- All other wrestlers retain existing artwork through automatic fallback.
