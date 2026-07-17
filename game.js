@@ -10,7 +10,7 @@ const VENUES=['Liberty Arena','Crown Coliseum','MetroPlex Pavilion','Titan Dome'
 const MATCH_LABELS=['MAIN EVENT','FEATURED CONTEST','GAUNTLET SHOWCASE','PRIME-TIME MATCH'];
 const STATS_KEY='ttg_stats_3_7_2';
 function defaultStats(){return {version:1,total:0,wins:0,losses:0,singles:{matches:0,wins:0,losses:0},tag:{matches:0,wins:0,losses:0},currentStreak:0,bestWinStreak:0,bestGauntlet:0,wrestlers:{},teams:{},highestRated:null,lastMatch:null}}
-function loadStats(){try{const saved=JSON.parse(localStorage.getItem(STATS_KEY)||'null');const stats=saved&&saved.version===1?Object.assign(defaultStats(),saved):defaultStats();if(stats.wrestlers?.['damian-blackwell']&&!stats.wrestlers['damian-black']){stats.wrestlers['damian-black']={...stats.wrestlers['damian-blackwell'],id:'damian-black',name:'Damian Black'};delete stats.wrestlers['damian-blackwell'];saveStats(stats)}return stats}catch(e){return defaultStats()}}
+function loadStats(){try{const saved=JSON.parse(localStorage.getItem(STATS_KEY)||'null');return saved&&saved.version===1?Object.assign(defaultStats(),saved):defaultStats()}catch(e){return defaultStats()}}
 function saveStats(stats){try{localStorage.setItem(STATS_KEY,JSON.stringify(stats))}catch(e){}}
 function wrestlerStats(stats,w){if(!stats.wrestlers[w.id])stats.wrestlers[w.id]={id:w.id,name:w.name,matches:0,wins:0,losses:0,singles:0,tag:0};return stats.wrestlers[w.id]}
 function teamKey(team){return [...team].map(w=>w.id).sort().join('__')}
@@ -87,23 +87,27 @@ function imageTransform(config,type='full',screen='default'){
  const screens=config?.screens||{};
  if(screens[screen])return screens[screen];
  const map=config?.transforms||{};
+ // Never let an unspecified screen inherit an enlarged full-art transform.
+ // Unknown contexts use a neutral contained transform instead.
+ if(screen==='default')return {scale:1,x:0,y:0,anchor:type==='full'?'feet':'centre'};
  return map[type]||map.full||config?.transform||{scale:1,x:0,y:0,anchor:'feet'};
 }
 function imageWithFallback(w,type,extraClass='',screen='default'){
- const sources=wrestlerImageCandidates(w,type),config=characterImageConfig(w),t=imageTransform(config,type,screen);
+ const resolvedScreen=screen==='default'?(type==='portrait'?'matchPortrait':type==='victory'?'victory':'card'):screen;
+ const sources=wrestlerImageCandidates(w,type),config=characterImageConfig(w),t=imageTransform(config,type,resolvedScreen);
  const custom=config?' framework-custom':'';
  const anchor=t.anchor||'feet';
  const st=`--custom-scale:${t.scale??1};--custom-x:${t.x??0}px;--custom-y:${t.y??0}px;`;
- return `<img class="wrestler-art wrestler-${w.id}${custom} ${extraClass}" style="${st}" data-art-type="${type}" data-image-screen="${screen}" data-image-anchor="${anchor}" src="${sources[0]}" data-sources="${sources.join('|')}" data-source-index="0" alt="${w.name}" onerror="advanceImageFallback(this)">`;
+ return `<img class="wrestler-art wrestler-${w.id}${custom} ${extraClass}" style="${st}" data-art-type="${type}" data-image-screen="${resolvedScreen}" data-image-anchor="${anchor}" src="${sources[0]}" data-sources="${sources.join('|')}" data-source-index="0" alt="${w.name}" onerror="advanceImageFallback(this)">`;
 }
 function wrestlerPng(w){return wrestlerImage(w,'full')}
-function heroPortrait(w,side='',artType='auto'){const resolvedType=artType==='auto'?(characterImageConfig(w)?'portrait':'full'):artType;return `<article class="hero-portrait ${side} image-framework ${characterImageConfig(w)?'has-render':'legacy-render'}">${imageWithFallback(w,resolvedType,`art-${resolvedType}`)}<div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
+function heroPortrait(w,side='',artType='auto'){const resolvedType=artType==='auto'?(characterImageConfig(w)?'portrait':'full'):artType;const screen=resolvedType==='victory'?'victory':'preMatch';return `<article class="hero-portrait ${side} image-framework ${characterImageConfig(w)?'has-render':'legacy-render'}">${imageWithFallback(w,resolvedType,`art-${resolvedType}`,screen)}<div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
 function tvSting(label,title,subtitle=''){overlay.innerHTML=`<div class="overlay tv-sting-overlay"><section class="tv-sting"><small>${label}</small><h1>${title}</h1>${subtitle?`<p>${subtitle}</p>`:''}<div class="tv-scan"></div></section></div>`;setTimeout(()=>{if(overlay.querySelector('.tv-sting-overlay'))overlay.innerHTML=''},850)}
 function rel(a,b){return RELATIONSHIPS.find(r=>(r.a===a.id&&r.b===b.id)||(r.a===b.id&&r.b===a.id))}
 function chemistry(a,b){let r=rel(a,b);return r?r.chemistry:Math.round((a.versatility+b.versatility)/2)}
 function score(t){let[a,b]=t;if(!b)return a.overall*.34+a.technique*.2+a.power*.14+a.speed*.12+a.charisma*.1+a.resilience*.1+S.momentum;let av=k=>(a[k]+b[k])/2;return av('overall')*.3+av('tag')*.25+(chemistry(a,b)+S.chem)*.2+av('technique')*.1+av('power')*.05+av('speed')*.05+av('charisma')*.05+S.momentum}
 function imageFallback(img,name){const wrap=img.closest('.card');if(!wrap)return;img.style.display='none';wrap.classList.add('missing-art');let ph=wrap.querySelector('.art-placeholder');if(!ph){ph=document.createElement('div');ph.className='art-placeholder';ph.innerHTML=`<b>${name.split(/\s+/).map(x=>x.replace(/[^A-Za-z]/g,'')[0]||'').join('').slice(0,3)}</b><small>ADD WRESTLER ART</small>`;wrap.insertBefore(ph,wrap.firstChild)}}
-function card(w,onclick='',compact=false){const upgraded=!!characterImageConfig(w),artType=compact&&upgraded?'portrait':'full';return `<article class="card character-tile${compact?' compact':''}${upgraded?' image-framework-card':' legacy-card'}" ${onclick?`onclick="${onclick}"`:''}>${imageWithFallback(w,artType,`art-${artType}`)}<div class="name">${w.name}<small>${w.title} · ${w.faction}</small></div></article>`}
+function card(w,onclick='',compact=false,screen='card'){const upgraded=!!characterImageConfig(w),artType=compact&&upgraded?'portrait':'full',resolvedScreen=compact?'matchPortrait':screen;return `<article class="card character-tile${compact?' compact':''}${upgraded?' image-framework-card':' legacy-card'}" ${onclick?`onclick="${onclick}"`:''}>${imageWithFallback(w,artType,`art-${artType}`,resolvedScreen)}<div class="name">${w.name}<small>${w.title} · ${w.faction}</small></div></article>`}
 function render(x){app.classList.remove('screen-enter');app.innerHTML=x;document.getElementById('streak').textContent=S.streak;requestAnimationFrame(()=>app.classList.add('screen-enter'))}
 function clearStoryTimer(){if(storyTimer){clearTimeout(storyTimer);storyTimer=null}}
 const FEATURE_LINES={
@@ -120,7 +124,7 @@ function home(){
 }
 function classicHome(){
  resetClassicState();S.previewCaptain=one(WRESTLERS);const captain=S.previewCaptain;
- render(`<section class="panel mode-landing"><div class="actions top-actions"><button class="btn" onclick="start()">START GAUNTLET</button>${shellBack()}</div><div class="mode-landing-art">${imageWithFallback(captain,'full','art-full')}<div class="mode-preview-label"><small>YOUR STARTING WRESTLER</small><b>${captain.name}</b></div></div><div class="mode-landing-copy"><div class="tv-kicker">CLASSIC MODE</div><h1>SURVIVE THE GAUNTLET</h1><p>Your run begins with <strong>${captain.name}</strong>. Choose a partner and survive as long as possible. Every broadcast, decision and reward matters. Lose once and the run is over.</p></div></section>`)
+ render(`<section class="panel mode-landing"><div class="actions top-actions"><button class="btn" onclick="start()">START GAUNTLET</button>${shellBack()}</div><div class="mode-landing-art">${imageWithFallback(captain,'full','art-full','classicLanding')}<div class="mode-preview-label"><small>YOUR STARTING WRESTLER</small><b>${captain.name}</b></div></div><div class="mode-landing-copy"><div class="tv-kicker">CLASSIC MODE</div><h1>SURVIVE THE GAUNTLET</h1><p>Your run begins with <strong>${captain.name}</strong>. Choose a partner and survive as long as possible. Every broadcast, decision and reward matters. Lose once and the run is over.</p></div></section>`)
 }
 function collection(){
  render(`<section class="collection-screen">${shellBack()}<header class="section-heading"><div><div class="tv-kicker">THE FOUNDING TWENTY</div><h1>COLLECTION</h1><p>Character profiles, signatures and future career history.</p></div><strong>${WRESTLERS.length}/${WRESTLERS.length}</strong></header><div class="collection-grid">${WRESTLERS.map(w=>`<button class="collection-tile" onclick="collectionProfile('${w.id}')">${imageWithFallback(w,'full','art-full','collection')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
@@ -369,42 +373,19 @@ function decisionPoints(total,count){const pts=[];for(let i=1;i<=count;i++)pts.p
 function phaseForEvent(i,total){const p=i/total;if(p<.14)return 0;if(p<.34)return 1;if(p<.55)return 2;if(p<.72)return 3;if(p<.9)return 4;return 5}
 function addBroadcast(type,text,meta={}){M.log.push({type,text,...meta});M.latest=text;if(meta.highlight){M.highlights.push(text);if(!M.bestMoment||meta.weight>=(M.bestWeight||0)){M.bestMoment=text;M.bestWeight=meta.weight||1}}}
 function scheduleNext(ms=1050){clearStoryTimer();storyTimer=setTimeout(()=>advanceStory(),ms)}
-function matchPartnerHTML(team,activeIndex,side){
- if(team.length<2)return '';
- const partner=team[1-activeIndex];
- return `<div class="match-partner ${side}">${imageWithFallback(partner,characterImageConfig(partner)?'portrait':'full','art-portrait','matchPortrait')}<div><small>TAG PARTNER</small><b>${partner.name}</b><span>${partner.finisher}</span></div></div>`;
-}
-function matchCompetitorHTML(w,side,team,activeIndex){
- const role=isSinglesMatch()?(side==='player'?'YOUR WRESTLER':'OPPONENT'):'LEGAL WRESTLER';
- const artType=characterImageConfig(w)?'portrait':'full';
- return `<article class="match-competitor ${side}">
-   <div class="match-role">${role}</div>
-   <div class="match-stage-art">${imageWithFallback(w,artType,`art-${artType}`,'matchStage')}</div>
-   <div class="match-nameplate"><small>${w.title}</small><h2>${w.name}</h2><span>${w.faction} · ${w.finisher}</span></div>
-   ${matchPartnerHTML(team,activeIndex,side)}
- </article>`;
-}
 function renderMatch(){
  const p=S.team[M.activeP],o=S.opp[M.activeO],control=clamp(M.playerControl,5,95);
- const recent=M.log.slice(-10);
- render(`<section class="panel story-panel match-ui-v2">
+ render(`<section class="panel story-panel">
  <div class="broadcast-top"><div><small>MATCH BROADCAST</small><h1>${M.phaseLabel}</h1></div><div class="story-chip">${M.story.name}</div></div>
  <div class="control-strip"><div class="team-label">${S.team.map(x=>x.name).join(' & ')}</div><div class="control-meter"><i style="width:${control}%"></i><span>CONTROL ${Math.round(control)}–${Math.round(100-control)}</span></div><div class="team-label right">${S.opp.map(x=>x.name).join(' & ')}</div></div>
  <div class="scoreboard-strip"><div><small>MATCH SCORE</small><strong>${projectedScore('player')}</strong></div><div class="crowd-meter"><span>🔥 CROWD ${Math.round(M.crowd)}%</span><i style="width:${M.crowd}%"></i></div><div class="right"><small>MATCH SCORE</small><strong>${projectedScore('opp')}</strong></div></div>
  <div class="decision-layer">${M.waiting?decisionHTML():''}</div>
- <div class="match-stage">
-   ${matchCompetitorHTML(p,'player',S.team,M.activeP)}
-   <div class="match-stage-centre"><span>LIVE</span><b>VS</b><small>${M.phaseLabel}</small></div>
-   ${matchCompetitorHTML(o,'opponent',S.opp,M.activeO)}
- </div>
- ${M.spotlight?`<div class="signature-spotlight"><small>★ SIGNATURE MOVE ★</small><h2>${M.spotlight.move}</h2><h3>${M.spotlight.name}</h3><p>${M.spotlight.tagline}</p></div>`:''}
- <section class="commentary-deck"><div class="commentary-deck-head"><div><small>LIVE COMMENTARY</small><h2>RINGSIDE FEED</h2></div><div><span>Moment ${Math.min(M.eventIndex+1,M.eventTarget)} of ${M.eventTarget}</span><span>${formatTime(Math.round(M.matchSeconds*(M.eventIndex/Math.max(1,M.eventTarget))))}</span></div></div>
- <div id="broadcastFeed" class="broadcast-feed">${recent.map((e,i)=>`<div class="broadcast-line ${e.type} ${i===recent.length-1?'latest':''}">${e.type==='phase'?'<b>'+e.text+'</b>':e.text}</div>`).join('')}</div></section>
+ <div class="broadcast-layout"><div class="broadcast-card">${card(p,'',true)}<small>${isSinglesMatch()?'YOUR WRESTLER':'LEGAL WRESTLER'}</small></div><div id="broadcastFeed" class="broadcast-feed">${M.log.slice(-10).map((e,i)=>`<div class="broadcast-line ${e.type} ${i===M.log.slice(-10).length-1?'latest':''}">${e.type==='phase'?'<b>'+e.text+'</b>':e.text}</div>`).join('')}</div><div class="broadcast-card">${card(o,'',true)}<small>${isSinglesMatch()?'OPPONENT':'LEGAL WRESTLER'}</small></div></div>
+ ${M.spotlight?`<div class="signature-spotlight"><small>★ SIGNATURE MOVE ★</small><h2>${M.spotlight.move}</h2><h3>${M.spotlight.name}</h3><p>${M.spotlight.tagline}</p></div>`:''}<div class="broadcast-status"><span>Moment ${Math.min(M.eventIndex+1,M.eventTarget)} of ${M.eventTarget}</span><span>${formatTime(Math.round(M.matchSeconds*(M.eventIndex/Math.max(1,M.eventTarget))))}</span></div>
  ${M.waiting?'':`<div class="auto-play"><span class="live-dot"></span> MATCH IN PROGRESS</div>`}
  </section>`);
  const feed=document.getElementById('broadcastFeed');if(feed)feed.scrollTop=feed.scrollHeight
 }
-
 function decisionHTML(){const d=getDecision();M.currentDecision=d;return `<div class="story-decision"><small>${d.phase.toUpperCase()} DECISION</small><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid">${d.options.map((x,i)=>`<button class="choice" onclick="storyChoice('choice-${i}')"><b>${x.name}</b><small>${x.desc}</small></button>`).join('')}</div></div>`}
 function getDecision(){
  const p=S.team[M.activeP],partner=S.team.length>1?S.team[1-M.activeP]:null,phase=decisionPhase(),situation=one(DECISION_SITUATIONS[phase]);
