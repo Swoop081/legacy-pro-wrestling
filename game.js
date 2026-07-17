@@ -72,8 +72,8 @@ const WRESTLER_IMAGE_SETS={
 };
 
 const WRESTLER_IMAGE_TRANSFORMS={
- 'jack-mercer':{scale:2.05,y:-2},
- 'jett-valentine':{scale:2.25,y:-2}
+ 'jack-mercer':{scale:1.55,y:0},
+ 'jett-valentine':{scale:1.65,y:0}
 };
 function legacyWrestlerImage(w){return `assets/${w.id}.png`}
 function wrestlerImageCandidates(w,type='full'){
