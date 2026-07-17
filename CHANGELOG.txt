@@ -1,17 +1,17 @@
-TAG TEAM GAUNTLET 3.8.0 BUILD 1 R2
+TAG TEAM GAUNTLET — 3.8.0 BUILD 1 R3
 
-BROADCAST 2.0
-- All 20 founding wrestlers retain their personality profiles.
-- 400 wrestler-specific decisions remain available across opening, control, crisis, and finish phases.
-- Decision cards now show only the choice name and description.
-- Hidden success values, attribute numbers, and developer-facing labels are no longer rendered.
-- The duplicated YOUR CALL wording has been removed.
+GAUNTLET OPENING FLOW
+- Partner selection now displays only the two available partner choices.
+- The already assigned starting wrestler is no longer repeated as a third card.
+- Selecting a partner transitions directly to the Your Team screen.
+- The Your Team screen presents both wrestlers first, with the single Find Opponent button beneath them.
 
-CLASSIC GAUNTLET ONBOARDING
-- The first match of every new gauntlet run is guaranteed to be won.
-- Walkouts are disabled for the opening match.
-- Normal difficulty and walkout rules return from Match 2 onward.
-- This guarantees the player reaches the first reward choice.
+FIRST-VICTORY FLOW
+- The first Gauntlet victory now goes directly to Choose Reward.
+- A Featured Singles Match can no longer interrupt the first reward.
+- Singles challenges resume normally after later Gauntlet victories.
 
-CACHE
-- Asset query version updated to 3.8.0b1-r2.
+PRESERVED
+- First Gauntlet match remains guaranteed to be won.
+- Broadcast 2.0 personality decisions remain active for all 20 wrestlers.
+- Decision cards continue to hide internal labels, values and percentages.

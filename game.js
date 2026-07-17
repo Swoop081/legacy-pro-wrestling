@@ -174,10 +174,10 @@ function statisticsMenu(tab='career'){
 function optionsMenu(){
  render(`<section class="panel mode-landing">${shellBack()}<div class="mode-landing-copy"><div class="tv-kicker">COMING SOON</div><h1>OPTIONS</h1><p>Broadcast speed, animation, audio and accessibility controls will live here.</p></div></section>`)
 }
-function start(){let captain=S.previewCaptain||one(WRESTLERS);S.previewCaptain=null;S.team=[captain];window.opts=pick(WRESTLERS.filter(w=>w.id!==captain.id),2);render(`<section class="panel"><h1 class="title">Choose Your Partner</h1><p class="sub">Your first wrestler is ${captain.name}</p><div class="cards two">${opts.map((w,i)=>card(w,`partner(${i})`)).join('')}</div><div class="actions" style="max-width:320px;margin:25px auto">${card(captain)}</div></section>`)}
+function start(){let captain=S.previewCaptain||one(WRESTLERS);S.previewCaptain=null;S.team=[captain];window.opts=pick(WRESTLERS.filter(w=>w.id!==captain.id),2);render(`<section class="panel"><h1 class="title">Choose Your Partner</h1><p class="sub">Your first wrestler is ${captain.name}. Choose one partner to begin the Gauntlet.</p><div class="cards two">${opts.map((w,i)=>card(w,`partner(${i})`)).join('')}</div></section>`)}
 function partner(i){S.team.push(opts[i]);discover(()=>team())}
 function discover(next){let r=S.team.length>1?rel(...S.team):null;if(r&&r.type==='legendary'){overlay.innerHTML=`<div class="overlay unlock-overlay"><div class="discover unlock-discover"><div class="actions top-actions"><button class="btn" id="continue">CONTINUE</button></div><div class="tv-kicker">FOUNDING TWENTY</div><p>LEGENDARY TEAM DISCOVERED</p><div class="pair unlock-pair">${card(S.team[0])}${card(S.team[1])}</div><h1>${r.teamName}</h1></div></div>`;document.getElementById('continue').onclick=()=>{overlay.innerHTML='';next()}}else next()}
-function team(){clearStoryTimer();render(`<section class="panel"><div class="actions top-actions"><button class="btn" onclick="opponent()">FIND OPPONENT</button></div><h1 class="title">Your Team</h1><p class="sub">${rel(...S.team)?.teamName||S.team.map(x=>x.name).join(' & ')}</p><div class="cards two">${S.team.map(x=>card(x)).join('')}</div></section>`)}
+function team(){clearStoryTimer();render(`<section class="panel"><h1 class="title">Your Team</h1><p class="sub">${rel(...S.team)?.teamName||S.team.map(x=>x.name).join(' & ')}</p><div class="cards two">${S.team.map(x=>card(x)).join('')}</div><div class="actions team-actions"><button class="btn" onclick="opponent()">FIND OPPONENT</button></div></section>`)}
 function opponent(){
  let ids=new Set(S.team.map(x=>x.id)),eligible=WRESTLERS.filter(x=>!ids.has(x.id));S.opp=pick(eligible,2);S.venue=one(VENUES);S.attendance=Math.floor(rnd(11800,19800));
  const label=one(MATCH_LABELS),left=teamName(S.team),right=teamName(S.opp);
@@ -408,6 +408,9 @@ function showSummary(win){
 
 function postMatchFlow(){
  if(S.specialSingles){restoreTagTeams();return rewards();}
+ // The first Gauntlet victory always pays out immediately so new players
+ // experience the reward loop before any optional singles challenge.
+ if(!S.exhibition&&S.streak===1)return rewards();
  const shouldChallenge=!S.challengeSeen||Math.random()<.35;
  if(shouldChallenge)return showSinglesChallenge();
  rewards();

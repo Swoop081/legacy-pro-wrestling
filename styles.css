@@ -141,3 +141,7 @@ html,body,#app{overflow-anchor:none}
 
 /* 3.8.0 Build 1 R2: clean player-facing decision cards */
 .choice em{display:none!important}.story-decision>small{background:transparent!important;color:#ffd15b!important;padding:0!important;margin-left:8px}.story-decision:before{vertical-align:middle;margin-right:8px}.choice{display:flex;flex-direction:column;justify-content:center}.choice small{line-height:1.45}
+
+/* 3.8.0 Build 1 R3: team reveal completes before the single progression action. */
+.team-actions{max-width:420px;margin:28px auto 0}
+.team-actions .btn{width:100%}
