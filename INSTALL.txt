@@ -1,14 +1,1 @@
-TAG TEAM GAUNTLET 3.7.2 BUILD 2 — STEP 5
-
-Replace only these files in the repository root:
-- game.js
-- styles.css
-- index.html
-
-Keep these untouched:
-- .git/
-- .nojekyll
-- assets/
-- data.js
-
-Test locally before committing. Existing statistics begin at zero and persist in this browser/device after completed matches.
+Replace only game.js, styles.css, and index.html. Keep .nojekyll, .git, assets, and data.js unchanged. Test locally before commit and push.

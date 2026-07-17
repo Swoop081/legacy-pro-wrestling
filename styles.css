@@ -136,3 +136,5 @@ html,body,#app{overflow-anchor:none}
 .stats-head{background:rgba(91,22,27,.55);color:#f1c55b;font-size:.75rem;letter-spacing:.1em}.stats-head span:first-child{color:#f1c55b}
 .stats-empty{padding:35px;border:1px solid rgba(175,71,74,.48);text-align:center;color:#aaa}
 @media(max-width:620px){.stats-detail-grid{grid-template-columns:1fr 1fr}.stats-detail-grid article{min-height:125px;padding:17px}.stats-detail-grid b{font-size:2rem}.stats-row{grid-template-columns:minmax(120px,2fr) repeat(4,42px);padding:13px 10px;font-size:.82rem}.mode-preview-label{bottom:6px;left:6px;right:6px}}
+
+.choice em{display:block;margin-top:9px;color:#ffd15b;font:700 9px Arial;letter-spacing:1.2px;font-style:normal}.story-decision>small{display:inline-block;background:#ffd15b;color:#130d05!important;padding:7px 13px}.choice b{line-height:1.05}

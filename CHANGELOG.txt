@@ -1,15 +1,8 @@
-STEP 5 — PERSISTENT STATISTICS + GAUNTLET PREVIEW
+Tag Team Gauntlet 3.8.0 Build 1 — Broadcast 2.0
 
-ADDED
-- Persistent career record using local browser storage
-- Singles and Tag Team records
-- Per-wrestler matches, wins, losses and win percentage
-- Per-team matches, wins, losses and win percentage
-- Best Gauntlet run, overall win streak, highest-rated match and last result
-- Functional Career, Wrestlers, Teams and Records tabs
-
-FIXED
-- The Classic Mode preview now shows the exact wrestler assigned as the starting wrestler on the partner-selection screen.
-
-CACHE VERSION
-- 3.7.2b2-step5
+- 400 wrestler-exclusive decision labels across 20 founding wrestlers
+- Dynamic opening, control, crisis, and finish situations
+- Attribute-driven success chances
+- Personalized success and failure commentary
+- Existing three-choice layout preserved
+- Cache version: 3.8.0b1
