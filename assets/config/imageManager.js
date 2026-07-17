@@ -219,4 +219,21 @@ window.TTG_IMAGE_MANAGER = {
     }
   },
 
+  'elias-crowe': {
+    assets: {
+      full: 'assets/wrestlers/elias-crowe/full.png',
+      portrait: 'assets/wrestlers/elias-crowe/portrait.png',
+      victory: 'assets/wrestlers/elias-crowe/victory.png'
+    },
+    transforms: { full: { scale: 1, x: 0, y: 0 }, portrait: { scale: 1, x: 0, y: 0 }, victory: { scale: 1, x: 0, y: 0 } },
+    screens: {
+      quickMatch: { scale: 1, x: 0, y: 0, anchor: 'feet' }, card: { scale: 1, x: 0, y: 0, anchor: 'feet' },
+      classicLanding: { scale: .78, x: 0, y: 58, anchor: 'centre' }, quickLanding: { scale: .76, x: 0, y: 96, anchor: 'centre' },
+      collection: { scale: 1, x: 0, y: 0, anchor: 'feet' }, homeFeature: { scale: 1, x: 0, y: 28, anchor: 'centre' },
+      profile: { scale: 1, x: 0, y: 0, anchor: 'feet' }, preMatch: { scale: 1, x: 0, y: 0, anchor: 'centre' },
+      matchPortrait: { scale: 1, x: 0, y: 0, anchor: 'centre' }, matchStage: { scale: 1, x: 0, y: 0, anchor: 'centre' },
+      victory: { scale: 1, x: 0, y: 0, anchor: 'feet' }
+    }
+  },
+
 };
