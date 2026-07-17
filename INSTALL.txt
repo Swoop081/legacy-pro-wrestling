@@ -1,0 +1,31 @@
+TAG TEAM GAUNTLET — 3.7.2 BUILD 2, STEP 1
+QUICK MATCH SINGLES PATCH
+
+REPLACE ONLY:
+  game.js
+
+DO NOT DELETE OR REPLACE:
+  .nojekyll
+  .git
+  assets/
+  index.html
+  styles.css
+  data.js
+
+INSTALL:
+1. Keep a copy of your current game.js.
+2. Copy the new game.js into the root of your tag-team-gauntlet GitHub folder.
+3. Choose Replace when Windows asks.
+4. Open index.html locally and test:
+   Main Menu > Quick Match > Singles Match.
+5. Confirm you can choose your wrestler, choose a different opponent, begin the broadcast, finish the match, rematch, and return to Quick Match.
+6. Only after local testing succeeds, commit and push game.js.
+
+ROLLBACK:
+Rename game-BUILD1-BACKUP.js to game.js and replace the patched file.
+
+NOT INCLUDED YET:
+- Quick Match Tag Team
+- Collection Play Now
+- Statistics
+- Options
