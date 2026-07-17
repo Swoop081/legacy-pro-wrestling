@@ -1,8 +1,8 @@
-TAG TEAM GAUNTLET — 3.8.0 BUILD 1 R3
+TAG TEAM GAUNTLET 3.8.0 BUILD 2 R1 HOTFIX
 
-Replace these files in the existing working repository:
+Replace only:
 - game.js
-- styles.css
 - index.html
 
-Keep .git, .nojekyll, assets/ and data.js unchanged.
+styles.css is included only for convenience and is unchanged from Build 2.
+Keep .nojekyll, .git, assets, and data.js untouched.
