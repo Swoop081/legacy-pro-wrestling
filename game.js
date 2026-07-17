@@ -70,9 +70,15 @@ const WRESTLER_IMAGE_SETS={
  'jack-mercer':{full:'assets/wrestlers/jack-mercer/full.png',portrait:'assets/wrestlers/jack-mercer/portrait.png',victory:'assets/wrestlers/jack-mercer/victory.png'},
  'jett-valentine':{full:'assets/wrestlers/jett-valentine/full.png',portrait:'assets/wrestlers/jett-valentine/portrait.png',victory:'assets/wrestlers/jett-valentine/victory.png'}
 };
+
+const WRESTLER_IMAGE_TRANSFORMS={
+ 'jack-mercer':{scale:1.28,y:-18},
+ 'jett-valentine':{scale:1.34,y:-22}
+};
+
 function legacyWrestlerImage(w){return `assets/${w.id}.png`}
 function wrestlerImage(w,type='full'){const set=WRESTLER_IMAGE_SETS[w.id];return set?(set[type]||set.full||legacyWrestlerImage(w)):legacyWrestlerImage(w)}
-function imageWithFallback(w,type,extraClass=''){const primary=wrestlerImage(w,type),fallback=legacyWrestlerImage(w);return `<img class="wrestler-art ${extraClass}" src="${primary}" data-fallback="${fallback}" alt="${w.name}" onerror="if(this.src.indexOf(this.dataset.fallback)===-1){this.src=this.dataset.fallback}else{this.style.display='none';this.parentElement.classList.add('missing-art')}">`}
+function imageWithFallback(w,type,extraClass=''){const primary=wrestlerImage(w,type),fallback=legacyWrestlerImage(w),t=WRESTLER_IMAGE_TRANSFORMS[w.id]||{},st=`--img-scale:${t.scale||1};--img-y:${(t.y||0)}px;`;return `<img class="wrestler-art ${extraClass}" style="${st}" src="${primary}" data-fallback="${fallback}" alt="${w.name}" onerror="if(this.src.indexOf(this.dataset.fallback)===-1){this.src=this.dataset.fallback}else{this.style.display='none';this.parentElement.classList.add('missing-art')}">`}
 function wrestlerPng(w){return wrestlerImage(w,'full')}
 function heroPortrait(w,side='',artType='full'){return `<article class="hero-portrait ${side} image-framework ${WRESTLER_IMAGE_SETS[w.id]?'has-render':'legacy-render'}">${imageWithFallback(w,artType,`art-${artType}`)}<div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
 function tvSting(label,title,subtitle=''){overlay.innerHTML=`<div class="overlay tv-sting-overlay"><section class="tv-sting"><small>${label}</small><h1>${title}</h1>${subtitle?`<p>${subtitle}</p>`:''}<div class="tv-scan"></div></section></div>`;setTimeout(()=>{if(overlay.querySelector('.tv-sting-overlay'))overlay.innerHTML=''},850)}
