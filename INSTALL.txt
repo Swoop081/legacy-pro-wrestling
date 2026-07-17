@@ -1,21 +1,14 @@
-TAG TEAM GAUNTLET 3.7.2 BUILD 2 — STEP 4
+TAG TEAM GAUNTLET 3.7.2 BUILD 2 — STEP 5
 
-REPLACE ONLY:
+Replace only these files in the repository root:
 - game.js
 - styles.css
 - index.html
 
-DO NOT DELETE OR REPLACE:
+Keep these untouched:
+- .git/
 - .nojekyll
-- .git
 - assets/
 - data.js
 
-TEST LOCALLY FIRST:
-1. Classic Gauntlet match and result screen
-2. Quick Match Singles and result screen
-3. Quick Match Tag Team and result screen
-4. Collection > Play Now
-5. Confirm new commentary lines, rating card, crowd reaction and finish card appear
-
-After testing, commit and push the three replacement files.
+Test locally before committing. Existing statistics begin at zero and persist in this browser/device after completed matches.

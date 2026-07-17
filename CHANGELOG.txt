@@ -1,23 +1,15 @@
-TAG TEAM GAUNTLET 3.7.2 BUILD 2 — STEP 4
-BROADCAST & MATCH PRESENTATION
+STEP 5 — PERSISTENT STATISTICS + GAUNTLET PREVIEW
 
 ADDED
-- Context-aware broadcast calls at major match phases
-- Commentary for close contests, dominant stretches and hot crowds
-- New result broadcast header
-- Match rating label and star presentation
-- Crowd reaction and excitement percentage
-- Finish classification and winning move presentation
+- Persistent career record using local browser storage
+- Singles and Tag Team records
+- Per-wrestler matches, wins, losses and win percentage
+- Per-team matches, wins, losses and win percentage
+- Best Gauntlet run, overall win streak, highest-rated match and last result
+- Functional Career, Wrestlers, Teams and Records tabs
 
-IMPROVED
-- Singles and Tag Team openings now use mode-specific commentary
-- Result screens now present the actual winning side even after a player loss
-- Mobile layout for the new result accolades
-- Cache-busting updated to 3.7.2b2-step4
+FIXED
+- The Classic Mode preview now shows the exact wrestler assigned as the starting wrestler on the partner-selection screen.
 
-UNCHANGED
-- Match rules and scoring
-- Classic Gauntlet progression
-- Wrestler data
-- Assets
-- .nojekyll
+CACHE VERSION
+- 3.7.2b2-step5
