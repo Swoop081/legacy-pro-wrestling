@@ -1,0 +1,19 @@
+3.7.2 BUILD 2 — STEP 2
+
+ADDED
+- Playable Quick Match Tag Team.
+- Four-slot wrestler selection: two player wrestlers and two opponents.
+- Duplicate wrestler prevention.
+- Undo-last-pick control.
+- Tag Team confirmation screen and broadcast.
+- Tag Team rematch support.
+
+FIXED
+- Singles and featured Gauntlet singles post-match stories now use singular wrestler language.
+- Singles MVP text no longer references tag exchanges.
+- Singles winner label now reads WINNER rather than WINNERS.
+- A single winner PNG is centered rather than occupying the left half of a two-person grid.
+- Singles opening commentary no longer says both teams.
+
+CACHE
+- index.html now loads game.js, data.js and styles.css with the version suffix 3.7.2b2-step2.
