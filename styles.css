@@ -186,7 +186,28 @@ html,body,#app{overflow-anchor:none}
   overflow:hidden;
 }
 
-/* Image Framework 1.3 — direct per-wrestler transforms and reliable legacy art */
-.wrestler-art{transform-origin:center bottom}
-.collection-tile>.wrestler-art{position:absolute;inset:0;width:100%;height:100%}
-.collection-tile{position:relative}
+
+/* IMAGE FRAMEWORK 1.4 — explicit sizing; overrides earlier generic image rules */
+.collection-tile>.wrestler-art.framework-custom,
+.card.character-tile>.wrestler-art.framework-custom{
+  position:absolute !important;
+  left:50% !important;
+  bottom:0 !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:none !important;
+  padding:0 !important;
+  object-fit:contain !important;
+  object-position:center bottom !important;
+  transform:translate(-50%,var(--custom-y,0)) scale(var(--custom-scale,1)) !important;
+  transform-origin:center bottom !important;
+}
+.collection-tile>span,.card.character-tile>.name{z-index:3}
+.hero-portrait>.wrestler-art.framework-custom,
+.featured-superstar>.wrestler-art.framework-custom,
+.mode-landing-art>.wrestler-art.framework-custom,
+.image-framework-profile>.wrestler-art.framework-custom{
+  transform:translateY(var(--custom-y,0)) scale(var(--custom-scale,1)) !important;
+  transform-origin:center bottom !important;
+  max-width:none !important;
+}

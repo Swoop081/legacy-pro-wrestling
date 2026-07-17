@@ -65,24 +65,36 @@ function attendance(){if(!S.attendance)S.attendance=Math.floor(rnd(11800,19800))
 function teamName(team){return team.length>1?(rel(...team)?.teamName||team.map(x=>x.name).join(' & ')):team[0].name}
 function isSinglesMatch(){return S.team.length===1&&S.opp.length===1}
 function isTagMatch(){return S.team.length===2&&S.opp.length===2}
-// IMAGE FRAMEWORK 1.0
+// IMAGE FRAMEWORK 1.4 — cache-safe loading and explicit per-wrestler sizing
 const WRESTLER_IMAGE_SETS={
  'jack-mercer':{full:'assets/wrestlers/jack-mercer/full.png',portrait:'assets/wrestlers/jack-mercer/portrait.png',victory:'assets/wrestlers/jack-mercer/victory.png'},
  'jett-valentine':{full:'assets/wrestlers/jett-valentine/full.png',portrait:'assets/wrestlers/jett-valentine/portrait.png',victory:'assets/wrestlers/jett-valentine/victory.png'}
 };
 
 const WRESTLER_IMAGE_TRANSFORMS={
- // Direct transforms are deliberately applied inline so every screen uses them.
- 'jack-mercer':{scale:1.95,y:0},
- 'jett-valentine':{scale:2.35,y:0}
+ 'jack-mercer':{scale:2.05,y:-2},
+ 'jett-valentine':{scale:2.25,y:-2}
 };
-function legacyWrestlerImage(w,ext='webp'){return `assets/wrestlers/${w.id}.${ext}`}
-function wrestlerImage(w,type='full'){const set=WRESTLER_IMAGE_SETS[w.id];return set?(set[type]||set.full||legacyWrestlerImage(w)):legacyWrestlerImage(w)}
+function legacyWrestlerImage(w){return `assets/${w.id}.png`}
+function wrestlerImageCandidates(w,type='full'){
+ const set=WRESTLER_IMAGE_SETS[w.id];
+ const list=[];
+ if(set)list.push(set[type]||set.full);
+ list.push(`assets/${w.id}.png`,`assets/${w.id}.webp`,`assets/wrestlers/${w.id}.png`,`assets/wrestlers/${w.id}.webp`);
+ return [...new Set(list.filter(Boolean))];
+}
+function wrestlerImage(w,type='full'){return wrestlerImageCandidates(w,type)[0]}
+function advanceImageFallback(img){
+ const candidates=(img.dataset.sources||'').split('|').filter(Boolean);
+ const next=Number(img.dataset.sourceIndex||0)+1;
+ if(next<candidates.length){img.dataset.sourceIndex=String(next);img.src=candidates[next];return;}
+ img.style.display='none';img.parentElement?.classList.add('missing-art');
+}
 function imageWithFallback(w,type,extraClass=''){
- const primary=wrestlerImage(w,type),fallback=legacyWrestlerImage(w,'png'),t=WRESTLER_IMAGE_TRANSFORMS[w.id]||{};
- const scale=t.scale||1,y=t.y||0;
- const st=`transform:translateY(${y}px) scale(${scale});transform-origin:center bottom;`;
- return `<img class="wrestler-art ${extraClass}" style="${st}" src="${primary}" data-fallback="${fallback}" alt="${w.name}" onerror="if(!this.dataset.triedFallback){this.dataset.triedFallback='1';this.src=this.dataset.fallback}else{this.style.display='none';this.parentElement.classList.add('missing-art')}">`
+ const sources=wrestlerImageCandidates(w,type),t=WRESTLER_IMAGE_TRANSFORMS[w.id]||{};
+ const custom=WRESTLER_IMAGE_SETS[w.id]?' framework-custom':'';
+ const st=`--custom-scale:${t.scale||1};--custom-y:${t.y||0}px;`;
+ return `<img class="wrestler-art wrestler-${w.id}${custom} ${extraClass}" style="${st}" src="${sources[0]}" data-sources="${sources.join('|')}" data-source-index="0" alt="${w.name}" onerror="advanceImageFallback(this)">`;
 }
 function wrestlerPng(w){return wrestlerImage(w,'full')}
 function heroPortrait(w,side='',artType='full'){return `<article class="hero-portrait ${side} image-framework ${WRESTLER_IMAGE_SETS[w.id]?'has-render':'legacy-render'}">${imageWithFallback(w,artType,`art-${artType}`)}<div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}

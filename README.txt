@@ -1,13 +1,10 @@
-IMAGE FRAMEWORK 1.3 TARGETED PATCH
+TAG TEAM GAUNTLET — IMAGE FRAMEWORK 1.4 PATCH
 
-Replace only these two files in the repository root:
+Replace exactly these three files in the repository root:
 - game.js
 - styles.css
+- index.html
 
-Fixes:
-- Restores all original wrestler images using the existing .webp files, with .png fallback.
-- Applies Jack Mercer and Jett Valentine sizing directly inline on every screen.
-- Jack scale: 1.95x
-- Jett scale: 2.35x
+The index.html change is required to force Safari/GitHub Pages to load the new JS and CSS rather than cached copies.
 
-Do not merge this folder as a repository. Copy the two files over the existing files, then commit and push in GitHub Desktop.
+This patch tries both the original root asset paths and the newer assets/wrestlers paths, in PNG and WebP formats.
