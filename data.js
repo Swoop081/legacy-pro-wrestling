@@ -341,44 +341,6 @@ const WRESTLERS = [
     "image": "assets/sterling-sinclair.webp",
     "finisher": "Golden Touch"
   },
-  {
-    "id": "dave-maddox",
-    "name": "Dave Maddox",
-    "title": "The Workhorse",
-    "faction": "Guardians",
-    "signature": "Maddox Cutter",
-    "overall": 97,
-    "rarity": "Legendary",
-    "tag": 98,
-    "power": 87,
-    "speed": 84,
-    "technique": 92,
-    "charisma": 93,
-    "versatility": 97,
-    "loyalty": 100,
-    "resilience": 100,
-    "image": "assets/dave-maddox.webp",
-    "finisher": "Maddox Cutter"
-  },
-  {
-    "id": "logan-steele",
-    "name": "Logan Steele",
-    "title": "The Living Legend",
-    "faction": "Guardians",
-    "signature": "Icon Slam",
-    "overall": 98,
-    "rarity": "Legendary",
-    "tag": 94,
-    "power": 98,
-    "speed": 75,
-    "technique": 86,
-    "charisma": 100,
-    "versatility": 89,
-    "loyalty": 98,
-    "resilience": 99,
-    "image": "assets/logan-steele.webp",
-    "finisher": "Icon Slam"
-  }
 ];
 
 const RELATIONSHIPS = [

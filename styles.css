@@ -568,3 +568,64 @@ html,body,#app{overflow-anchor:none}
 /* Version 5.2 */
 .achievement-screen,.help-screen{padding:20px;max-width:1100px;margin:auto}.achievement-grid,.help-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.achievement,.help-grid article{border:1px solid #493235;background:linear-gradient(145deg,#171214,#0e0b0c);padding:16px;border-radius:12px}.achievement{display:flex;gap:14px;align-items:flex-start}.achievement i{font-size:28px;color:#ffd34f}.achievement.locked{opacity:.48;filter:grayscale(.65)}.achievement h3,.help-grid h2{margin:3px 0 6px}.achievement p,.help-grid p{margin:0;color:#c9c1c3;line-height:1.45}.tournament-option{border-color:#d7aa33!important;box-shadow:0 0 20px #d7aa3326}.tournament-trophy{font-size:100px;text-align:center;display:grid;gap:10px}.tournament-trophy small{font-size:13px;letter-spacing:2px;color:#ffd34f}.tournament-roster{max-height:62vh;overflow:auto}.tournament-roster .selected{outline:3px solid #ffd34f;box-shadow:0 0 22px #ffd34f55}.tournament-progress{display:flex;justify-content:center;gap:8px;margin:12px 0 18px}.tournament-progress span{padding:7px 11px;border:1px solid #4b3438;border-radius:30px;color:#8d7f82}.tournament-progress .active{color:#fff;border-color:#e01e37;background:#8f1020}.tournament-progress .done{color:#111;background:#ffd34f;border-color:#ffd34f}.compact-tournament-vs{margin:0 auto 16px;max-width:760px}.tournament-advance,.tournament-champion{text-align:center}.tournament-advance .btn,.tournament-champion .btn{margin:8px}.story-decision{padding-top:28px!important}.story-decision>small{top:0!important;transform:translate(-50%,-50%)!important;left:50%!important}
 @media(max-width:700px){.achievement-grid,.help-grid{grid-template-columns:1fr}.achievement-screen,.help-screen{padding:12px}.tournament-roster{grid-template-columns:repeat(2,minmax(0,1fr));max-height:66vh}.compact-tournament-vs .hero-portrait{min-height:145px}.tournament-trophy{font-size:74px}.game-hub .hub-menu{gap:7px}}
+
+/* v5.2 unified current-image safety pass — all active wrestler art remains fully visible */
+.collection-tile > .wrestler-art.framework-custom,
+.card.character-tile > .wrestler-art.framework-custom,
+.featured-superstar > .wrestler-art.framework-custom,
+.mode-landing-art > .wrestler-art.framework-custom,
+.image-framework-profile > .wrestler-art.framework-custom,
+.hero-portrait > .wrestler-art.framework-custom,
+.match-stage-art > .wrestler-art.framework-custom {
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  box-sizing: border-box !important;
+}
+.collection-tile > .wrestler-art.framework-custom,
+.card.character-tile > .wrestler-art.framework-custom {
+  inset: 0 auto 0 50% !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: translateX(-50%) scale(var(--custom-scale,1)) !important;
+  transform-origin: center bottom !important;
+}
+.featured-superstar > .wrestler-art.framework-custom,
+.mode-landing-art > .wrestler-art.framework-custom,
+.image-framework-profile > .wrestler-art.framework-custom {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(var(--custom-scale,1)) !important;
+  transform-origin: center bottom !important;
+}
+.hero-portrait > .wrestler-art.framework-custom,
+.match-stage-art > .wrestler-art.framework-custom,
+.broadcast-card .card.character-tile.compact > .wrestler-art.framework-custom.art-portrait {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: scale(var(--custom-scale,1)) !important;
+  transform-origin: center center !important;
+  object-position: center center !important;
+}
+/* Reserve a visible safety margin around heads on every portrait panel. */
+.hero-portrait.image-framework.has-render,
+.match-stage-art,
+.card.character-tile,
+.collection-tile,
+.featured-superstar,
+.mode-landing-art,
+.image-framework-profile { overflow: hidden !important; }
+.hero-portrait.image-framework.has-render > .wrestler-art,
+.match-stage-art > .wrestler-art { padding: 3% 2% 1% !important; }
+@media(max-width:760px){
+  .featured-superstar > .wrestler-art.framework-custom,
+  .mode-landing-art > .wrestler-art.framework-custom,
+  .image-framework-profile > .wrestler-art.framework-custom { transform: scale(var(--custom-scale,1)) !important; }
+  .compact-preview .hero-portrait > img,
+  .compact-challengers .hero-portrait > img { height: 100% !important; }
+}

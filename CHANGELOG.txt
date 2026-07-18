@@ -14,3 +14,10 @@ Image Framework 1.2
 
 Version 5.1 — Mobile Presentation & Flow
 - Consolidated mobile layout, artwork scaling, result messaging, faction pause and automatic-flow improvements.
+
+
+5.2.1 Unified Image Pass
+- Integrated current artwork for Primal, Lucas Bennett, Marcus King, Mateo Vega, Ryder Phoenix and Sterling Sinclair.
+- Temporarily disabled Dave Maddox and Logan Steele from all active roster pools.
+- Applied safe contain-based sizing across all wrestler image contexts.
+- Added alpha-bound audited per-character scaling with protected headroom.
