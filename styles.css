@@ -477,3 +477,90 @@ html,body,#app{overflow-anchor:none}
 .collection-section-title{margin:34px 0 12px;border-left:5px solid #d5232d;padding-left:12px;font:italic 32px Impact;letter-spacing:1px}.support-grid{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}.support-tile{cursor:default;min-height:330px}.support-tile>.npc-art{height:300px;width:100%;object-fit:contain;object-position:center bottom}
 .result-banner{margin:14px 0 0;padding:10px;text-align:center;background:linear-gradient(90deg,transparent,#a9171e 20%,#a9171e 80%,transparent);text-transform:uppercase}.result-banner small,.result-banner strong{display:block}.result-banner small{letter-spacing:4px;color:#ffd15b}.result-banner strong{font:italic clamp(38px,7vw,72px) Impact;text-shadow:4px 4px #4a070a}.manager-celebration{display:flex;align-items:center;justify-content:center;gap:15px;margin:12px auto;padding:8px 18px;max-width:700px;background:#101216;border:1px solid #575d68}.manager-celebration .npc-art{height:90px;width:90px}.manager-celebration p{margin:0;color:#ddd}.manager-celebration b{color:#ffd15b}
 @media(max-width:760px){.commentary-desk{grid-template-columns:1fr 70px 1fr;padding:4px 4px 0;min-height:100px}.desk-commentator{gap:2px}.desk-commentator .npc-art{width:72px;height:92px}.desk-commentator b{font-size:13px}.desk-commentator small{display:none}.desk-centre strong{font-size:11px}.illustrated-event,.illustrated-interview{grid-template-columns:1fr;max-height:calc(100dvh - 25px);overflow:auto}.event-character,.interviewer-art{min-height:250px}.event-character>.npc-art,.interviewer-art>.npc-art{height:280px}.event-content,.interview-content{padding:18px 12px}.manager-card.illustrated{min-height:390px}.manager-card-art,.manager-card-art .npc-art{height:250px}.manager-card.illustrated .character-lower-third{bottom:128px}}
+
+/* Version 5.1 — Mobile presentation and consistency patch */
+/* Active Quick Match buttons */
+.framework-options button{border-color:#a6262e;background:linear-gradient(90deg,#351014,#111217 68%);box-shadow:inset 0 0 22px rgba(211,31,42,.14),0 0 14px rgba(211,31,42,.12);cursor:pointer}
+.framework-options button:active{transform:scale(.99);filter:brightness(1.18)}
+.framework-options em{font-size:24px;line-height:1;top:50%;transform:translateY(-50%);color:#ffcf48}
+
+/* Decision tab */
+.story-decision>small{display:block;width:max-content;margin:-28px auto 12px!important;text-align:center}
+
+/* Match progress belongs above the ring presentation */
+.prominent-status{display:flex;justify-content:space-between;align-items:center;margin:5px 0 8px;padding:7px 11px;border:1px solid #745a23;background:#171208;color:#ffd15b;font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+
+/* Results: winners first, headline beneath, stronger artwork */
+.below-winners{margin-top:12px}
+.winning-team-art .hero-portrait{min-height:390px}
+.winning-team-art .hero-portrait>.wrestler-art{transform:translate(var(--custom-x,0px),var(--custom-y,0px)) scale(calc(var(--custom-scale,1) * 1.18))!important;transform-origin:center bottom!important}
+.winner-copy p{max-width:680px;margin:8px auto 0}
+
+/* Automatic team confirmation */
+.compact-team-confirm{min-height:calc(100dvh - 150px);display:flex;flex-direction:column;justify-content:center}
+.compact-team-confirm .cards.two{max-width:720px;margin:8px auto;grid-template-columns:1fr 1fr}
+.compact-team-confirm .card.character-tile{min-height:300px}
+.auto-transition-note{text-align:center;color:#ffd15b;letter-spacing:2px;font-size:11px;margin:12px 0}
+
+/* No-filler challenger screen */
+.compact-challengers .match-card-title{margin:4px 0 8px}
+.compact-challengers .cinematic-versus{margin:6px 0}
+.compact-challengers .hero-team>h2,.compact-challengers .hero-team>p{display:none}
+.compact-challengers .broadcast-desk-preview{margin:6px 0;padding:8px 12px}
+.compact-challengers .broadcast-desk-preview p{margin:3px 0}
+.compact-challengers .commentary-desk{margin-top:6px}
+
+/* Compact exhibition matchup posters */
+.compact-preview{margin:8px 0!important}
+.compact-preview .hero-portrait{min-height:250px!important}
+.compact-preview .hero-portrait>img{height:190px!important}
+.compact-preview .hero-portrait>div{padding:8px!important}
+.compact-preview .hero-team>h2{display:none}
+
+/* Rewards must compare on one screen */
+.reward-stage{min-height:calc(100dvh - 150px)}
+.reward-celebration{padding:4px 6px}.reward-celebration h1{font-size:44px;margin:3px 0}.reward-celebration p{margin:3px auto 8px;line-height:1.25}
+.reward-reveal-line{margin:0 auto 8px}
+.rewards.reward-grid-2{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-width:850px}
+.reward{min-height:190px;padding:13px 10px;gap:4px}.reward i{font-size:28px}.reward h3{font-size:23px}.reward p{font-size:12px;line-height:1.25}.reward strong{font-size:10px;line-height:1.2}.reward>b{padding-top:6px;margin-top:3px}
+
+/* Collection profile artwork is always fully visible below navigation */
+.profile-art{position:relative;overflow:hidden;padding-top:58px}
+.profile-art>.wrestler-art{position:absolute!important;inset:58px 0 0!important;width:100%!important;height:calc(100% - 58px)!important;object-fit:contain!important;object-position:center bottom!important;max-width:100%!important;transform:translate(0,0) scale(1)!important}
+
+/* Compact live legal-wrestler boxes: remove dead headroom */
+.match-stage-art{height:clamp(185px,37vw,285px)}
+.match-stage-art>.wrestler-art{object-position:center 18%!important}
+
+/* Initial two-choice partner selection */
+.panel>.cards.two{gap:10px}
+.panel>.cards.two .card.character-tile{min-height:330px}
+
+@media(max-width:760px){
+ .featured-superstar>.wrestler-art[data-image-screen="homeFeature"]{transform:translate(0,18px) scale(1.18)!important;transform-origin:center bottom!important}
+ .framework-art>.wrestler-art[data-image-screen="quickLanding"]{transform:translate(0,112px) scale(.76)!important}
+ .singles-intro,.television-card{padding:10px!important}
+ .singles-cinematic .hero-portrait{min-height:230px!important}
+ .cinematic-versus.compact-preview{gap:7px!important}
+ .cinematic-versus.compact-preview .giant-vs{font-size:32px!important;margin:2px 0!important}
+ .compact-team-confirm .cards.two{grid-template-columns:1fr 1fr!important}
+ .compact-team-confirm .card.character-tile{min-height:230px!important}
+ .compact-team-confirm .card.character-tile>.wrestler-art{height:195px!important;max-height:195px!important}
+ .compact-team-confirm .card.character-tile>.name{padding:8px!important}
+ .compact-challengers{min-height:calc(100dvh - 150px);padding:10px!important}
+ .compact-challengers .cinematic-versus{display:grid;grid-template-columns:1fr 34px 1fr;gap:5px;align-items:center}
+ .compact-challengers .hero-team{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+ .compact-challengers .hero-portrait{min-height:190px!important}
+ .compact-challengers .hero-portrait>img{height:145px!important}
+ .compact-challengers .hero-portrait>div{padding:5px!important}.compact-challengers .hero-portrait small,.compact-challengers .hero-portrait span{display:none}.compact-challengers .hero-portrait h3{font-size:12px!important}
+ .compact-challengers .commentary-desk{min-height:82px}.compact-challengers .desk-commentator .npc-art{height:70px;width:58px}
+ .reward-stage{padding:10px!important}.reward-celebration h1{font-size:35px}.reward-celebration p{font-size:12px}.reward-reveal-line{font-size:9px}.reward{min-height:160px}.reward small{font-size:7px}.reward i{font-size:22px}.reward h3{font-size:18px}.reward p{font-size:10px}.reward strong{display:none}
+ .profile-screen{grid-template-columns:1fr!important}.profile-art{min-height:500px!important;height:500px!important}
+ .profile-art>.wrestler-art{inset:56px 0 0!important;height:444px!important}
+ .match-stage-art{height:185px!important}.match-stage-name{min-height:68px!important}.match-stage-name span{display:none}
+ .story-panel .commentary-desk{margin-top:8px}
+ .panel>.cards.two{grid-template-columns:1fr 1fr!important}
+ .panel>.cards.two .card.character-tile{min-height:250px!important}
+ .panel>.cards.two .card.character-tile>.wrestler-art{height:210px!important;max-height:210px!important}
+ .panel>.cards.two .card.character-tile>.name{padding:7px!important;font-size:14px!important}
+}

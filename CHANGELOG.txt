@@ -11,3 +11,6 @@ Image Framework 1.2
 - Restored all existing roster images.
 - Increased Jack Mercer and Jett Valentine visible-art scale to approximately double.
 - Applied transforms to Collection and Quick Match selection tiles.
+
+Version 5.1 — Mobile Presentation & Flow
+- Consolidated mobile layout, artwork scaling, result messaging, faction pause and automatic-flow improvements.

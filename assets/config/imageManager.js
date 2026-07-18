@@ -203,19 +203,19 @@ window.TTG_IMAGE_MANAGER = {
     transforms: {
       full: { scale: 1.00, x: 0, y: 0 },
       portrait: { scale: 1.00, x: 0, y: 0 },
-      victory: { scale: 1.00, x: 0, y: 0 }
+      victory: { scale: 1.18, x: 0, y: 0 }
     },
     screens: {
-      quickMatch: { scale: 1.00, x: 0, y: 0, anchor: 'feet' },
+      quickMatch: { scale: 1.50, x: 0, y: 0, anchor: 'feet' },
       card: { scale: 1.00, x: 0, y: 0, anchor: 'feet' },
-      classicLanding: { scale: 0.78, x: 0, y: 58, anchor: 'centre' },
+      classicLanding: { scale: 1.12, x: 0, y: 58, anchor: 'centre' },
       quickLanding: { scale: 0.76, x: 0, y: 96, anchor: 'centre' },
-      collection: { scale: 1.00, x: 0, y: 0, anchor: 'feet' },
-      homeFeature: { scale: 1.00, x: 0, y: 28, anchor: 'centre' },
-      profile: { scale: 1.00, x: 0, y: 0, anchor: 'feet' },
+      collection: { scale: 1.50, x: 0, y: 0, anchor: 'feet' },
+      homeFeature: { scale: 1.18, x: 0, y: 28, anchor: 'centre' },
+      profile: { scale: 1.25, x: 0, y: 0, anchor: 'feet' },
       preMatch: { scale: 1.00, x: 0, y: 0, anchor: 'centre' },
       matchPortrait: { scale: 1.00, x: 0, y: 0, anchor: 'centre' },
-      victory: { scale: 1.00, x: 0, y: 0, anchor: 'feet' }
+      victory: { scale: 1.18, x: 0, y: 0, anchor: 'feet' }
     }
   },
 
@@ -225,18 +225,18 @@ window.TTG_IMAGE_MANAGER = {
       portrait: 'assets/wrestlers/elias-crowe/portrait.png',
       victory: 'assets/wrestlers/elias-crowe/victory.png'
     },
-    transforms: { full: { scale: 1, x: 0, y: 0 }, portrait: { scale: 1, x: 0, y: 0 }, victory: { scale: 1, x: 0, y: 0 } },
+    transforms: { full: { scale: 1, x: 0, y: 0 }, portrait: { scale: 1, x: 0, y: 0 }, victory: { scale: 1.18, x: 0, y: 0 } },
     screens: {
-      quickMatch: { scale: 1, x: 0, y: 0, anchor: 'feet' }, card: { scale: 1, x: 0, y: 0, anchor: 'feet' },
-      classicLanding: { scale: .78, x: 0, y: 58, anchor: 'centre' }, quickLanding: { scale: .76, x: 0, y: 96, anchor: 'centre' },
-      collection: { scale: 1, x: 0, y: 0, anchor: 'feet' }, homeFeature: { scale: 1, x: 0, y: 28, anchor: 'centre' },
-      profile: { scale: 1, x: 0, y: 0, anchor: 'feet' }, preMatch: { scale: 1, x: 0, y: 0, anchor: 'centre' },
+      quickMatch: { scale: 1.50, x: 0, y: 0, anchor: 'feet' }, card: { scale: 1, x: 0, y: 0, anchor: 'feet' },
+      classicLanding: { scale: 1.12, x: 0, y: 58, anchor: 'centre' }, quickLanding: { scale: .76, x: 0, y: 96, anchor: 'centre' },
+      collection: { scale: 1.50, x: 0, y: 0, anchor: 'feet' }, homeFeature: { scale: 1.18, x: 0, y: 28, anchor: 'centre' },
+      profile: { scale: 1.25, x: 0, y: 0, anchor: 'feet' }, preMatch: { scale: 1, x: 0, y: 0, anchor: 'centre' },
       matchPortrait: { scale: 1, x: 0, y: 0, anchor: 'centre' }, matchStage: { scale: 1, x: 0, y: 0, anchor: 'centre' },
-      victory: { scale: 1, x: 0, y: 0, anchor: 'feet' }
+      victory: { scale: 1.18, x: 0, y: 0, anchor: 'feet' }
     }
   },
-  'el-rey-del-cielo': { assets: { full: 'assets/wrestlers/el-rey-del-cielo/full.png', portrait: 'assets/wrestlers/el-rey-del-cielo/portrait.png', victory: 'assets/wrestlers/el-rey-del-cielo/victory.png' }, transforms: { full: { scale: 1, x: 0, y: 0 }, portrait: { scale: 1, x: 0, y: 0 }, victory: { scale: 1, x: 0, y: 0 } }, screens: { card: {scale:1,x:0,y:0,anchor:'feet'}, collection: {scale:1,x:0,y:0,anchor:'feet'}, preMatch: {scale:1,x:0,y:0,anchor:'centre'}, matchPortrait: {scale:1,x:0,y:0,anchor:'centre'}, matchStage: {scale:1,x:0,y:0,anchor:'centre'}, victory: {scale:1,x:0,y:0,anchor:'feet'} } },
-  'max-justice': { assets: { full: 'assets/wrestlers/max-justice/full.png', portrait: 'assets/wrestlers/max-justice/portrait.png', victory: 'assets/wrestlers/max-justice/victory.png' }, transforms: { full: { scale: 1, x: 0, y: 0 }, portrait: { scale: 1, x: 0, y: 0 }, victory: { scale: 1, x: 0, y: 0 } }, screens: { card: {scale:1,x:0,y:0,anchor:'feet'}, collection: {scale:1,x:0,y:0,anchor:'feet'}, preMatch: {scale:1,x:0,y:0,anchor:'centre'}, matchPortrait: {scale:1,x:0,y:0,anchor:'centre'}, matchStage: {scale:1,x:0,y:0,anchor:'centre'}, victory: {scale:1,x:0,y:0,anchor:'feet'} } },
+  'el-rey-del-cielo': { assets: { full: 'assets/wrestlers/el-rey-del-cielo/full.png', portrait: 'assets/wrestlers/el-rey-del-cielo/portrait.png', victory: 'assets/wrestlers/el-rey-del-cielo/victory.png' }, transforms: { full: { scale: 1, x: 0, y: 0 }, portrait: { scale: 1, x: 0, y: 0 }, victory: { scale: 1.18, x: 0, y: 0 } }, screens: { quickMatch:{scale:1.50,x:0,y:0,anchor:'feet'}, classicLanding:{scale:1.12,x:0,y:48,anchor:'centre'}, quickLanding:{scale:.90,x:0,y:82,anchor:'centre'}, homeFeature:{scale:1.18,x:0,y:18,anchor:'centre'}, profile:{scale:1.25,x:0,y:0,anchor:'feet'}, card: {scale:1,x:0,y:0,anchor:'feet'}, collection: {scale:1.50,x:0,y:0,anchor:'feet'}, preMatch: {scale:1,x:0,y:0,anchor:'centre'}, matchPortrait: {scale:1,x:0,y:0,anchor:'centre'}, matchStage: {scale:1,x:0,y:0,anchor:'centre'}, victory: {scale:1.18,x:0,y:0,anchor:'feet'} } },
+  'max-justice': { assets: { full: 'assets/wrestlers/max-justice/full.png', portrait: 'assets/wrestlers/max-justice/portrait.png', victory: 'assets/wrestlers/max-justice/victory.png' }, transforms: { full: { scale: 1, x: 0, y: 0 }, portrait: { scale: 1, x: 0, y: 0 }, victory: { scale: 1.18, x: 0, y: 0 } }, screens: { quickMatch:{scale:1.50,x:0,y:0,anchor:'feet'}, classicLanding:{scale:1.12,x:0,y:48,anchor:'centre'}, quickLanding:{scale:.90,x:0,y:82,anchor:'centre'}, homeFeature:{scale:1.18,x:0,y:18,anchor:'centre'}, profile:{scale:1.25,x:0,y:0,anchor:'feet'}, card: {scale:1,x:0,y:0,anchor:'feet'}, collection: {scale:1.50,x:0,y:0,anchor:'feet'}, preMatch: {scale:1,x:0,y:0,anchor:'centre'}, matchPortrait: {scale:1,x:0,y:0,anchor:'centre'}, matchStage: {scale:1,x:0,y:0,anchor:'centre'}, victory: {scale:1.18,x:0,y:0,anchor:'feet'} } },
   'mike-sullivan': { assets: { full: 'assets/wrestlers/mike-sullivan/full.png', portrait: 'assets/wrestlers/mike-sullivan/portrait.png' }, transforms: { full: { scale: 1, x: 0, y: 0 }, portrait: { scale: 1, x: 0, y: 0 } }, screens: { card: {scale:1,x:0,y:0,anchor:'feet'}, collection: {scale:1,x:0,y:0,anchor:'feet'}, preMatch: {scale:1,x:0,y:0,anchor:'centre'}, matchPortrait: {scale:1,x:0,y:0,anchor:'centre'}, matchStage: {scale:1,x:0,y:0,anchor:'centre'}, victory: {scale:1,x:0,y:0,anchor:'feet'} } },
   'johnny-cannon': { assets: { full: 'assets/wrestlers/johnny-cannon/full.png', portrait: 'assets/wrestlers/johnny-cannon/portrait.png' }, transforms: { full: { scale: 1, x: 0, y: 0 }, portrait: { scale: 1, x: 0, y: 0 } }, screens: { card: {scale:1,x:0,y:0,anchor:'feet'}, collection: {scale:1,x:0,y:0,anchor:'feet'}, preMatch: {scale:1,x:0,y:0,anchor:'centre'}, matchPortrait: {scale:1,x:0,y:0,anchor:'centre'}, matchStage: {scale:1,x:0,y:0,anchor:'centre'}, victory: {scale:1,x:0,y:0,anchor:'feet'} } },
   'scarlett-storm': { assets: { full: 'assets/wrestlers/scarlett-storm/full.png', portrait: 'assets/wrestlers/scarlett-storm/portrait.png' }, transforms: { full: { scale: 1, x: 0, y: 0 }, portrait: { scale: 1, x: 0, y: 0 } }, screens: { card: {scale:1,x:0,y:0,anchor:'feet'}, collection: {scale:1,x:0,y:0,anchor:'feet'}, preMatch: {scale:1,x:0,y:0,anchor:'centre'}, matchPortrait: {scale:1,x:0,y:0,anchor:'centre'}, matchStage: {scale:1,x:0,y:0,anchor:'centre'}, victory: {scale:1,x:0,y:0,anchor:'feet'} } },
