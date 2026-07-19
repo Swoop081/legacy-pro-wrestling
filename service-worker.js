@@ -1,5 +1,5 @@
 /* Tag Team Gauntlet Service Worker 7.0.0 */
-const APP_VERSION = '7.0.0';
+const APP_VERSION = '7.1.0-test';
 const CACHE_NAME = `lpw-${APP_VERSION}`;
 const NEVER_CACHE = ['index.html','game.js','data.js','styles.css','version.json','service-worker.js','assets/config/imageManager.js'];
 self.addEventListener('install', event => { self.skipWaiting(); });
