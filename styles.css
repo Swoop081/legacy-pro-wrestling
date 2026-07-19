@@ -829,3 +829,92 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
  .lpw-founder-clean .live-founder-card>img{height:205px!important}
  .lpw-founder-clean .live-founder-card b{font-size:1.05rem}
 }
+
+/* VERSION 8.0.4 — focused feud-origin presentation correction */
+.lpw-feud-origin{padding-top:clamp(22px,4vw,38px)}
+.lpw-feud-origin>.tv-kicker{margin-bottom:.65rem}
+.lpw-feud-origin>h1{margin:.1rem 0 .45rem;line-height:1.04}
+.lpw-feud-origin .origin-matchup{
+  height:185px;
+  margin:.25rem 0 .55rem;
+  overflow:hidden;
+  align-items:end;
+}
+.lpw-feud-origin .origin-matchup img{
+  height:205px;
+  object-position:center bottom;
+  transform:scale(1.16);
+  transform-origin:center bottom;
+}
+.lpw-feud-origin .origin-matchup strong{
+  align-self:end;
+  padding-bottom:.25rem;
+}
+.lpw-feud-origin .origin-report{
+  grid-template-columns:minmax(155px,35%) 1fr;
+  min-height:250px;
+  margin:.55rem 0 1rem;
+  padding:0 20px 0 0;
+  gap:18px;
+  overflow:hidden;
+  align-items:stretch;
+}
+.lpw-feud-origin .origin-report>.npc-art{
+  width:100%;
+  height:100%;
+  min-height:250px;
+  max-height:none;
+  object-fit:contain;
+  object-position:center bottom;
+  transform:scale(1.42);
+  transform-origin:center bottom;
+}
+.lpw-feud-origin .origin-report-copy{
+  align-self:center;
+  min-width:0;
+  padding:18px 0;
+  text-align:left;
+}
+.lpw-feud-origin .origin-report-copy>b{
+  display:block;
+  margin:0 0 .18rem;
+  font-size:clamp(1.25rem,4vw,1.65rem);
+  line-height:1.05;
+}
+.lpw-feud-origin .origin-report-copy>small{
+  display:block;
+  margin:0 0 .8rem;
+  color:#c8c8cc;
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.lpw-feud-origin .origin-report-copy>p{
+  margin:0;
+  font-size:clamp(1rem,3.4vw,1.2rem);
+  line-height:1.42;
+}
+.lpw-feud-origin .origin-close{margin:1rem 0}
+
+@media(max-width:560px){
+  .lpw-feud-origin{padding:24px 24px 28px}
+  .lpw-feud-origin>h1{font-size:clamp(2.2rem,10vw,3rem)}
+  .lpw-feud-origin .origin-matchup{height:165px;margin:.15rem 0 .45rem;gap:.45rem}
+  .lpw-feud-origin .origin-matchup img{height:185px;transform:scale(1.2)}
+  .lpw-feud-origin .origin-matchup strong{font-size:1.65rem;padding-bottom:.15rem}
+  .lpw-feud-origin .origin-report{
+    grid-template-columns:38% 62%;
+    min-height:230px;
+    padding:0 14px 0 0;
+    gap:8px;
+  }
+  .lpw-feud-origin .origin-report>.npc-art{
+    min-height:230px;
+    transform:scale(1.55);
+  }
+  .lpw-feud-origin .origin-report-copy{padding:14px 0}
+  .lpw-feud-origin .origin-report-copy>b{font-size:1.25rem}
+  .lpw-feud-origin .origin-report-copy>small{font-size:.68rem;margin-bottom:.65rem;letter-spacing:.04em}
+  .lpw-feud-origin .origin-report-copy>p{font-size:1rem;line-height:1.4}
+}
