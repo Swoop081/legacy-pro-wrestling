@@ -340,7 +340,19 @@ const WRESTLERS = [
     "resilience": 96,
     "image": "assets/sterling-sinclair.webp",
     "finisher": "Golden Touch"
+  },,
+  {
+    "id":"ace-riot","name":"Ace Riot","title":"The Voice of Rebellion","faction":"Independent","signature":"Riot Trigger","overall":96,"rarity":"Legendary","tag":88,"power":82,"speed":90,"technique":98,"charisma":99,"versatility":97,"loyalty":78,"resilience":95,"image":"assets/wrestlers/ace-riot/full.webp","finisher":"Riot Trigger"
   },
+  {
+    "id":"everest","name":"Everest","title":"The Immovable Mountain","faction":"Independent","signature":"Summit Slam","overall":98,"rarity":"Mythic","tag":83,"power":100,"speed":58,"technique":80,"charisma":94,"versatility":72,"loyalty":96,"resilience":100,"image":"assets/wrestlers/everest/full.webp","finisher":"Summit Slam"
+  },
+  {
+    "id":"axel-voss","name":"Axel Voss","title":"The Human Wrecking Ball","faction":"Independent","signature":"Impact Zero","overall":98,"rarity":"Legendary","tag":82,"power":100,"speed":91,"technique":94,"charisma":88,"versatility":92,"loyalty":70,"resilience":99,"image":"assets/wrestlers/axel-voss/full.webp","finisher":"Impact Zero"
+  },
+  {
+    "id":"slater-nova","name":"Slater Nova","title":"The Freefall Artist","faction":"Independent","signature":"Nova Fall","overall":96,"rarity":"Legendary","tag":92,"power":68,"speed":99,"technique":88,"charisma":97,"versatility":99,"loyalty":91,"resilience":91,"image":"assets/wrestlers/slater-nova/full.webp","finisher":"Nova Fall"
+  }
 ];
 
 const RELATIONSHIPS = [

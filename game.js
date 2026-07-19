@@ -1278,3 +1278,48 @@ gauntletLiveMonthRosterChoice=function(){const c=liveLoad();render(`<section cla
 
 const _lpwMatchCard=gauntletLiveMatchCard65;
 gauntletLiveMatchCard65=function(){const c=liveLoad();if(liveIsSupercard(c)){const p=liveFounder(c.active),r=liveFeudOpponent(c);c.pending={opponent:r.id,opponents:[r.id],type:'singles',partner:null,isSupercard:true};liveSave(c);return render(`<section class="panel live-match-card supercard-card"><div class="supercard-logo"><small>LEGACY PRO WRESTLING PRESENTS</small><b>${liveCurrentSupercard(c)}</b></div><div class="live-npc-scene ring-intro expanded">${npcImage('ethan-brooks','full')}<div><small>RING ANNOUNCER</small><b>Ethan Brooks</b><p>“The following contest is the decisive match of the monthly rivalry!”</p></div></div><div class="live-match-lineup singles portrait-lineup">${lpwPortraitCard(p,'YOUR WRESTLER')}${lpwPortraitCard(r,'RIVAL')}</div><button class="btn live-primary" onclick="gauntletLiveLaunchBroadcast65()">BEGIN SUPER CARD MATCH</button></section>`)}return _lpwMatchCard()};
+
+/* ==========================================================================\n   LEGACY PRO WRESTLING 8.0 — CHAMPIONSHIP ERA\n   ========================================================================== */
+Object.assign(FEATURE_LINES,{
+ 'ace-riot':'He says what everyone else is afraid to say.',
+ 'everest':'The mountain does not move for anyone.',
+ 'axel-voss':'Every match ends at Impact Zero.',
+ 'slater-nova':'The biggest risk is becoming forgettable.'
+});
+Object.assign(BIOS,{
+ 'ace-riot':'An outspoken technical rebel whose words create headlines and whose precision forces opponents to listen.',
+ 'everest':'A respectful, once-in-a-generation giant whose calm presence makes every contest feel historic.',
+ 'axel-voss':'An explosive combat athlete who combines heavyweight force with terrifying speed and ruthless efficiency.',
+ 'slater-nova':'A fearless aerial artist who treats every match as a canvas and every impossible risk as self-expression.'
+});
+Object.assign(PERSONALITY_PROFILES,{
+ 'ace-riot':{archetype:'The Rebel',events:['argues with the referee while never losing position','invites the crowd to speak louder','turns a technical counter into a public statement','points at the hard camera before attacking','refuses to follow the expected script','wins the exchange and immediately demands the microphone']},
+ 'everest':{archetype:'The Attraction',events:['absorbs the strike without taking a step backward','raises one enormous hand and silences the arena','calmly returns to his feet','blocks the escape with a single step','shows mercy before resuming the contest','stands immovable in the centre of the ring']},
+ 'axel-voss':{archetype:'The Destroyer',events:['explodes forward with frightening speed','drives through the opponent like a tackle dummy','cuts off the ring with combat precision','shows no emotion after a brutal takedown','forces the pace into another violent gear','stalks forward with both fists ready']},
+ 'slater-nova':{archetype:'The Artist',events:['changes direction in mid-air','paints a streak of colour through the ropes','balances on the turnbuckle as the crowd rises','takes the dangerous route without hesitation','turns a fall into an aerial counter','stares at the lights before launching himself again']}
+});
+Object.assign(WRESTLER_DECISIONS,{
+ 'ace-riot':[['Take the Microphone','Challenge the System','Win the Argument','Expose the Opening','Refuse the Script'],['Turn Technique into Protest','Make It Personal','Control the Narrative','Outthink the Favourite','Force Them to Listen'],['Fight from Conviction','Reject the Easy Exit','Speak Through the Pain','Create a Rebellion','Refuse to Stay Silent'],['Call for Riot Trigger','End the Debate','Deliver the Final Statement','Make the Champion Listen','Finish on His Terms']],
+ 'everest':[['Claim the Centre','Stand Immovable','Offer One Warning','Test Their Courage','Raise the Mountain'],['Close Every Escape','Apply Mountain Pressure','Show Controlled Strength','Slow the Entire Match','Make the Ring Feel Smaller'],['Rise Without Emotion','Absorb the Avalanche','Refuse to Fall','Find the Giant\'s Balance','Stand One More Time'],['Call for Summit Slam','End the Climb','Bring Down the Mountain','Finish with One Motion','Reach the Summit']],
+ 'axel-voss':[['Explode from the Bell','Shoot for Ground Control','Crash Through the Guard','Set a Combat Pace','Take Away the Breath'],['Keep the Pressure Violent','Launch Another Takedown','Cut Off Every Exit','Punish the Weakness','Turn Speed into Force'],['Fight Out with Power','Return to His Feet','Answer with a Suplex','Break the Hold Apart','Become More Dangerous'],['Call for Impact Zero','End It Immediately','Deliver Total Destruction','Finish the Fight','Leave Nothing Standing']],
+ 'slater-nova':[['Paint the Opening','Test the Highest Rope','Trust the Instinct','Create the First Moment','Take the Unusual Path'],['Turn the Ring into a Canvas','Attempt the Impossible','Change Direction Mid-Flight','Make the Crowd Believe','Risk Everything for the Moment'],['Create from the Fall','Reach for the Ropes','Turn Pain into Motion','Find One More Flight','Refuse the Safe Choice'],['Call for Nova Fall','Take the Final Flight','Create the Lasting Image','Finish from the Sky','Risk It All One More Time']]
+});
+
+const LPW8_TITLES=[
+ {id:'world',name:'LEGACY World Championship',short:'WORLD',prestige:100},
+ {id:'television',name:'LEGACY Television Championship',short:'TELEVISION',prestige:82},
+ {id:'heritage',name:'LEGACY Heritage Championship',short:'HERITAGE',prestige:88},
+ {id:'tag',name:'LEGACY Tag Team Championship',short:'TAG TEAM',prestige:90}
+];
+function lpw8Init(c){
+ c.championships=c.championships||{world:'jack-mercer',television:'jett-valentine',heritage:'mason-marks',tag:['victor-royale','sterling-sinclair']};
+ c.rankings=c.rankings||WRESTLERS.map((w,i)=>({id:w.id,points:Math.max(10,100-i*3)+(w.overall-95)*4,wins:0,losses:0}));
+ return c;
+}
+function lpw8Rankings(c){lpw8Init(c);return [...c.rankings].sort((a,b)=>b.points-a.points)}
+function lpw8RankingScreen(){const c=lpw8Init(liveLoad());liveSave(c);const rows=lpw8Rankings(c);render(`<section class="panel lpw8-rankings">${shellBack()}<div class="tv-kicker">CHAMPIONSHIP ERA</div><h1>POWER RANKINGS</h1><p class="sub">Wins, losses and major performances shape every title opportunity.</p><div class="lpw8-title-strip">${LPW8_TITLES.map(t=>{const h=c.championships[t.id],names=Array.isArray(h)?h.map(id=>liveFounder(id)?.name).join(' & '):liveFounder(h)?.name;return `<article><small>${t.short} CHAMPION</small><b>${names||'VACANT'}</b></article>`}).join('')}</div><div class="lpw8-ranking-list">${rows.map((r,i)=>{const w=liveFounder(r.id);return `<article><strong>${i+1}</strong>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><b>${w.name}</b><small>${w.title}</small></span><em>${r.points} PTS<br>${r.wins}-${r.losses}</em></article>`}).join('')}</div><button class="btn live-primary" onclick="gauntletLiveHome()">RETURN TO CAREER</button></section>`)}
+function lpw8Championships(){const c=lpw8Init(liveLoad());liveSave(c);render(`<section class="panel lpw8-championships">${shellBack()}<div class="tv-kicker">LEGACY GOLD</div><h1>CHAMPIONSHIPS</h1><div class="lpw8-belt-grid">${LPW8_TITLES.map(t=>{const h=c.championships[t.id],ids=Array.isArray(h)?h:[h],names=ids.map(id=>liveFounder(id)?.name).filter(Boolean).join(' & ');return `<article><div class="lpw8-belt">★</div><small>${t.name}</small><h2>${names||'VACANT'}</h2><p>Prestige ${t.prestige}</p></article>`}).join('')}</div><button class="btn live-primary" onclick="lpw8RankingScreen()">VIEW POWER RANKINGS</button></section>`)}
+const _lpw8Home=gauntletLiveHome;
+gauntletLiveHome=function(){_lpw8Home();const actions=document.querySelector('.live-home-actions');if(actions)actions.insertAdjacentHTML('beforeend','<button class="btn secondary" onclick="lpw8Championships()">CHAMPIONSHIPS</button><button class="btn secondary" onclick="lpw8RankingScreen()">POWER RANKINGS</button>');const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent='VERSION 8.0';};
+const _lpw8Finish=gauntletLiveFinishMatch65;
+gauntletLiveFinishMatch65=function(win,oppId){const c=lpw8Init(liveLoad()),me=c.rankings.find(x=>x.id===c.active),op=c.rankings.find(x=>x.id===oppId);if(me){me.points=Math.max(0,me.points+(win?18:-6));me[win?'wins':'losses']++}if(op){op.points=Math.max(0,op.points+(win?-4:14));op[win?'losses':'wins']++}liveSave(c);return _lpw8Finish(win,oppId)};

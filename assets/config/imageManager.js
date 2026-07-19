@@ -299,3 +299,12 @@ Object.assign(window.TTG_IMAGE_MANAGER,{
   'ava-cross': { assets: { full: 'assets/wrestlers/ava-cross/full.webp', portrait: 'assets/wrestlers/ava-cross/portrait.webp' }, transforms: { full:{scale:1,x:0,y:0}, portrait:{scale:1,x:0,y:0} }, screens:{} },
   'ethan-brooks': { assets: { full: 'assets/wrestlers/ethan-brooks/full.webp', portrait: 'assets/wrestlers/ethan-brooks/portrait.webp' }, transforms: { full:{scale:1,x:0,y:0}, portrait:{scale:1,x:0,y:0} }, screens:{} }
 });
+
+/* LEGACY Pro Wrestling 8.0 — Expansion roster image framework */
+Object.assign(window.TTG_IMAGE_MANAGER, Object.fromEntries([
+  ['ace-riot',1.48],['everest',1.34],['axel-voss',1.38],['slater-nova',1.50]
+].map(([id,scale])=>[id,{
+  assets:{full:`assets/wrestlers/${id}/full.webp`,portrait:`assets/wrestlers/${id}/portrait.webp`,victory:`assets/wrestlers/${id}/victory.webp`},
+  transforms:{full:{scale,x:0,y:0},portrait:{scale:1,x:0,y:0},victory:{scale:1.14,x:0,y:0}},
+  screens:{quickMatch:{scale,x:0,y:0,anchor:'feet'},collection:{scale,x:0,y:0,anchor:'feet'},profile:{scale,x:0,y:0,anchor:'feet'},homeFeature:{scale:1.5,x:0,y:0,anchor:'head'},quickLanding:{scale:1.55,x:0,y:0,anchor:'head'},classicLanding:{scale:1.52,x:0,y:0,anchor:'head'},matchPortrait:{scale:1,x:0,y:0,anchor:'centre'},victory:{scale:1.14,x:0,y:0,anchor:'feet'},resultVictory:{scale:1.62,x:0,y:0,anchor:'head'}}
+}])));
