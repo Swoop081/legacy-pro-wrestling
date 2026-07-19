@@ -1357,13 +1357,15 @@ gauntletLiveStable=function(){
 gauntletLiveCalendar=function(){
  const c=liveLoad(); if(!c)return gauntletLiveHome();
  const w=liveFounder(c.active),f=liveFeud(c),r=liveFeudOpponent(c);
- render(`<section class="panel live-calendar-screen lpw-calendar-compact">
+ const nickname=(w.name.match(/^"[^"]+"/)||[''])[0];
+ const ringName=w.name.replace(/^"[^"]+"\s*/, '');
+ render(`<section class="panel live-calendar-screen lpw-calendar-compact lpw-calendar-807">
   <div class="live-calendar-top"><button class="shell-back" onclick="home()">← MAIN MENU</button><button class="shell-back" onclick="gauntletLiveHome()">CAREER MENU</button></div>
   <div class="tv-kicker">${lpwTimeline(c)}</div>
   <h1>CAREER</h1>
   <div class="live-week-strip">${LIVE_DAYS.map((d,i)=>`<div class="live-day ${i<c.day?'complete':''} ${i===c.day?'current':''} ${i===6&&liveIsSupercard({...c,day:i})?'supercard':''}"><small>${d.slice(0,3).toUpperCase()}</small><b>${i===0?'M':i===3?'T':i+1}</b><span>${liveDayLabel(c,i)}</span></div>`).join('')}</div>
   <div class="live-career-dashboard">
-   <div class="live-career-hero">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<div><small>ACTIVE WRESTLER</small><b>${w.name}</b><span>${c.wins}-${c.losses} record · ${c.stable.length} stable member${c.stable.length===1?'':'s'}</span></div></div>
+   <div class="live-career-hero">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<div class="lpw-active-copy"><small>ACTIVE WRESTLER</small>${nickname?`<span class="lpw-active-nickname">${nickname}</span>`:''}<b class="lpw-active-name">${ringName}</b><span class="lpw-active-record">${c.wins}-${c.losses} record · ${c.stable.length} stable member${c.stable.length===1?'':'s'}</span></div></div>
    <div class="live-mini-stats"><span><small>MOMENTUM</small><b>${c.momentum}</b></span><span><small>POPULARITY</small><b>${c.popularity}</b></span><button onclick="gauntletLiveStable()">MANAGE STABLE</button></div>
   </div>
   ${f?`<div class="live-feud-banner calendar-feud"><div>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}</div><span><small>CURRENT FEUD</small><b>${w.name} vs ${r.name}</b><em>${liveCurrentSupercard(c)} · Intensity ${f.intensity}%</em></span><div>${imageWithFallback(r,'portrait','art-portrait','matchPortrait')}</div></div>`:''}

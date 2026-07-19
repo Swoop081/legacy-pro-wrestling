@@ -954,3 +954,43 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
     transform-origin:center center;
   }
 }
+
+/* VERSION 8.0.7 — focused Career dashboard hierarchy */
+.lpw-calendar-807 .live-career-dashboard{grid-template-columns:minmax(0,1.7fr) minmax(205px,.95fr);align-items:stretch;gap:12px}
+.lpw-calendar-807 .live-career-hero{min-height:134px;margin:0;padding:14px 16px;gap:16px;align-items:center}
+.lpw-calendar-807 .live-career-hero img{width:118px!important;height:118px!important;flex:0 0 118px;object-fit:contain;object-position:center bottom}
+.lpw-calendar-807 .lpw-active-copy{display:flex!important;flex-direction:column;justify-content:center;align-items:flex-start;min-width:0;line-height:1.05}
+.lpw-calendar-807 .lpw-active-copy>small{margin-bottom:4px;font-size:.72rem;letter-spacing:.06em}
+.lpw-calendar-807 .lpw-active-nickname{display:block;color:#fff;font-size:1.05rem;font-weight:800;line-height:1.05}
+.lpw-calendar-807 .lpw-active-name{display:block;width:100%;font-size:1.65rem!important;line-height:1.02;margin:1px 0 5px;white-space:normal}
+.lpw-calendar-807 .lpw-active-record{display:block;font-size:.86rem;line-height:1.18;opacity:.72}
+.lpw-calendar-807 .live-mini-stats{min-height:134px}
+.lpw-calendar-807 .calendar-feud{min-height:112px;padding:8px 12px}
+.lpw-calendar-807 .calendar-feud>div img{width:82px!important;height:82px!important}
+.lpw-calendar-807 .calendar-feud span b{font-size:1rem;line-height:1.08}
+
+/* Keep the feud-origin VS visible above the report panel. */
+.lpw-feud-origin .origin-matchup{position:relative;z-index:2;margin-bottom:.75rem}
+.lpw-feud-origin .origin-matchup strong{position:relative;z-index:4;align-self:end;padding:0 4px 10px;font-size:2rem;line-height:1}
+.lpw-feud-origin .origin-report{position:relative;z-index:1;margin-top:.25rem}
+
+@media(max-width:700px){
+ .lpw-calendar-807 .live-career-dashboard{grid-template-columns:minmax(0,1.72fr) minmax(185px,.92fr)!important;gap:10px}
+ .lpw-calendar-807 .live-career-hero{grid-template-columns:100px minmax(0,1fr)!important;min-height:126px;padding:10px 12px;gap:12px}
+ .lpw-calendar-807 .live-career-hero img{width:100px!important;height:108px!important;flex-basis:100px}
+ .lpw-calendar-807 .lpw-active-copy>small{font-size:.62rem}
+ .lpw-calendar-807 .lpw-active-nickname{font-size:.92rem}
+ .lpw-calendar-807 .lpw-active-name{font-size:1.38rem!important}
+ .lpw-calendar-807 .lpw-active-record{font-size:.76rem}
+ .lpw-calendar-807 .live-mini-stats{min-height:126px}
+ .lpw-calendar-807 .calendar-feud>div img{width:72px!important;height:72px!important}
+}
+@media(max-width:430px){
+ .lpw-calendar-807 .live-career-dashboard{grid-template-columns:minmax(0,1.62fr) minmax(150px,.9fr)!important}
+ .lpw-calendar-807 .live-career-hero{grid-template-columns:82px minmax(0,1fr)!important;padding:9px;gap:8px}
+ .lpw-calendar-807 .live-career-hero img{width:82px!important;height:100px!important;flex-basis:82px}
+ .lpw-calendar-807 .lpw-active-name{font-size:1.22rem!important}
+ .lpw-calendar-807 .lpw-active-record{font-size:.7rem}
+ .lpw-calendar-807 .live-mini-stats{grid-template-columns:1fr 1fr!important}
+ .lpw-calendar-807 .live-mini-stats button{grid-column:1/-1}
+}
