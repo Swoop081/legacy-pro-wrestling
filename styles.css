@@ -722,3 +722,56 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
 
 /* Version 8.0 Championship Era */
 .lpw8-title-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.lpw8-title-strip article,.lpw8-belt-grid article{background:#171214;border:1px solid #5b3b40;border-radius:14px;padding:14px;text-align:center}.lpw8-title-strip small,.lpw8-belt-grid small{color:#d9ad42;letter-spacing:1px}.lpw8-ranking-list{display:grid;gap:8px;margin:18px 0}.lpw8-ranking-list article{display:grid;grid-template-columns:42px 62px 1fr auto;gap:12px;align-items:center;background:#151113;border:1px solid #3d292d;border-radius:12px;padding:8px 12px}.lpw8-ranking-list article>strong{font-size:24px;color:#d9ad42}.lpw8-ranking-list img{width:58px;height:58px;object-fit:contain}.lpw8-ranking-list span{display:grid}.lpw8-ranking-list small,.lpw8-ranking-list em{color:#aaa;font-style:normal}.lpw8-belt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:20px 0}.lpw8-belt{font-size:58px;color:#ffd34f;text-shadow:0 0 18px #ffd34f66}.lpw8-championships h2{margin:8px 0}@media(max-width:720px){.lpw8-title-strip{grid-template-columns:repeat(2,1fr)}.lpw8-belt-grid{grid-template-columns:1fr}.lpw8-ranking-list article{grid-template-columns:34px 52px 1fr auto}.lpw8-ranking-list img{width:48px;height:48px}}
+
+/* LPW 8.0.2 focused tabled fixes */
+.lpw-stable-clean .live-stable-card{display:block;position:relative;overflow:hidden;min-height:0;aspect-ratio:4/5;background:#151515}
+.lpw-stable-clean .lpw-stable-art{position:absolute;inset:0;cursor:pointer}
+.lpw-stable-clean .lpw-stable-art>img{width:100%;height:100%;object-fit:contain;display:block}
+.lpw-stable-clean .lpw-stable-overlay{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;padding:34px 10px 10px;background:linear-gradient(transparent,rgba(0,0,0,.94));z-index:2}
+.lpw-stable-clean .lpw-stable-overlay span{padding:0;min-width:0}
+.lpw-stable-clean .lpw-stable-overlay small{display:block;color:#f0c64f;font-size:.62rem;letter-spacing:.1em}
+.lpw-stable-clean .lpw-stable-overlay b{display:block;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lpw-stable-clean .lpw-stable-overlay button{flex:0 0 auto;border:1px solid rgba(255,255,255,.35);background:rgba(15,15,15,.9);color:#fff;border-radius:7px;padding:7px 8px;font-size:.62rem;font-weight:900}
+.lpw-stable-clean .live-stable-card.active .lpw-stable-overlay button{border-color:#f0c64f}
+
+.lpw-calendar-compact .live-week-strip{order:0;margin:2px 0 10px}
+.lpw-calendar-compact .live-career-dashboard{margin-top:0}
+.lpw-calendar-compact .live-today{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lpw-calendar-compact .live-today>div{min-width:0}
+.lpw-calendar-compact .live-today .btn{flex:0 0 auto;margin:0;padding:12px 18px}
+
+@media(max-width:700px){
+ .lpw-calendar-compact{padding:14px 16px!important}
+ .lpw-calendar-compact .live-calendar-top{margin-bottom:8px}
+ .lpw-calendar-compact>.tv-kicker{font-size:.67rem;margin-top:4px}
+ .lpw-calendar-compact h1{font-size:2.2rem;margin:.18rem 0 .35rem}
+ .lpw-calendar-compact .live-week-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;overflow:visible;padding:0;margin:0 0 8px}
+ .lpw-calendar-compact .live-day{min-width:0;min-height:62px;padding:6px 4px;border-radius:9px;text-align:center;align-content:space-between}
+ .lpw-calendar-compact .live-day small{font-size:.54rem}
+ .lpw-calendar-compact .live-day b{font-size:.95rem}
+ .lpw-calendar-compact .live-day span{font-size:.48rem;line-height:1.05;max-height:2.1em;overflow:hidden}
+ .lpw-calendar-compact .live-career-dashboard{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(145px,.75fr);gap:7px;margin-bottom:7px}
+ .lpw-calendar-compact .live-career-hero{display:grid;grid-template-columns:72px 1fr!important;gap:8px;margin:0;padding:7px;border-radius:12px;min-height:88px}
+ .lpw-calendar-compact .live-career-hero img{width:72px!important;height:72px!important}
+ .lpw-calendar-compact .live-career-hero small{font-size:.58rem}
+ .lpw-calendar-compact .live-career-hero b{font-size:1rem;line-height:1.05}
+ .lpw-calendar-compact .live-career-hero span{font-size:.62rem;line-height:1.15}
+ .lpw-calendar-compact .live-mini-stats{grid-template-columns:1fr 1fr;gap:5px;padding:6px;border-radius:12px}
+ .lpw-calendar-compact .live-mini-stats span{padding:5px 3px;border-radius:7px}
+ .lpw-calendar-compact .live-mini-stats small{font-size:.48rem}
+ .lpw-calendar-compact .live-mini-stats b{font-size:1.15rem}
+ .lpw-calendar-compact .live-mini-stats button{padding:6px 3px;font-size:.58rem}
+ .lpw-calendar-compact .calendar-feud{min-height:72px;margin:0 0 7px;padding:5px 7px;grid-template-columns:55px 1fr 55px;gap:5px}
+ .lpw-calendar-compact .calendar-feud img{width:55px;height:55px}
+ .lpw-calendar-compact .calendar-feud small{font-size:.56rem}
+ .lpw-calendar-compact .calendar-feud b{font-size:.85rem;line-height:1.08}
+ .lpw-calendar-compact .calendar-feud em{font-size:.58rem}
+ .lpw-calendar-compact .live-today{margin:0;padding:9px 10px;border-radius:12px}
+ .lpw-calendar-compact .live-today small{font-size:.58rem}
+ .lpw-calendar-compact .live-today h2{font-size:1.05rem;margin:.08rem 0}
+ .lpw-calendar-compact .live-today p{font-size:.65rem;line-height:1.15;margin:0;max-height:2.3em;overflow:hidden}
+ .lpw-calendar-compact .live-today .btn{padding:9px 13px;font-size:.7rem}
+ .lpw-calendar-compact .lpw-ple-card{display:none}
+ .lpw-stable-clean .live-stable-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+ .lpw-stable-clean .live-stable-card{aspect-ratio:4/5}
+}

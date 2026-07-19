@@ -1330,3 +1330,44 @@ window.__LPW_BOOT_COMPLETE__ = true;
 home();
 document.documentElement.classList.add('lpw-ready');
 document.documentElement.classList.remove('lpw-booting');
+
+/* LPW 8.0.2 — focused mobile layout fixes: stable cards + career calendar */
+gauntletLiveStable=function(){
+ const c=liveLoad(); if(!c)return gauntletLiveHome();
+ render(`<section class="panel live-stable-screen lpw-stable-clean">
+  <button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button>
+  <div class="tv-kicker">PERMANENT ROSTER</div>
+  <h1>YOUR STABLE</h1>
+  <p>Tap a wrestler to make them active. Open My Career for development.</p>
+  <div class="live-stable-grid">${c.stable.map(id=>{
+   const w=liveFounder(id),p=liveProgress(id,c),active=id===c.active;
+   return `<article class="live-stable-card ${active?'active':''}">
+    <div class="lpw-stable-art" onclick="gauntletLiveSetActive('${id}')">
+     ${imageWithFallback(w,'portrait','art-portrait','collection')}
+     <div class="lpw-stable-overlay">
+      <span><small>${active?'ACTIVE':'OVR '+liveOverall(p)}</small><b>${w.name}</b></span>
+      <button onclick="event.stopPropagation();gauntletLiveCareerCard('${id}')">MY CAREER</button>
+     </div>
+    </div>
+   </article>`
+  }).join('')}</div>
+ </section>`)
+};
+
+gauntletLiveCalendar=function(){
+ const c=liveLoad(); if(!c)return gauntletLiveHome();
+ const w=liveFounder(c.active),f=liveFeud(c),r=liveFeudOpponent(c);
+ render(`<section class="panel live-calendar-screen lpw-calendar-compact">
+  <div class="live-calendar-top"><button class="shell-back" onclick="home()">← MAIN MENU</button><button class="shell-back" onclick="gauntletLiveHome()">CAREER MENU</button></div>
+  <div class="tv-kicker">${lpwTimeline(c)}</div>
+  <h1>CAREER</h1>
+  <div class="live-week-strip">${LIVE_DAYS.map((d,i)=>`<div class="live-day ${i<c.day?'complete':''} ${i===c.day?'current':''} ${i===6&&liveIsSupercard({...c,day:i})?'supercard':''}"><small>${d.slice(0,3).toUpperCase()}</small><b>${i===0?'M':i===3?'T':i+1}</b><span>${liveDayLabel(c,i)}</span></div>`).join('')}</div>
+  <div class="live-career-dashboard">
+   <div class="live-career-hero">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<div><small>ACTIVE WRESTLER</small><b>${w.name}</b><span>${c.wins}-${c.losses} record · ${c.stable.length} stable member${c.stable.length===1?'':'s'}</span></div></div>
+   <div class="live-mini-stats"><span><small>MOMENTUM</small><b>${c.momentum}</b></span><span><small>POPULARITY</small><b>${c.popularity}</b></span><button onclick="gauntletLiveStable()">MANAGE STABLE</button></div>
+  </div>
+  ${f?`<div class="live-feud-banner calendar-feud"><div>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}</div><span><small>CURRENT FEUD</small><b>${w.name} vs ${r.name}</b><em>${liveCurrentSupercard(c)} · Intensity ${f.intensity}%</em></span><div>${imageWithFallback(r,'portrait','art-portrait','matchPortrait')}</div></div>`:''}
+  <div class="live-today"><div><small>TODAY · ${LIVE_DAYS[c.day].toUpperCase()}</small><h2>${liveDayLabel(c,c.day)}</h2><p>${liveDayDescription(c)}</p></div><button class="btn live-primary" onclick="gauntletLiveBeginDay()">BEGIN</button></div>
+  <div class="lpw-ple-card"><small>UPCOMING PREMIUM EVENT</small><b>${liveCurrentSupercard(c)}</b><span>${Math.max(0,4-liveMonthWeek(c))} week${Math.max(0,4-liveMonthWeek(c))===1?'':'s'} away</span></div>
+ </section>`)
+};
