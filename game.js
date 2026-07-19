@@ -704,7 +704,7 @@ function gauntletLiveHome(){
 function gauntletLiveNewCareer(){const c=liveLoad();if(c&&!confirm('Start a new Career career and replace the current save?'))return;gauntletLiveFounderSelect()}
 function gauntletLiveFounderSelect(){
  const founders=LIVE_FOUNDERS.map(liveFounder).filter(Boolean);
- render(`<section class="panel live-founder-screen"><button class="shell-back" onclick="gauntletLiveHome()">← CAREER</button><div class="tv-kicker">NEW CAREER</div><h1>CHOOSE YOUR FOUNDER</h1><p class="sub">This wrestler becomes the first member of your stable.</p><div class="live-founder-grid">${founders.map(w=>`<button class="live-founder-card" onclick="gauntletLiveChooseFounder('${w.id}')">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b><em>${w.signature}</em></span></button>`).join('')}</div></section>`)
+ render(`<section class="panel live-founder-screen lpw-founder-clean"><button class="shell-back" onclick="gauntletLiveHome()">← CAREER</button><div class="tv-kicker">NEW CAREER</div><h1>CHOOSE YOUR FOUNDER</h1><p class="sub">This wrestler becomes the first member of your stable.</p><div class="live-founder-grid">${founders.map(w=>`<button class="live-founder-card" onclick="gauntletLiveChooseFounder('${w.id}')">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b><em>${w.signature}</em></span></button>`).join('')}</div></section>`)
 }
 function gauntletLiveChooseFounder(id){
  const w=liveFounder(id);if(!w||!LIVE_FOUNDERS.includes(id))return gauntletLiveFounderSelect();
@@ -1085,7 +1085,7 @@ liveLoad=function(){const c=_liveLoad65();if(c){liveEnsureWorld(c);liveSave(c)}r
 gauntletLiveNewCareer=function(){const c=liveLoad();if(c&&!confirm('Start a new Career career and replace the current save?'))return;localStorage.removeItem(LIVE_SAVE_KEY);gauntletLiveIntro(0)};
 function gauntletLiveIntro(page=0){
  const slides=[
-  {k:'WELCOME TO CAREER',h:'THIS IS YOUR CAREER',p:'I am Veronica Vale, General Manager. You will guide one wrestler through a living wrestling world where every victory, injury, rivalry and decision changes what happens next.',img:'full'},
+  {k:'WELCOME TO CAREER',h:'THIS IS YOUR CAREER',p:'I am Veronica Vale, General Manager of LEGACY Pro Wrestling. You will guide one wrestler through a living wrestling world where every victory, injury, rivalry and decision changes what happens next.',img:'full'},
   {k:'TWO LIVE SHOWS EVERY WEEK',h:'MAYHEM & THROWDOWN',p:'Monday Night Mayhem and Thursday Night Throwdown always feature a match card or a major replacement segment. The rest of the week reacts naturally to the stories created on television.',img:'portrait'},
   {k:'FOUR WEEKS · ONE RIVALRY',h:'WIN THE SUPERCARD',p:'Each month builds toward a named Supercard. The Supercard result decides the feud. Win and your rival joins your permanent stable; lose and you must try again in a new story.',img:'full'},
   {k:'BUILD YOUR ROSTER',h:'CHOOSE YOUR FIRST ICON',p:'After every Supercard you may continue with your current wrestler or switch to anyone you have unlocked. Select the first wrestler who will represent your stable.',img:'portrait'}

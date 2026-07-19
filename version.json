@@ -1,1 +1,5 @@
-{"version":"8.0.2","name":"Championship Era","build":"test-3-focused-layout-fixes"}
+{
+  "version": "8.0.3",
+  "build": "focused-onboarding-fixes-test-4",
+  "released": "2026-07-20"
+}
