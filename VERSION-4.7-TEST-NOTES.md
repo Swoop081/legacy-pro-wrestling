@@ -5,7 +5,7 @@
 1. **Classic Gauntlet preview used the unscoped full-art transform.**
    Upgraded wrestlers inherited their enlarged Collection/full scale on the Classic Mode landing page. The preview now uses an explicit `classicLanding` preset inside a fixed host.
 
-2. **Generic Gauntlet cards used `full.png` without a screen preset.**
+2. **Generic Gauntlet cards used `full.webp` without a screen preset.**
    Partner selection, Your Team, reward replacement and legendary-team overlays all called the image renderer with the default screen. The default could inherit a 1.5× full-art transform. Generic cards now use the dedicated `card` preset.
 
 3. **Absolute-positioned full art could collapse its card and escape visually.**

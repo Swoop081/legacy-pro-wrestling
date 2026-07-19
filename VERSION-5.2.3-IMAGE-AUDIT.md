@@ -2,20 +2,20 @@
 
 - Wrestlers checked: **20**
 - PNG assets checked: **60**
-- Required image types: `full.png`, `portrait.png`, `victory.png`
+- Required image types: `full.webp`, `portrait.webp`, `victory.webp`
 - Result: **All assets present, readable, non-empty and with positive top headroom.**
 
 ## Newly re-enabled artwork
 
 ### Dave Maddox
-- `full.png`: 2048×2048, visible width 45.8%, visible height 95.6%, top headroom 58 px.
-- `portrait.png`: 2048×2048, visible width 92.0%, visible height 80.8%, top headroom 261 px.
-- `victory.png`: 2048×2048, visible width 52.5%, visible height 95.6%, top headroom 58 px.
+- `full.webp`: 2048×2048, visible width 45.8%, visible height 95.6%, top headroom 58 px.
+- `portrait.webp`: 2048×2048, visible width 92.0%, visible height 80.8%, top headroom 261 px.
+- `victory.webp`: 2048×2048, visible width 52.5%, visible height 95.6%, top headroom 58 px.
 
 ### Logan Steele
-- `full.png`: 2048×2048, visible width 62.3%, visible height 92.7%, top headroom 105 px.
-- `portrait.png`: 2048×2048, visible width 91.8%, visible height 81.3%, top headroom 250 px.
-- `victory.png`: 2048×2048, visible width 67.9%, visible height 92.7%, top headroom 105 px.
+- `full.webp`: 2048×2048, visible width 62.3%, visible height 92.7%, top headroom 105 px.
+- `portrait.webp`: 2048×2048, visible width 91.8%, visible height 81.3%, top headroom 250 px.
+- `victory.webp`: 2048×2048, visible width 67.9%, visible height 92.7%, top headroom 105 px.
 
 ## Screen treatment
 

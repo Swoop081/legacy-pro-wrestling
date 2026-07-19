@@ -3,9 +3,9 @@
 Permanent settings are stored in `assets/config/imageManager.js`.
 
 Each upgraded wrestler can provide:
-- `full.png`
-- `portrait.png`
-- `victory.png`
+- `full.webp`
+- `portrait.webp`
+- `victory.webp`
 - `scale`, `x`, and `y` positioning values
 
 ## Hidden developer mode

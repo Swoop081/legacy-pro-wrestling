@@ -11,7 +11,7 @@ const MATCH_LABELS=['MAIN EVENT','FEATURED CONTEST','GAUNTLET SHOWCASE','PRIME-T
 const SUPPORT_CAST={
  'mike-sullivan':{id:'mike-sullivan',name:'Mike Sullivan',role:'Play-by-Play Commentator',group:'Broadcast Team'},
  'johnny-cannon':{id:'johnny-cannon',name:'Johnny Cannon',role:'Colour Commentator',group:'Broadcast Team'},
- 'kate-morgan':{id:'kate-morgan',name:'Kate Morgan',role:'Backstage Interviewer',group:'Broadcast Team'},
+ 'katie-morgan':{id:'katie-morgan',name:'Katie Morgan',role:'Backstage Interviewer',group:'Broadcast Team'},
  'scarlett-storm':{id:'scarlett-storm',name:'Scarlett Storm',role:'The Blonde Bombshell',group:'Managers'},
  'preston-cole':{id:'preston-cole',name:'Preston Cole',role:'The Strategist',group:'Managers'},
  'graham-archer':{id:'graham-archer',name:'Graham Archer',role:'The Mastermind',group:'Managers'},
@@ -24,7 +24,7 @@ const MANAGERS=[
  {id:'tommy-sparks',name:'Tommy Sparks',title:'The Megaphone',initials:'TS',passive:2,ability:'Crowd Ignition',description:'Adds +2 to your team score by building momentum and crowd energy.',voice:'COME ON! SHOW THEM WHAT YOU HAVE GOT!'}
 ];
 function npc(id){return SUPPORT_CAST[id]||MANAGERS.find(m=>m.id===id)}
-function npcImage(id,type='full',extra=''){const c=CHARACTER_IMAGE_MANAGER[id],src=c?.assets?.[type]||c?.assets?.full||`assets/wrestlers/${id}/${type}.png`;return `<img class="npc-art npc-${id} ${extra}" src="${src}" alt="${npc(id)?.name||id}" onerror="this.style.display='none'">`}
+function npcImage(id,type='full',extra=''){const c=CHARACTER_IMAGE_MANAGER[id],src=c?.assets?.[type]||c?.assets?.full||`assets/wrestlers/${id}/${type}.webp`;return `<img class="npc-art npc-${id} ${extra}" src="${src}" alt="${npc(id)?.name||id}" onerror="this.style.display='none'">`}
 function lowerThird(person,subtitle=''){return `<div class="character-lower-third"><small>${subtitle||person.role||person.title||''}</small><b>${person.name}</b></div>`}
 function managerCard(m,action=''){return `<button class="manager-card illustrated" ${action?`onclick="${action}"`:''}><div class="manager-card-art">${npcImage(m.id,'full')}</div>${lowerThird(m,m.title)}<div class="manager-card-copy"><b>${m.ability}</b><p>${m.description}</p></div></button>`}
 
@@ -91,12 +91,12 @@ function isTagMatch(){return S.team.length===2&&S.opp.length===2}
 // CHARACTER IMAGE MANAGER 2.0 — configuration is loaded from assets/config/imageManager.js
 const CHARACTER_IMAGE_MANAGER=window.TTG_IMAGE_MANAGER||{};
 function characterImageConfig(w){const id=typeof w==='string'?w:w?.id;return id?CHARACTER_IMAGE_MANAGER[id]||null:null}
-function legacyWrestlerImage(w){return `assets/${w.id}.png`}
+function legacyWrestlerImage(w){return `assets/${w.id}.webp`}
 function wrestlerImageCandidates(w,type='full'){
  const config=characterImageConfig(w),set=config?.assets;
  const list=[];
  if(set)list.push(set[type]||set.full);
- list.push(`assets/${w.id}.png`,`assets/${w.id}.webp`,`assets/wrestlers/${w.id}.png`,`assets/wrestlers/${w.id}.webp`);
+ list.push(`assets/${w.id}.webp`,`assets/${w.id}.webp`,`assets/wrestlers/${w.id}.webp`,`assets/wrestlers/${w.id}.webp`);
  return [...new Set(list.filter(Boolean))];
 }
 function wrestlerImage(w,type='full'){return wrestlerImageCandidates(w,type)[0]}
@@ -574,7 +574,7 @@ const INTERVIEW_QUESTIONS=[
  w=>({q:`${w.name}, what does this victory prove about your team?`,a:[['PRAISE YOUR PARTNER','“We win because we trust each other.”','chem',4],['OWN THE MOMENT','“It proves we belong in the spotlight.”','momentum',2],['DEMAND MORE','“One win means nothing. Send the next team.”','bonus',5]]}),
  w=>({q:`${w.name}, the crowd is beginning to believe in this run. Do you?`,a:[['THANK THE FANS','“We feel every voice in that arena.”','momentum',2],['STAY FOCUSED','“Belief does not win matches. Preparation does.”','bonus',3],['PROMISE DOMINANCE','“They have not seen anything yet.”','bonus',5]]})
 ];
-function showBackstageInterview(){const speaker=one(S.team),x=one(INTERVIEW_QUESTIONS)(speaker);S.currentInterview=x;S.interviewCount++;overlay.innerHTML=`<div class="overlay interview-overlay"><section class="backstage-interview illustrated-interview"><div class="interviewer-art">${npcImage('kate-morgan','full')}${lowerThird(npc('kate-morgan'),'BACKSTAGE INTERVIEWER')}</div><div class="interview-content"><div class="tv-kicker">LIVE · BACKSTAGE</div><div class="interview-question"><small>KATE MORGAN WITH ${speaker.name.toUpperCase()}</small><h1>“${x.q}”</h1></div><div class="choice-grid interview-choices">${x.a.map((a,i)=>`<button class="choice" onclick="answerInterview(${i})"><b>${a[0]}</b><small>${a[1]}</small></button>`).join('')}</div></div></section></div>`}
+function showBackstageInterview(){const speaker=one(S.team),x=one(INTERVIEW_QUESTIONS)(speaker);S.currentInterview=x;S.interviewCount++;overlay.innerHTML=`<div class="overlay interview-overlay"><section class="backstage-interview illustrated-interview"><div class="interviewer-art">${npcImage('katie-morgan','full')}${lowerThird(npc('katie-morgan'),'BACKSTAGE INTERVIEWER')}</div><div class="interview-content"><div class="tv-kicker">LIVE · BACKSTAGE</div><div class="interview-question"><small>KATIE MORGAN WITH ${speaker.name.toUpperCase()}</small><h1>“${x.q}”</h1></div><div class="choice-grid interview-choices">${x.a.map((a,i)=>`<button class="choice" onclick="answerInterview(${i})"><b>${a[0]}</b><small>${a[1]}</small></button>`).join('')}</div></div></section></div>`}
 function answerInterview(i){const a=S.currentInterview?.a?.[i];if(!a)return;let value=a[3];if(S.manager?.id==='scarlett-storm'&&value>0)value++;applyEventEffect(a[2],value);overlay.innerHTML=`<div class="overlay interview-overlay"><section class="backstage-interview interview-result"><div class="tv-kicker">INTERVIEW COMPLETE</div><h1>${a[0]}</h1><blockquote>${a[1]}</blockquote><p>${a[2]==='chem'?`Team chemistry +${value}`:a[2]==='momentum'?`Momentum +${value}`:`Next-match team score +${value}`}</p><button class="btn" onclick="finishBetweenEvent()">CONTINUE</button></section></div>`}
 function showSinglesChallenge(){
  S.challengeSeen=true;
@@ -655,7 +655,7 @@ function tournamentEliminated(){render(`<section class="panel tournament-advance
 // GAUNTLET LIVE 6.1 BUILD 2 — playable weekly career and stable recruitment
 const LIVE_SAVE_KEY='ttg_gauntlet_live_v1';
 const LIVE_DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-const LIVE_FOUNDERS=['jack-mercer','mason-marks','el-rey-del-cielo','max-justice'];
+const LIVE_FOUNDERS=['jack-mercer','victor-royale','jett-valentine','revenant'];
 function liveLoad(){
  try{
   const c=JSON.parse(localStorage.getItem(LIVE_SAVE_KEY)||'null');
@@ -912,7 +912,7 @@ gauntletLiveStable=function(){const c=liveLoad();if(!c)return gauntletLiveHome()
 
 // GAUNTLET LIVE 6.4 BUILD 5 — Living World, feuds, NPC encounters and full broadcast matches
 const LIVE_NPC_ENCOUNTERS=[
- {npc:'kate-morgan',title:'Exclusive Interview',copy:'Kate Morgan wants your reaction to the week so far.',choices:[['Speak with confidence','Popularity +8','popularity',8],['Send a warning','Feud intensity +12','feud',12],['Keep it measured','Momentum +6','momentum',6]]},
+ {npc:'katie-morgan',title:'Exclusive Interview',copy:'Katie Morgan wants your reaction to the week so far.',choices:[['Speak with confidence','Popularity +8','popularity',8],['Send a warning','Feud intensity +12','feud',12],['Keep it measured','Momentum +6','momentum',6]]},
  {npc:'scarlett-storm',title:'A Manager Approaches',copy:'Scarlett Storm believes your career needs a stronger presence at ringside.',choices:[['Accept her guidance','Scarlett joins your corner','manager','scarlett-storm'],['Ask for advice only','Momentum +8','momentum',8],['Decline respectfully','Popularity +4','popularity',4]]},
  {npc:'preston-cole',title:'Scouting Report',copy:'Preston Cole has studied your rival and found a weakness.',choices:[['Study the report','Next match bonus +5','bonus',5],['Focus on yourself','Technique +1','technique',1],['Reject the plan','Momentum +5','momentum',5]]},
  {npc:'graham-archer',title:'The Mastermind\'s Offer',copy:'Graham Archer offers to manipulate the situation in your favour.',choices:[['Accept the plan','Next match bonus +6','bonus',6],['Use the information only','Feud intensity +8','feud',8],['Walk away','Popularity +5','popularity',5]]},
@@ -945,7 +945,7 @@ function gauntletLiveNews(){
 }
 function gauntletLivePromo(){
  const c=liveLoad(),r=liveFeudOpponent(c)||liveChooseStoryOpponent(c);if(!liveFeud(c))liveStartFeud(c,r.id,'A direct promo challenge ignited the rivalry.');
- render(`<section class="panel live-world-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">THURSDAY · LIVE PROMO</div><h1>FACE TO FACE</h1><div class="live-promo-faceoff"><div>${imageWithFallback(liveFounder(c.active),'portrait','art-portrait','matchPortrait')}<b>${liveFounder(c.active).name}</b></div><strong>VS</strong><div>${imageWithFallback(r,'portrait','art-portrait','matchPortrait')}<b>${r.name}</b></div></div><div class="live-npc-scene compact">${npcImage('kate-morgan','portrait')}<div><small>KATE MORGAN</small><p>“The microphone is yours. What do you say to ${r.name}?”</p></div></div><div class="live-choice-grid"><button onclick="gauntletLiveResolvePromo('respect')"><b>SHOW RESPECT</b><span>Popularity +8 · Feud +5</span></button><button onclick="gauntletLiveResolvePromo('warning')"><b>ISSUE A WARNING</b><span>Momentum +8 · Feud +12</span></button><button onclick="gauntletLiveResolvePromo('insult')"><b>MAKE IT PERSONAL</b><span>Popularity +5 · Feud +18</span></button></div></section>`)
+ render(`<section class="panel live-world-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">THURSDAY · LIVE PROMO</div><h1>FACE TO FACE</h1><div class="live-promo-faceoff"><div>${imageWithFallback(liveFounder(c.active),'portrait','art-portrait','matchPortrait')}<b>${liveFounder(c.active).name}</b></div><strong>VS</strong><div>${imageWithFallback(r,'portrait','art-portrait','matchPortrait')}<b>${r.name}</b></div></div><div class="live-npc-scene compact">${npcImage('katie-morgan','portrait')}<div><small>KATIE MORGAN</small><p>“The microphone is yours. What do you say to ${r.name}?”</p></div></div><div class="live-choice-grid"><button onclick="gauntletLiveResolvePromo('respect')"><b>SHOW RESPECT</b><span>Popularity +8 · Feud +5</span></button><button onclick="gauntletLiveResolvePromo('warning')"><b>ISSUE A WARNING</b><span>Momentum +8 · Feud +12</span></button><button onclick="gauntletLiveResolvePromo('insult')"><b>MAKE IT PERSONAL</b><span>Popularity +5 · Feud +18</span></button></div></section>`)
 }
 function gauntletLiveResolvePromo(type){const c=liveLoad(),f=liveFeud(c);if(type==='respect'){c.popularity=liveClamp(c.popularity+8,0,100);f.intensity+=5}else if(type==='warning'){c.momentum=liveClamp(c.momentum+8,0,100);f.intensity+=12}else{c.popularity=liveClamp(c.popularity+5,0,100);f.intensity+=18}f.intensity=liveClamp(f.intensity,0,100);liveAddNews(c,`${liveFounder(c.active).name} delivered a ${type} promo against ${liveFeudOpponent(c).name}.`);const xp=liveAwardXp(c,c.active,40,'Rival promo');liveAdvanceDay(c);liveSave(c);render(`<section class="panel live-day-complete"><div class="tv-kicker">PROMO COMPLETE</div><h1>MESSAGE DELIVERED</h1><p>The rivalry with ${liveFeudOpponent(c).name} has intensified.</p><div class="live-xp-award"><b>+${xp.amount} XP</b><span>FEUD INTENSITY ${f.intensity}%</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE TO FRIDAY</button></section>`)}
 function gauntletLiveEncounter(){const c=liveLoad(),enc=LIVE_NPC_ENCOUNTERS[(c.week+c.wins+c.losses)%LIVE_NPC_ENCOUNTERS.length],person=npc(enc.npc);c.world.pendingEncounter=enc;liveSave(c);render(`<section class="panel live-world-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">SATURDAY · RANDOM ENCOUNTER</div><h1>${enc.title}</h1><div class="live-npc-scene large">${npcImage(person.id,'full')}<div><small>${person.role||person.title}</small><h2>${person.name}</h2><p>${enc.copy}</p></div></div><div class="live-choice-grid">${enc.choices.map((x,i)=>`<button onclick="gauntletLiveResolveEncounter(${i})"><b>${x[0]}</b><span>${x[1]}</span></button>`).join('')}</div></section>`)}
@@ -1014,3 +1014,186 @@ home();
  const dev=new URLSearchParams(location.search).get('dev');
  if(dev==='roster')setTimeout(rosterStatus,100);else if(enabled())setTimeout(open,250);
 })();
+
+
+/* GAUNTLET LIVE 6.5 — LIVING WORLD / DYNAMIC TELEVISION */
+Object.assign(SUPPORT_CAST,{
+ 'katie-morgan':{id:'katie-morgan',name:'Katie Morgan',role:'Backstage Interviewer',group:'Broadcast Team'},
+ 'veronica-vale':{id:'veronica-vale',name:'Veronica Vale',role:'General Manager',group:'Operations'},
+ 'coach-hank-dawson':{id:'coach-hank-dawson',name:'Coach Hank Dawson',role:'Performance Coach',group:'Operations'},
+ 'dr-lena-hart':{id:'dr-lena-hart',name:'Dr. Lena Hart',role:'Medical Director',group:'Operations'},
+ 'leon-ward':{id:'leon-ward',name:'Leon Ward',role:'Head of Security',group:'Operations'},
+ 'raymond-briggs':{id:'raymond-briggs',name:'Raymond Briggs',role:'Match Producer',group:'Operations'},
+ 'ava-cross':{id:'ava-cross',name:'Ava Cross',role:'Social Media Reporter',group:'Broadcast Team'},
+ 'ethan-brooks':{id:'ethan-brooks',name:'Ethan Brooks',role:'Ring Announcer',group:'Broadcast Team'}
+});
+delete SUPPORT_CAST['kate-morgan'];
+const LIVE_SHOWS={0:{name:'MONDAY NIGHT MAYHEM',short:'MAYHEM'},3:{name:'THURSDAY NIGHT THROWDOWN',short:'THROWDOWN'}};
+const LIVE_SUPERCARDS=['Collision Course','Final Reckoning','Crossfire','High Stakes','Breaking Point','Last Stand','Full Impact','Zero Hour','Aftershock','Uprising','Collision Point','No Surrender'];
+const LIVE_SEGMENTS=['promo','backstage-attack','interview','contract-signing','commentary-confrontation','locker-room','video-message','medical-angle'];
+function liveMonthWeek(c){return ((c.week-1)%4)+1}
+function liveMonthSlot(c,day=c.day){return (liveMonthWeek(c)-1)*2+(day===3?1:0)}
+function liveCurrentSupercard(c){liveEnsureWorld(c);return c.world.supercardName||LIVE_SUPERCARDS[(c.month-1)%LIVE_SUPERCARDS.length]}
+function liveShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function liveOtherPool(c,exclude=[]){return WRESTLERS.filter(w=>w.id!==c.active&&!exclude.includes(w.id))}
+function livePickDifferent(c,exclude=[]){const pool=liveOtherPool(c,exclude);return one(pool)}
+function liveGenerateMonthlyPlan(c){
+ c.world=c.world||{};
+ const f=liveFeud(c),rival=f&&f.opponent;
+ let types=liveShuffle(['singles','singles','singles','singles','tag','tag','multi','segment']);
+ // Randomly trade one or two matches for story segments while preserving all caps.
+ if(Math.random()<.75)types[Math.floor(Math.random()*types.length)]='segment';
+ if(Math.random()<.35){const choices=types.map((x,i)=>x!=='segment'?i:-1).filter(i=>i>=0);if(choices.length)types[one(choices)]='segment'}
+ let rivalSingles=0;
+ c.world.monthPlan=types.map((type,index)=>{
+  const day=index%2===0?0:3, week=Math.floor(index/2)+1;
+  if(type==='segment')return {type,segment:one(LIVE_SEGMENTS),week,day};
+  if(type==='tag'){
+   const partner=livePickDifferent(c,[rival]);
+   const opp1=(rival&&Math.random()<.45)?liveFounder(rival):livePickDifferent(c,[partner?.id]);
+   const opp2=livePickDifferent(c,[partner?.id,opp1?.id]);
+   return {type,week,day,partner:partner.id,opponents:[opp1.id,opp2.id]};
+  }
+  if(type==='multi'){
+   const count=Math.random()<.5?3:4, opponents=[];
+   while(opponents.length<count-1){const w=livePickDifferent(c,opponents);if(w&&!opponents.includes(w.id))opponents.push(w.id)}
+   return {type,week,day,opponents};
+  }
+  let opp;
+  if(rival&&rivalSingles<1&&index>1&&Math.random()<.35){opp=liveFounder(rival);rivalSingles++}
+  else opp=livePickDifferent(c,[rival]);
+  return {type:'singles',week,day,opponents:[opp.id]};
+ });
+ c.world.supercardName=LIVE_SUPERCARDS[(c.month-1)%LIVE_SUPERCARDS.length];
+ liveSave(c);
+}
+const _liveEnsureWorld65=liveEnsureWorld;
+liveEnsureWorld=function(c){
+ _liveEnsureWorld65(c);
+ c.version=6;
+ c.world.onboardingSeen=!!c.world.onboardingSeen;
+ c.world.injury=c.world.injury||null;
+ c.world.katieThisWeek=c.world.katieThisWeek||0;
+ c.world.worldStories=Array.isArray(c.world.worldStories)?c.world.worldStories:[];
+ c.world.showSeen=c.world.showSeen||{};
+ if(!Array.isArray(c.world.monthPlan)||c.world.planMonth!==c.month){c.world.planMonth=c.month;liveGenerateMonthlyPlan(c)}
+ return c.world;
+};
+const _liveLoad65=liveLoad;
+liveLoad=function(){const c=_liveLoad65();if(c){liveEnsureWorld(c);liveSave(c)}return c};
+
+gauntletLiveNewCareer=function(){const c=liveLoad();if(c&&!confirm('Start a new Gauntlet Live career and replace the current save?'))return;localStorage.removeItem(LIVE_SAVE_KEY);gauntletLiveIntro(0)};
+function gauntletLiveIntro(page=0){
+ const slides=[
+  {k:'WELCOME TO GAUNTLET LIVE',h:'THIS IS YOUR CAREER',p:'I am Veronica Vale, General Manager. You will guide one wrestler through a living wrestling world where every victory, injury, rivalry and decision changes what happens next.',img:'full'},
+  {k:'TWO LIVE SHOWS EVERY WEEK',h:'MAYHEM & THROWDOWN',p:'Monday Night Mayhem and Thursday Night Throwdown always feature a match card or a major replacement segment. The rest of the week reacts naturally to the stories created on television.',img:'portrait'},
+  {k:'FOUR WEEKS · ONE RIVALRY',h:'WIN THE SUPERCARD',p:'Each month builds toward a named Supercard. The Supercard result decides the feud. Win and your rival joins your permanent stable; lose and you must try again in a new story.',img:'full'},
+  {k:'BUILD YOUR ROSTER',h:'CHOOSE YOUR FIRST ICON',p:'After every Supercard you may continue with your current wrestler or switch to anyone you have unlocked. Select the first wrestler who will represent your stable.',img:'portrait'}
+ ];
+ const s=slides[Math.max(0,Math.min(page,slides.length-1))],last=page===slides.length-1;
+ render(`<section class="panel live-onboarding"><div class="live-onboarding-art">${npcImage('veronica-vale',s.img)}</div><div class="live-onboarding-copy"><div class="tv-kicker">${s.k}</div><h1>${s.h}</h1><p>${s.p}</p><div class="live-onboarding-progress">${slides.map((_,i)=>`<span class="${i<=page?'on':''}"></span>`).join('')}</div><button class="btn live-primary" onclick="${last?'gauntletLiveFounderSelect()':`gauntletLiveIntro(${page+1})`}">${last?'SELECT STARTING WRESTLER':'CONTINUE'}</button></div></section>`)
+}
+const _gauntletLiveChooseFounder65=gauntletLiveChooseFounder;
+gauntletLiveChooseFounder=function(id){
+ const w=liveFounder(id);if(!w||!LIVE_FOUNDERS.includes(id))return gauntletLiveFounderSelect();
+ const c={version:6,founder:id,active:id,stable:[id],week:1,month:1,day:0,wins:0,losses:0,momentum:50,popularity:20,training:{power:0,speed:0,technique:0,charisma:0,recovery:0},history:[],created:new Date().toISOString(),world:{onboardingSeen:true,news:[],worldStories:[],katieThisWeek:0}};
+ liveEnsureWorld(c);liveStartFeud(c,livePickDifferent(c).id,'Veronica Vale has selected your first monthly rival.');liveGenerateMonthlyPlan(c);liveSave(c);gauntletLiveCalendar();
+};
+function livePlanItem(c){if(liveIsSupercard(c))return {type:'supercard'};if(c.day===0||c.day===3)return c.world.monthPlan[liveMonthSlot(c)]||{type:'segment',segment:'promo'};return null}
+function liveShowName(c){return LIVE_SHOWS[c.day]?.name||LIVE_DAYS[c.day].toUpperCase()}
+function liveSegmentTitle(seg){return ({promo:'In-Ring Promo','backstage-attack':'Backstage Attack','interview':'Exclusive Interview','contract-signing':'Contract Signing','commentary-confrontation':'Commentary Desk Confrontation','locker-room':'Locker-Room Incident','video-message':'Video Message','medical-angle':'Medical Update'})[seg]||'Major Story Segment'}
+function liveDayLabel65(c,index){
+ if(index===6&&c.week%4===0)return liveCurrentSupercard(c).toUpperCase();
+ if(index===0||index===3){const item=(c.world.monthPlan||[])[(liveMonthWeek(c)-1)*2+(index===3?1:0)];return item?.type==='segment'?liveSegmentTitle(item.segment).toUpperCase():LIVE_SHOWS[index].short;
+ }
+ if(index===6)return 'WEEKLY REVIEW';
+ if(c.world.injury&&index===c.day)return 'MEDICAL EVALUATION';
+ return ['','WORLD FALLOUT','CAREER DEVELOPMENT','','RECOVERY & MEDIA','LIVING WORLD',''][index];
+}
+liveDayLabel=liveDayLabel65;
+liveDayDescription=function(c){
+ if(c.day===0||c.day===3){const item=livePlanItem(c);return `${liveShowName(c)} presents ${item.type==='segment'?liveSegmentTitle(item.segment):item.type==='tag'?'a featured tag-team match':item.type==='multi'?'a multi-person showcase':'a featured singles match'}.`}
+ if(liveIsSupercard(c))return `${liveCurrentSupercard(c)} ends the monthly rivalry. Victory decides the feud and unlocks your opponent.`;
+ if(c.world.injury)return 'Dr. Lena Hart must evaluate the injury suffered in your last match before anything else can happen.';
+ return 'Today is selected dynamically from training, interviews, medical care, world news and unexpected encounters.'
+};
+const _gauntletLiveCalendar65=gauntletLiveCalendar;
+gauntletLiveCalendar=function(){
+ const c=liveLoad();if(!c)return gauntletLiveHome();const w=liveFounder(c.active),f=liveFeud(c),r=liveFeudOpponent(c);
+ render(`<section class="panel live-calendar-screen"><div class="live-calendar-top"><button class="shell-back" onclick="home()">← MAIN MENU</button><button class="shell-back" onclick="gauntletLiveHome()">CAREER MENU</button></div><div class="tv-kicker">MONTH ${c.month} · WEEK ${liveMonthWeek(c)} · ${liveCurrentSupercard(c).toUpperCase()}</div><h1>GAUNTLET LIVE</h1><div class="live-career-dashboard"><div class="live-career-hero">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<div><small>ACTIVE WRESTLER</small><b>${w.name}</b><span>${c.wins}-${c.losses} record · ${c.stable.length} stable members</span></div></div><div class="live-mini-stats"><span><small>MOMENTUM</small><b>${c.momentum}</b></span><span><small>POPULARITY</small><b>${c.popularity}</b></span><button onclick="gauntletLiveStable()">MANAGE STABLE</button></div></div>${f?`<div class="live-feud-banner calendar-feud"><div>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}</div><span><small>CURRENT FEUD</small><b>${w.name} vs ${r.name}</b><em>${liveCurrentSupercard(c)} · Intensity ${f.intensity}%</em></span><div>${imageWithFallback(r,'portrait','art-portrait','matchPortrait')}</div></div>`:''}<div class="live-week-strip">${LIVE_DAYS.map((d,i)=>`<div class="live-day ${i<c.day?'complete':''} ${i===c.day?'current':''} ${i===6&&liveIsSupercard({...c,day:i})?'supercard':''}"><small>${d.slice(0,3).toUpperCase()}</small><b>${i===0?'M':i===3?'T':i+1}</b><span>${liveDayLabel(c,i)}</span></div>`).join('')}</div><div class="live-today"><small>TODAY · ${LIVE_DAYS[c.day].toUpperCase()}</small><h2>${liveDayLabel(c,c.day)}</h2><p>${liveDayDescription(c)}</p><button class="btn live-primary" onclick="gauntletLiveBeginDay()">BEGIN</button></div></section>`)
+};
+function liveSimulateWorld(c){
+ const pool=liveShuffle(liveOtherPool(c)).slice(0,6),stories=[];
+ for(let i=0;i+1<pool.length;i+=2){const a=pool[i],b=pool[i+1],winner=Math.random()<.5?a:b,loser=winner===a?b:a;stories.push({a:a.id,b:b.id,winner:winner.id,text:`${winner.name} defeated ${loser.name} in a closely watched match.`})}
+ if(Math.random()<.55){const a=one(pool),b=one(pool.filter(x=>x.id!==a.id));stories.push({a:a.id,b:b.id,text:`Tension exploded when ${a.name} confronted ${b.name} after the bell.`})}
+ c.world.worldStories=stories;stories.forEach(s=>liveAddNews(c,s.text));return stories
+}
+function gauntletLiveShowIntro(){
+ const c=liveLoad(),item=livePlanItem(c),stories=liveSimulateWorld(c),venue=one(VENUES),attendance=Math.floor(rnd(11000,20500)).toLocaleString();liveSave(c);
+ const card=stories.slice(0,2).map(s=>`<li>${s.text}</li>`).join('');
+ render(`<section class="panel live-show-intro"><div class="show-announcer-art">${npcImage('ethan-brooks','full')}</div><div class="show-intro-copy"><div class="tv-kicker">LIVE FROM ${venue.toUpperCase()} · ${attendance} IN ATTENDANCE</div><h1>${liveIsSupercard(c)?liveCurrentSupercard(c).toUpperCase():liveShowName(c)}</h1><p class="show-intro-line">Ethan Brooks welcomes the audience to tonight's broadcast.</p><div class="show-card-list"><small>ALSO TONIGHT</small><ul>${card||'<li>Major developments from across the Gauntlet world.</li>'}</ul><b>YOUR SEGMENT · ${liveIsSupercard(c)?'FEUD FINALE':item.type==='segment'?liveSegmentTitle(item.segment):item.type.toUpperCase()+' MATCH'}</b></div><button class="btn live-primary" onclick="gauntletLiveRunShowSegment()">START THE SHOW</button></div></section>`)
+}
+function gauntletLiveRunShowSegment(){const c=liveLoad(),item=livePlanItem(c);if(liveIsSupercard(c)||['singles','tag'].includes(item.type))return gauntletLiveMatchCard65();if(item.type==='multi')return gauntletLiveMultiMatch(item);return gauntletLiveStorySegment(item.segment)}
+gauntletLiveBeginDay=function(){const c=liveLoad();if(!c)return gauntletLiveHome();if(c.day===0||c.day===3||liveIsSupercard(c))return gauntletLiveShowIntro();if(c.world.injury)return gauntletLiveDoctorVisit();return gauntletLiveDynamicDay()};
+function gauntletLiveDynamicDay(){
+ const c=liveLoad(),f=liveFeud(c),r=liveFeudOpponent(c),roll=Math.random();
+ if(c.world.katieThisWeek<2&&(roll<.34||c.day===1)){c.world.katieThisWeek++;liveSave(c);return gauntletLiveKatieInterview()}
+ if(roll<.55)return gauntletLiveWorldRecap();
+ if(roll<.76)return gauntletLiveTraining65();
+ return gauntletLiveEncounter65();
+}
+function gauntletLiveKatieInterview(){
+ const c=liveLoad(),r=liveFeudOpponent(c),last=c.world.lastResult;
+ const qs=[
+  `${r.name} says you are avoiding a decisive confrontation. What is your response?`,
+  last?`${last.win?'You won':'You lost'} your last match. What did that result prove about your path to ${liveCurrentSupercard(c)}?`:`What message do you want to send before ${liveCurrentSupercard(c)}?`,
+  `Your rivalry with ${r.name} is becoming personal. Where does competition end and hatred begin?`,
+  `The rest of the roster is watching this feud closely. Do you feel pressure to represent your stable?`,
+  `Would defeating ${r.name} and recruiting them change the balance of power in Gauntlet Live?`
+ ];
+ render(`<section class="panel live-world-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">EXCLUSIVE · BACKSTAGE</div><h1>KATIE MORGAN INTERVIEW</h1><div class="live-npc-scene large">${npcImage('katie-morgan','full')}<div><small>BACKSTAGE INTERVIEWER</small><h2>Katie Morgan</h2><p>“${one(qs)}”</p></div></div><div class="live-choice-grid"><button onclick="gauntletLiveResolveDynamic('popularity',8,'You answered with confidence.')"><b>CONFIDENT</b><span>Popularity +8</span></button><button onclick="gauntletLiveResolveDynamic('momentum',8,'You delivered a direct warning.')"><b>DIRECT WARNING</b><span>Momentum +8</span></button><button onclick="gauntletLiveResolveDynamic('feud',12,'You made the rivalry deeply personal.')"><b>MAKE IT PERSONAL</b><span>Feud +12</span></button></div></section>`)
+}
+function gauntletLiveWorldRecap(){
+ const c=liveLoad();if(!c.world.worldStories.length)liveSimulateWorld(c);const stories=c.world.worldStories;
+ render(`<section class="panel live-world-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">AROUND THE GAUNTLET</div><h1>WORLD RECAP</h1><div class="live-commentary-duo"><div>${npcImage('mike-sullivan','portrait')}<b>Mike Sullivan</b><p>${stories[0]?.text||'The wrestling world continues to move around your career.'}</p></div><div>${npcImage('johnny-cannon','portrait')}<b>Johnny Cannon</b><p>${stories[1]?.text||'Every result creates a new opportunity—and a new enemy.'}</p></div></div><div class="live-world-results">${stories.slice(2).map(s=>`<article><span>${s.a?imageWithFallback(liveFounder(s.a),'portrait','art-portrait','matchPortrait'):''}</span><p>${s.text}</p>${s.b?`<span>${imageWithFallback(liveFounder(s.b),'portrait','art-portrait','matchPortrait')}</span>`:''}</article>`).join('')}</div><button class="btn live-primary" onclick="gauntletLiveResolveDynamic('popularity',3,'You studied the wider wrestling world.')">CONTINUE</button></section>`)
+}
+function gauntletLiveTraining65(){render(`<section class="panel live-world-screen"><div class="tv-kicker">PERFORMANCE CENTRE</div><h1>TRAINING SESSION</h1><div class="live-npc-scene large">${npcImage('coach-hank-dawson','full')}<div><small>PERFORMANCE COACH</small><h2>Coach Hank Dawson</h2><p>“Pick one area. We improve it properly or we do not waste the day.”</p></div></div><div class="live-choice-grid"><button onclick="gauntletLiveResolveDynamic('power',1,'Power training complete.')"><b>POWER DRILLS</b><span>Power +1</span></button><button onclick="gauntletLiveResolveDynamic('speed',1,'Speed training complete.')"><b>SPEED CIRCUIT</b><span>Speed +1</span></button><button onclick="gauntletLiveResolveDynamic('technique',1,'Technical training complete.')"><b>TECHNICAL CLINIC</b><span>Technique +1</span></button></div></section>`)}
+function gauntletLiveEncounter65(){const people=['ava-cross','raymond-briggs','leon-ward','scarlett-storm','preston-cole','graham-archer','tommy-sparks'],id=one(people),p=npc(id);render(`<section class="panel live-world-screen"><div class="tv-kicker">UNEXPECTED ENCOUNTER</div><h1>${p.role.toUpperCase()}</h1><div class="live-npc-scene large">${npcImage(id,'full')}<div><small>${p.role}</small><h2>${p.name}</h2><p>${id==='raymond-briggs'?'Raymond offers a detailed match plan for your next appearance.':id==='leon-ward'?'Security has learned that your rival may be planning another attack.':id==='ava-cross'?'Ava wants a short clip for the fans before the next live show.':'A new opportunity could change the direction of your career.'}</p></div></div><div class="live-choice-grid"><button onclick="gauntletLiveResolveDynamic('momentum',6,'The encounter increased your momentum.')"><b>ACCEPT</b><span>Momentum +6</span></button><button onclick="gauntletLiveResolveDynamic('popularity',6,'The encounter increased your popularity.')"><b>MAKE IT PUBLIC</b><span>Popularity +6</span></button></div></section>`)}
+function gauntletLiveResolveDynamic(type,val,msg){const c=liveLoad();if(type==='feud'){const f=liveFeud(c);if(f)f.intensity=liveClamp(f.intensity+val,0,100)}else if(['power','speed','technique','charisma','recovery'].includes(type)){const p=liveProgress(c.active,c);p.stats[type]=Math.min(p.caps[type],p.stats[type]+val)}else c[type]=liveClamp((c[type]||0)+val,0,100);liveAwardXp(c,c.active,35,'Career activity');liveAdvanceDay(c);liveSave(c);render(`<section class="panel live-day-complete"><div class="tv-kicker">DAY COMPLETE</div><h1>${msg.toUpperCase()}</h1><div class="live-result-cast">${npcImage(type==='feud'?'katie-morgan':'veronica-vale','portrait')}</div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`)}
+function gauntletLiveDoctorVisit(){const c=liveLoad();render(`<section class="panel live-world-screen"><div class="tv-kicker">MEDICAL EVALUATION</div><h1>DOCTOR'S ORDERS</h1><div class="live-npc-scene large">${npcImage('dr-lena-hart','full')}<div><small>MEDICAL DIRECTOR</small><h2>Dr. Lena Hart</h2><p>“The injury is manageable, but the decision you make now will affect the next show.”</p></div></div><div class="live-choice-grid"><button onclick="gauntletLiveClearInjury('rest')"><b>REST & RECOVER</b><span>Momentum -3 · safer return</span></button><button onclick="gauntletLiveClearInjury('push')"><b>COMPETE THROUGH IT</b><span>Momentum +5 · future risk</span></button></div></section>`)}
+function gauntletLiveClearInjury(type){const c=liveLoad();c.world.injury=null;c.momentum=liveClamp(c.momentum+(type==='push'?5:-3),0,100);liveAdvanceDay(c);liveSave(c);gauntletLiveCalendar()}
+function gauntletLiveStorySegment(seg){
+ const c=liveLoad(),r=liveFeudOpponent(c),player=liveFounder(c.active);
+ const npcId=seg==='contract-signing'?'veronica-vale':seg==='backstage-attack'?'leon-ward':seg==='commentary-confrontation'?'mike-sullivan':seg==='interview'?'katie-morgan':'katie-morgan';
+ const copy={promo:`${player.name} and ${r.name} exchange final warnings in the ring.`, 'backstage-attack':`${r.name} ambushes ${player.name} in the arena corridor before security arrives.`,interview:`Katie Morgan attempts to get answers as ${r.name} interrupts the interview.`, 'contract-signing':`Veronica Vale oversees the signing for ${liveCurrentSupercard(c)}.`, 'commentary-confrontation':`${r.name} joins commentary and provokes ${player.name} from ringside.`, 'locker-room':`A confrontation erupts inside the locker room and divides the roster.`, 'video-message':`${r.name} sends a threatening message from an undisclosed location.`, 'medical-angle':`The rivalry targets an existing weakness and forces a medical update.`}[seg];
+ render(`<section class="panel live-story-segment"><div class="story-character-left">${npcImage(npcId,'full')}</div><div class="story-centre"><div class="tv-kicker">${liveShowName(c)} · ${liveSegmentTitle(seg).toUpperCase()}</div><h1>${liveSegmentTitle(seg)}</h1><div class="story-rival-images"><div>${imageWithFallback(player,'full','art-full','quickMatch')}<b>${player.name}</b></div><div>${imageWithFallback(r,'full','art-full','quickMatch')}<b>${r.name}</b></div></div><p>${copy}</p><div class="live-choice-grid"><button onclick="gauntletLiveResolveSegment('${seg}','calm')"><b>STAY CONTROLLED</b><span>Popularity +6</span></button><button onclick="gauntletLiveResolveSegment('${seg}','fight')"><b>ESCALATE</b><span>Momentum +6 · Feud +10</span></button></div></div></section>`)
+}
+function gauntletLiveResolveSegment(seg,choice){const c=liveLoad(),f=liveFeud(c);if(choice==='fight'){c.momentum=liveClamp(c.momentum+6,0,100);if(f)f.intensity=liveClamp(f.intensity+10,0,100)}else c.popularity=liveClamp(c.popularity+6,0,100);if(seg==='backstage-attack'&&Math.random()<.35)c.world.injury={severity:'minor'};liveAwardXp(c,c.active,45,'Television segment');liveAdvanceDay(c);liveSave(c);gauntletLiveCalendar()}
+function gauntletLiveMatchCard65(){
+ const c=liveLoad(),item=livePlanItem(c),player=liveFounder(c.active),isSC=liveIsSupercard(c),r=liveFeudOpponent(c);
+ let type=isSC?'singles':item.type,opponents=isSC?[r.id]:item.opponents,partner=item.partner;
+ c.pending={opponent:opponents[0],opponents,type,partner,isSupercard:isSC};liveSave(c);
+ const roster=[player,...(partner?[liveFounder(partner)]:[]),...opponents.map(liveFounder)];
+ render(`<section class="panel live-match-card"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">${isSC?liveCurrentSupercard(c).toUpperCase():liveShowName(c)}</div><h1>${isSC?'FEUD FINALE':type==='tag'?'TAG TEAM MATCH':'FEATURED SINGLES MATCH'}</h1><div class="live-match-lineup ${type}">${roster.map((w,i)=>`<div>${imageWithFallback(w,'full','art-full','quickMatch')}<small>${i===0?'YOUR WRESTLER':i===1&&partner?'YOUR PARTNER':'OPPONENT'}</small><b>${w.name}</b></div>`).join('')}</div><div class="live-npc-scene compact">${npcImage('raymond-briggs','portrait')}<div><small>MATCH PRODUCER</small><p>“Use the broadcast decisions to control the pace. The result will shape what happens tomorrow.”</p></div></div><button class="btn live-primary" onclick="gauntletLiveLaunchBroadcast65()">BEGIN MATCH BROADCAST</button></section>`)
+}
+function gauntletLiveLaunchBroadcast65(){const c=liveLoad(),p=c.pending,player=liveFounder(c.active);const team=p.type==='tag'?[player,liveFounder(p.partner)]:[player],opp=p.opponents.map(liveFounder);S={team,opp,streak:2,chem:0,momentum:Math.round(c.momentum/20),wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,exhibition:false,quickType:null,quickPlayer:null,quickSelections:[],manager:c.world.manager?MANAGERS.find(m=>m.id===c.world.manager):null,nextMatchBonus:c.world.nextMatchBonus||0,eventHistory:[],interviewCount:0,liveMode:true};c.world.nextMatchBonus=0;liveSave(c);match()}
+function gauntletLiveMultiMatch(item){const c=liveLoad(),player=liveFounder(c.active),opps=item.opponents.map(liveFounder);c.pending={opponent:opps[0].id,opponents:item.opponents,type:'multi',isSupercard:false};liveSave(c);render(`<section class="panel live-match-card"><div class="tv-kicker">${liveShowName(c)} · MULTI-PERSON SHOWCASE</div><h1>${opps.length===2?'TRIPLE THREAT':'FATAL FOUR-WAY'}</h1><div class="live-match-lineup multi">${[player,...opps].map(w=>`<div>${imageWithFallback(w,'full','art-full','quickMatch')}<b>${w.name}</b></div>`).join('')}</div><p>Choose the central strategy for this chaotic match.</p><div class="live-choice-grid"><button onclick="gauntletLiveResolveMulti('patient')"><b>WAIT FOR AN OPENING</b><span>Safer approach</span></button><button onclick="gauntletLiveResolveMulti('attack')"><b>CONTROL THE CHAOS</b><span>Higher momentum</span></button></div></section>`)}
+function gauntletLiveResolveMulti(style){const c=liveLoad(),chance=.48+c.momentum/250+(style==='patient'?.07:0),win=Math.random()<chance,opp=liveFounder(c.pending.opponent);c.wins+=win?1:0;c.losses+=win?0:1;c.momentum=liveClamp(c.momentum+(win?9:-7),0,100);c.world.lastResult={win,opponent:opp.id,week:c.week,supercard:false};liveAwardXp(c,c.active,win?110:55,'Multi-person match');liveAdvanceDay(c);liveSave(c);render(`<section class="panel live-day-complete ${win?'live-win':'live-loss'}"><div class="tv-kicker">MULTI-PERSON RESULT</div><h1>${win?'VICTORY':'DEFEAT'}</h1>${imageWithFallback(win?liveFounder(c.active):opp,'victory','art-full','resultVictory')}<p>${win?'You survived the chaos and scored the deciding fall.':'Another wrestler claimed the deciding fall.'}</p><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`)}
+const _liveCompleteBroadcast65=liveCompleteBroadcast;
+liveCompleteBroadcast=function(win){
+ const c=liveLoad();if(!c||!c.pending)return gauntletLiveCalendar();const p=c.pending,opp=liveFounder(p.opponent),f=liveFeud(c),wasSC=p.isSupercard;
+ if(win){c.wins++;c.momentum=liveClamp(c.momentum+(wasSC?16:10),0,100);if(f)f.playerWins++}else{c.losses++;c.momentum=liveClamp(c.momentum-10,0,100);if(f)f.rivalWins++}
+ if(f)f.intensity=liveClamp(f.intensity+(win?8:10),0,100);
+ const xpAmount=win?(wasSC?250:120):(wasSC?80:50);c.lastXpAward=liveAwardXp(c,c.active,xpAmount,win?'Broadcast victory':'Broadcast experience');c.world.lastResult={win,opponent:opp.id,week:c.week,supercard:wasSC};
+ if(!wasSC&&Math.random()<.14)c.world.injury={severity:'minor'};
+ c.history.unshift({week:c.week,day:c.day,opponent:opp.id,win,supercard:wasSC,xp:xpAmount,date:new Date().toISOString()});c.history=c.history.slice(0,60);
+ if(wasSC){S.liveMode=false;return gauntletLiveSupercardResult(win,opp.id)}
+ liveAdvanceDay(c);liveSave(c);S.liveMode=false;gauntletLiveFinishMatch65(win,opp.id)
+};
+function gauntletLiveFinishMatch65(win,oppId){const c=liveLoad(),opp=liveFounder(oppId),xp=c.lastXpAward||{amount:0};c.lastXpAward=null;liveSave(c);render(`<section class="panel live-day-complete ${win?'live-win':'live-loss'}"><div class="tv-kicker">MATCH RESULT</div><h1>${win?'VICTORY':'DEFEAT'}</h1><div class="live-result-images">${imageWithFallback(liveFounder(c.active),win?'victory':'full','art-full','resultVictory')}${imageWithFallback(opp,win?'full':'victory','art-full','resultVictory')}</div><p>${win?`${liveFounder(c.active).name} defeated ${opp.name}.`:`${opp.name} defeated ${liveFounder(c.active).name}.`}</p><div class="live-xp-award"><b>+${xp.amount} XP</b><span>${c.world.injury?'An injury will require medical attention tomorrow.':'The world will react tomorrow.'}</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`)}
+function gauntletLiveSupercardResult(win,oppId){
+ const c=liveLoad(),opp=liveFounder(oppId),name=liveCurrentSupercard(c);if(win&&!c.stable.includes(oppId))c.stable.push(oppId);c.world.lastFeud={opponent:oppId,won:win,supercard:name};c.world.feud=null;c.world.monthPlan=null;c.world.katieThisWeek=0;liveAdvanceDay(c);liveSave(c);
+ render(`<section class="panel live-supercard-result ${win?'live-win':'live-loss'}"><div class="supercard-result-art">${imageWithFallback(liveFounder(c.active),win?'victory':'full','art-full','resultVictory')}${imageWithFallback(opp,win?'full':'victory','art-full','resultVictory')}</div><div><div class="tv-kicker">${name.toUpperCase()} · FEUD COMPLETE</div><h1>${win?'FEUD WON':'FEUD LOST'}</h1><p>${win?`${opp.name} has been unlocked and added to your stable.`:`${opp.name} won the decisive match. The television tally does not override the Supercard result.`}</p><button class="btn live-primary" onclick="gauntletLiveMonthRosterChoice()">CHOOSE NEXT MONTH'S WRESTLER</button></div></section>`)
+}
+function gauntletLiveMonthRosterChoice(){const c=liveLoad();render(`<section class="panel live-founder-screen"><div class="tv-kicker">NEW MONTH · NEW OPPORTUNITY</div><h1>WHO REPRESENTS YOUR STABLE?</h1><p class="sub">Continue with your current wrestler or change to any unlocked character.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=liveFounder(id);return `<button class="live-founder-card" onclick="gauntletLiveStartNextMonth('${id}')">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${id===c.active?'CURRENT WRESTLER':'STABLE MEMBER'}</small><b>${w.name}</b><em>${w.signature}</em></span></button>`}).join('')}</div></section>`)}
+function gauntletLiveStartNextMonth(id){const c=liveLoad();c.active=id;c.world.katieThisWeek=0;const opp=livePickDifferent(c,c.stable);liveStartFeud(c,opp.id,'A new monthly rivalry begins.');liveGenerateMonthlyPlan(c);liveSave(c);gauntletLiveCalendar()}
