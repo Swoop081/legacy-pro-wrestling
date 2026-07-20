@@ -1529,3 +1529,29 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
 @keyframes psychologyIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 @keyframes meterPulse{50%{transform:scale(1.015)}}
 @media(max-width:620px){.psychology-deltas{grid-template-columns:1fr}.psychology-result{padding:12px}.psychology-result h2{font-size:1.35rem}}
+
+/* LEGACY Pro Wrestling v8.1.2 Build 1 — Match Psychology 2.0 UI foundation */
+body.match-broadcast-view > header{display:none!important}
+body.match-broadcast-view main{padding-top:0!important}
+body.match-broadcast-view .match-ui-v2{min-height:100vh;border-top:0!important}
+
+.story-decision.psychology-v2-foundation:before{content:none!important;display:none!important}
+.story-decision.psychology-v2-foundation{padding-top:1rem}
+.story-decision.psychology-v2-foundation>.your-call-label{display:table;margin:-1.7rem auto .75rem;background:#ffd15b;color:#120d04;padding:5px 15px;font:italic 16px Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;letter-spacing:2px;transform:skew(-7deg);box-shadow:0 3px 0 rgba(0,0,0,.35)}
+.story-decision.psychology-v2-foundation>h2{margin:.2rem 0 .35rem}
+.story-decision.psychology-v2-foundation>p{margin:.25rem auto .8rem;max-width:760px}
+.choice-grid.psychology-neutral{gap:.7rem}
+.choice-grid.psychology-neutral .psychology-choice{position:relative;text-align:left;min-height:96px!important;padding:1rem 1.1rem!important;border:1px solid #4f4f55!important;border-left:3px solid #77777f!important;background:linear-gradient(180deg,#1b1b1f,#111114)!important;box-shadow:none!important;color:#fff!important}
+.choice-grid.psychology-neutral .psychology-choice:hover,.choice-grid.psychology-neutral .psychology-choice:focus{border-color:#a5a5ad!important;border-left-color:#d6b94c!important;background:linear-gradient(180deg,#232329,#151519)!important;transform:translateY(-1px)}
+.choice-grid.psychology-neutral .psychology-choice b{display:block;color:#fff!important;font-size:1rem;letter-spacing:.04em;margin:0 0 .35rem}
+.choice-grid.psychology-neutral .psychology-choice small{display:block;color:#b9b9c0!important;font-size:.78rem;line-height:1.35;margin:0!important}
+.choice-grid.psychology-neutral .guidance-badge,.choice-grid.psychology-neutral .move-type{display:none!important}
+
+@media(max-width:700px){
+ body.match-broadcast-view .match-ui-v2{padding-top:12px!important}
+ .story-decision.psychology-v2-foundation{padding:1rem .8rem .8rem}
+ .choice-grid.psychology-neutral{gap:.55rem}
+ .choice-grid.psychology-neutral .psychology-choice{min-height:82px!important;padding:.8rem .9rem!important}
+ .choice-grid.psychology-neutral .psychology-choice b{font-size:.9rem}
+ .choice-grid.psychology-neutral .psychology-choice small{font-size:.7rem}
+}
