@@ -1180,3 +1180,33 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
     font-size:1.5rem!important;
   }
 }
+
+
+/* VERSION 8.0.13 — lower the feud-origin VS badge to the portrait baseline. */
+.lpw-feud-origin .origin-matchup-811>strong{
+  align-self:end!important;
+  margin-bottom:0!important;
+  transform:none!important;
+}
+@media(max-width:700px){
+  .lpw-feud-origin .origin-matchup-811>strong{
+    margin-bottom:0!important;
+  }
+}
+
+/* VERSION 8.0.14 — lock VS badge to the exact bottom edge of the feud portrait row. */
+.lpw-feud-origin .origin-matchup.origin-matchup-811{
+  position:relative!important;
+}
+.lpw-feud-origin .origin-matchup-811>strong{
+  position:absolute!important;
+  left:50%!important;
+  bottom:0!important;
+  top:auto!important;
+  right:auto!important;
+  align-self:auto!important;
+  justify-self:auto!important;
+  margin:0!important;
+  transform:translateX(-50%)!important;
+  z-index:20!important;
+}
