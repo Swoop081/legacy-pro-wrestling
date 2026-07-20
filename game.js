@@ -346,7 +346,19 @@ const ACTION_META={
 function decisionPhase(){if(M.phaseIndex>=4||M.playerMom>=67)return 'finish';if(M.playerControl<42)return 'crisis';return M.phaseIndex<=1?'opening':'control'}
 function attributeValue(w,action){const meta=ACTION_META[action]||ACTION_META.control;return meta.attrs.reduce((s,k)=>s+(Number(w[k])||70),0)/meta.attrs.length}
 function actionOrder(phase){return phase==='crisis'?['comeback','survive','risk','control','comeback']:phase==='finish'?['finisher','risk','pressure','finisher','control']:phase==='opening'?['risk','control','pressure','risk','control']:['pressure','risk','control','pressure','risk']}
-function buildPersonalOptions(w,phase){const names=(WRESTLER_DECISIONS[w.id]||WRESTLER_DECISIONS['dave-maddox'])[['opening','control','crisis','finish'].indexOf(phase)]||[];const actions=actionOrder(phase);return names.map((name,i)=>({action:actions[i%actions.length],name,desc:ACTION_META[actions[i%actions.length]].desc,exclusive:true,attr:Math.round(attributeValue(w,actions[i%actions.length]))}))}
+const EXPANDED_DECISION_NAMES={
+ opening:['Take the First Step','Set the Tempo','Claim the Spotlight','Test Their Nerve','Own the Opening','Make Them React'],
+ control:['Dictate the Exchange','Cut Off the Ring','Turn Up the Pressure','Change the Rhythm','Force the Mistake','Make the Moment Count'],
+ crisis:['Refuse to Fold','Create an Escape','Risk the Counter','Find Another Gear','Break Their Momentum','Survive the Storm'],
+ finish:['Steal the Finish','End It With Style','Commit to the Closing Shot','Make It Picture Perfect','Leave No Doubt','Go for Everything']
+};
+function buildPersonalOptions(w,phase){
+ const base=(WRESTLER_DECISIONS[w.id]||WRESTLER_DECISIONS['dave-maddox'])[['opening','control','crisis','finish'].indexOf(phase)]||[];
+ const profile=profileFor(w),flavour=(profile?.archetype||'').split(' ')[0];
+ const expanded=(EXPANDED_DECISION_NAMES[phase]||[]).map((name,i)=>i%2===0?`${flavour} ${name}`:name);
+ const names=[...new Set([...base,...expanded])];const actions=actionOrder(phase);
+ return names.map((name,i)=>({action:actions[i%actions.length],name,desc:'',exclusive:true,attr:Math.round(attributeValue(w,actions[i%actions.length]))}))
+}
 function freshOptions(pool,count=3){M.decisionSeen=M.decisionSeen||[];let fresh=pool.filter(x=>!M.decisionSeen.includes(x.name));if(fresh.length<count)fresh=pool;const chosen=pick(fresh,count);chosen.forEach(x=>M.decisionSeen.push(x.name));M.decisionSeen=M.decisionSeen.slice(-18);return chosen}
 function decisionChance(w,o,action){const edge=(attributeValue(w,action)-((o.resilience+o.technique)/2))/250;const control=(M.playerControl-50)/220;const base={risk:.56,control:.74,pressure:.69,comeback:.59,survive:.78,finisher:.50,tag:.76}[action]||.65;return clamp(base+edge+control,.28,.91)}
 function choiceCommentary(choice,w,o,success){const label=choice.name;if(success){const pools=[`${w.name} chooses ${label}—and it works perfectly!`,`${label} becomes the moment that changes the match for ${w.name}!`,`${w.name} makes this match unmistakably his own with ${label}!`];return one(pools)}const pools=[`${w.name} commits to ${label}, but ${o.name} has it scouted!`,`${label} nearly changes everything—until ${o.name} shuts the door.`,`${w.name} tries to impose his identity with ${label}, but the timing is wrong.`];return one(pools)}
@@ -446,7 +458,7 @@ function renderMatch(){
 }
 function decisionHTML(){
  if(M.decisionOutcome){const x=M.decisionOutcome,sign=n=>n>0?`+${n}`:`${n}`;return `<div class="story-decision decision-outcome outcome-${x.key}"><small>YOUR CALL</small><h2>${x.label}</h2><p>${x.summary}</p><div class="outcome-deltas"><span><b>${sign(x.score)}</b><small>MATCH SCORE</small></span><span><b>${sign(x.control)}</b><small>CONTROL</small></span><span><b>${sign(x.crowd)}</b><small>CROWD</small></span></div></div>`}
- const d=getDecision();M.currentDecision=d;return `<div class="story-decision"><small>YOUR CALL</small><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid">${d.options.map((x,i)=>`<button class="choice" onclick="storyChoice('choice-${i}')"><b>${x.name}</b><small>${x.desc}</small></button>`).join('')}</div></div>`}
+ const d=getDecision();M.currentDecision=d;return `<div class="story-decision"><small>YOUR CALL</small><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid">${d.options.map((x,i)=>`<button class="choice choice-name-only" onclick="storyChoice('choice-${i}')"><b>${x.name}</b></button>`).join('')}</div></div>`}
 
 function getDecision(){
  const p=S.team[M.activeP],partner=S.team.length>1?S.team[1-M.activeP]:null,phase=decisionPhase(),situation=one(DECISION_SITUATIONS[phase]);
@@ -510,11 +522,13 @@ function attemptAIFinisher(playerSide){const attacker=eventWrestler(playerSide?'
  if(success){setSpotlight(attacker);addMatchScore(playerSide?'player':'opp',15);heatCrowd(12,playerSide?'player':'opp');addBroadcast('finisher',`${attacker.name} lands ${attacker.finisher} on ${defender.name}!`,{highlight:true,weight:2.8});shiftControl(playerSide?12:-12,`${attacker.name} landed ${attacker.finisher}.`);if(Math.random()<.66)createNearFall(playerSide)}else{addMatchScore(playerSide?'player':'opp',-8);addMatchScore(playerSide?'opp':'player',5);heatCrowd(7,playerSide?'opp':'player');addBroadcast('counter',`${defender.name} escapes ${attacker.finisher} at the last possible second!`,{highlight:true,weight:2.2});}
 }
 function psychologyTier(chance,roll){
- const margin=chance-roll;
- if(margin>=.22)return {key:'major-success',label:'MAJOR SUCCESS',mult:1.45};
- if(margin>=0)return {key:'success',label:'SUCCESS',mult:1};
- if(margin>=-.13)return {key:'mixed',label:'MIXED RESULT',mult:.45};
- if(margin>=-.28)return {key:'failure',label:'FAILURE',mult:-.65};
+ // Match Psychology 2.2: outcomes are intentionally uncertain. Skill nudges the roll,
+ // but no option is a guaranteed success.
+ const adjusted=clamp(roll-((chance-.60)*.45),0,1);
+ if(adjusted<.15)return {key:'major-success',label:'MAJOR SUCCESS',mult:1.45};
+ if(adjusted<.50)return {key:'success',label:'SUCCESS',mult:1};
+ if(adjusted<.75)return {key:'mixed',label:'MIXED RESULT',mult:.45};
+ if(adjusted<.95)return {key:'failure',label:'FAILURE',mult:-.65};
  return {key:'major-failure',label:'MAJOR FAILURE',mult:-1.1};
 }
 function psychologyImpact(action){return ({
@@ -532,10 +546,15 @@ function storyChoice(token){
  if(!M||!M.waiting||M.decisionOutcome)return;
  const choice=M.currentDecision?.options?.find(x=>x.token===token);if(!choice)return;
  const p=S.team[M.activeP],o=S.opp[M.activeO],id=choice.action;
- let chance=decisionChance(p,o,id);if(!S.exhibition&&S.streak===0)chance=Math.max(.72,chance);
+ let chance=decisionChance(p,o,id);if(!S.exhibition&&!S.liveMode&&S.streak===0)chance=Math.max(.72,chance);
  const tier=psychologyTier(chance,Math.random()),base=psychologyImpact(id);
  let score=Math.round(base.score*tier.mult),control=Math.round(base.control*tier.mult),crowd=Math.round(base.crowd*tier.mult);
- if(tier.key==='mixed'){score=Math.max(1,score);control=Math.max(0,control);crowd=Math.max(0,crowd)}
+ if(tier.key==='mixed'){
+  // Mixed outcomes always contain a real trade-off rather than three small gains.
+  if(id==='risk'||id==='finisher'||id==='comeback'){score=Math.max(2,score);crowd=Math.max(4,crowd);control=-Math.max(3,Math.round(base.control*.55))}
+  else if(id==='control'||id==='survive'){control=Math.max(3,control);score=-Math.max(2,Math.round(base.score*.45));crowd=Math.max(1,crowd)}
+  else {score=Math.max(2,score);control=Math.max(2,control);crowd=-Math.max(2,Math.round(base.crowd*.5))}
+ }
  if(id==='tag'&&S.team.length>1&&tier.mult>0){M.activeP=1-M.activeP;M.tags++}
  if(id==='finisher')M.finishers++;
  addMatchScore('player',score,'decision');
@@ -1325,7 +1344,7 @@ function lpwAttrNames(action){return (ACTION_META[action]?.attrs||[]).map(x=>x.c
 function lpwGuidance(action){return ({risk:'Huge swing if it lands; failure can hand control away.',control:'Reliable way to steady the match and protect your position.',pressure:'Builds control without committing everything to one moment.',comeback:'Can reverse a crisis quickly; failure may deepen the danger.',survive:'Safer counter that stabilises the match for a smaller reward.',finisher:'Match-ending potential with the highest consequences if countered.',tag:'Uses teamwork and fresh energy to change the match.'})[action]||'Changes the next exchange.'}
 decisionHTML=function(){
  if(M.decisionOutcome){const x=M.decisionOutcome,sign=n=>n>0?`+${n}`:`${n}`;return `<div class="story-decision psychology-v2-foundation decision-outcome outcome-${x.key}"><div class="your-call-label">YOUR CALL</div><h2>${x.label}</h2><p>${x.summary}</p><div class="outcome-deltas"><span><b>${sign(x.score)}</b><small>MATCH SCORE</small></span><span><b>${sign(x.control)}</b><small>CONTROL</small></span><span><b>${sign(x.crowd)}</b><small>CROWD</small></span></div><div class="outcome-progress">Updating the live match…</div></div>`}
- const d=getDecision();M.currentDecision=d;return `<div class="story-decision psychology-v2-foundation"><div class="your-call-label">YOUR CALL</div><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid psychology-neutral">${d.options.map((x,i)=>`<button class="choice psychology-choice" onclick="storyChoice('choice-${i}')"><b>${x.name}</b><small>${x.desc}</small></button>`).join('')}</div></div>`
+ const d=getDecision();M.currentDecision=d;return `<div class="story-decision psychology-v2-foundation"><div class="your-call-label">YOUR CALL</div><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid psychology-neutral">${d.options.map((x,i)=>`<button class="choice psychology-choice choice-name-only" onclick="storyChoice('choice-${i}')"><b>${x.name}</b></button>`).join('')}</div></div>`
 };
 
 function lpwEnsureDirector(c){liveEnsureWorld(c);c.world.director=c.world.director||{lastNpc:null,lastType:null,seen:{},managerOfferMonth:0};return c.world.director}

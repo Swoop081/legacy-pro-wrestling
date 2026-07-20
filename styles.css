@@ -1743,3 +1743,19 @@ body.career-view main > section.panel::before,body.career-view main > section.pa
 .outcome-progress{margin-top:12px;color:#aeb2ba;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;}
 @keyframes scorePulse{0%{transform:scale(1)}45%{transform:scale(1.22)}100%{transform:scale(1)}}
 @keyframes meterPulse{0%{filter:brightness(1)}45%{filter:brightness(1.65)}100%{filter:brightness(1)}}
+
+/* v8.2.3 Match Psychology 2.2 — name-only decision cards */
+.story-decision .choice-grid .choice.choice-name-only,
+.story-decision .choice-grid .psychology-choice.choice-name-only {
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 22px 26px;
+}
+.story-decision .choice-grid .choice.choice-name-only b,
+.story-decision .choice-grid .psychology-choice.choice-name-only b {
+  font-size: clamp(1.15rem, 4.4vw, 1.55rem);
+  line-height: 1.05;
+  letter-spacing: .02em;
+}

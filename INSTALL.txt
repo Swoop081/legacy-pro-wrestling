@@ -1,1 +1,1 @@
-Replace the matching files in the project root with the files from this patch. Keep all existing assets and folders.
+Replace the matching files in the current LEGACY project root with the files in this patch. Preserve all existing assets and the root-level .nojekyll file.
