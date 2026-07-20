@@ -1,13 +1,6 @@
-LEGACY Pro Wrestling v8.1 — Start the Show Hotfix
+LEGACY Pro Wrestling v8.1.2.2 — Build 1.1 Replacement Patch
 
-Changed file:
-- game.js
+Replace the matching files in the repository root with the files in this patch.
+Keep the existing assets folder and all other project files.
 
-Install:
-Replace the existing game.js in the repository root with this patched file.
-
-Fixes:
-- Repairs missing or invalid Career show plan data before Start the Show advances.
-- Validates singles, tag-team and multi-person participants.
-- Rebuilds an invalid card instead of silently freezing.
-- Adds a visible recovery screen if an unexpected Career data error remains.
+This replaces the rejected v8.1.2.1 Career Polish patch.

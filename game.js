@@ -1,5 +1,7 @@
 const app=document.getElementById('app'),overlay=document.getElementById('overlay');
 let S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,exhibition:false,quickType:null,quickPlayer:null,quickSelections:[],manager:null,nextMatchBonus:0,eventHistory:[],interviewCount:0};
+let ACTIVE_GAME_MODE='home';
+function setActiveGameMode(mode){ACTIVE_GAME_MODE=mode;document.body.dataset.gameMode=mode;}
 let M=null,storyTimer=null;
 const pick=(a,n=1)=>[...a].sort(()=>Math.random()-.5).slice(0,n);
 const one=a=>a[Math.floor(Math.random()*a.length)];
@@ -132,8 +134,9 @@ function score(t){let[a,b]=t,bonus=S.momentum+(S.nextMatchBonus||0)+managerBonus
 function imageFallback(img,name){const wrap=img.closest('.card');if(!wrap)return;img.style.display='none';wrap.classList.add('missing-art');let ph=wrap.querySelector('.art-placeholder');if(!ph){ph=document.createElement('div');ph.className='art-placeholder';ph.innerHTML=`<b>${name.split(/\s+/).map(x=>x.replace(/[^A-Za-z]/g,'')[0]||'').join('').slice(0,3)}</b><small>ADD WRESTLER ART</small>`;wrap.insertBefore(ph,wrap.firstChild)}}
 function card(w,onclick='',compact=false,screen='card'){const upgraded=!!characterImageConfig(w),artType=compact&&upgraded?'portrait':'full',resolvedScreen=compact?'matchPortrait':screen;return `<article class="card character-tile${compact?' compact':''}${upgraded?' image-framework-card':' legacy-card'}" ${onclick?`onclick="${onclick}"`:''}>${imageWithFallback(w,artType,`art-${artType}`,resolvedScreen)}<div class="name">${w.name}<small>${w.title}</small></div></article>`}
 function render(x){
- const isCareerScreen=!!(S&&S.liveMode)||/class=\"[^\"]*live-/.test(x);
+ const isCareerScreen=ACTIVE_GAME_MODE==='career';
  document.body.classList.toggle('career-mode',isCareerScreen);
+ document.body.classList.toggle('gauntlet-mode',ACTIVE_GAME_MODE==='gauntlet');
  app.classList.remove('screen-enter');
  app.innerHTML=x;
  const streakValue=document.getElementById('streak');
@@ -149,11 +152,13 @@ function resetClassicState(){clearStoryTimer();M=null;S={team:[],streak:0,chem:0
 function shellBack(){return `<button class="shell-back" onclick="home()">← MAIN MENU</button>`}
 function featuredSuperstar(){return one(WRESTLERS)}
 function home(){
+ setActiveGameMode('home');
  clearStoryTimer();M=null;overlay.innerHTML='';
  const w=featuredSuperstar();
  render(`<section class="game-hub"><div class="hub-copy"><div class="tv-kicker">WELCOME TO LPW</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team, survive the broadcast and unlock the Founding Twenty.</p><nav class="hub-menu"><button class="hub-option primary live-menu-option" onclick="gauntletLiveHome()"><b>CAREER</b><small>Begin or continue your weekly career.</small></button><button class="hub-option" onclick="classicHome()"><b>CLASSIC GAUNTLET</b><small>One loss ends the run.</small></button><button class="hub-option" onclick="quickMatchMenu()"><b>QUICK MATCH</b><small>Singles and Tag Team exhibition framework.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the Founding Twenty.</small></button><button class="hub-option" onclick="statisticsMenu()"><b>STATISTICS</b><small>Your legacy framework.</small></button><button class="hub-option muted" onclick="optionsMenu()"><b>OPTIONS</b><small>Presentation settings coming soon.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED SUPERSTAR</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)
 }
 function classicHome(){
+ setActiveGameMode('gauntlet');
  resetClassicState();S.previewCaptain=one(WRESTLERS);const captain=S.previewCaptain;
  render(`<section class="panel mode-landing"><div class="actions top-actions"><button class="btn" onclick="start()">START GAUNTLET</button>${shellBack()}</div><div class="mode-landing-art">${imageWithFallback(captain,'full','art-full','classicLanding')}<div class="mode-preview-label"><small>YOUR STARTING WRESTLER</small><b>${captain.name}</b></div></div><div class="mode-landing-copy"><div class="tv-kicker">CLASSIC MODE</div><h1>SURVIVE THE GAUNTLET</h1><p>Your run begins with <strong>${captain.name}</strong>. Choose a partner and survive as long as possible. Every broadcast, decision and reward matters. Lose once and the run is over.</p></div></section>`)
 }
@@ -173,6 +178,7 @@ function playNowFromCollection(id){
  quickSinglesOpponentSelect();
 }
 function quickMatchMenu(){
+ setActiveGameMode('quick');
  const w=one(WRESTLERS);
  render(`<section class="framework-screen quick-framework">${shellBack()}<div class="framework-art image-framework-profile">${imageWithFallback(w,'full','art-full','quickLanding')}</div><div class="framework-copy"><div class="tv-kicker">EXHIBITION</div><h1>QUICK MATCH</h1><p>Create a dream match using any wrestlers from the Founding Twenty.</p><div class="framework-options"><button onclick="beginQuickSingles()"><b>SINGLES MATCH</b><small>Choose one wrestler and one opponent.</small><em>›</em></button><button onclick="beginQuickTag()"><b>TAG TEAM MATCH</b><small>Choose two wrestlers and an opposing team.</small><em>›</em></button></div></div></section>`)
 }
@@ -1092,14 +1098,15 @@ liveLoad=function(){const c=_liveLoad65();if(c){liveEnsureWorld(c);liveSave(c)}r
 
 gauntletLiveNewCareer=function(){const c=liveLoad();if(c&&!confirm('Start a new Career career and replace the current save?'))return;localStorage.removeItem(LIVE_SAVE_KEY);gauntletLiveIntro(0)};
 function gauntletLiveIntro(page=0){
+ setActiveGameMode('career');
  const slides=[
   {k:'WELCOME TO CAREER',h:'THIS IS YOUR CAREER',p:'I am Veronica Vale, General Manager of LEGACY Pro Wrestling. You will guide one wrestler through a living wrestling world where every victory, injury, rivalry and decision changes what happens next.',img:'full'},
   {k:'TWO LIVE SHOWS EVERY WEEK',h:'MAYHEM & THROWDOWN',p:'Monday Night Mayhem and Thursday Night Throwdown always feature a match card or a major replacement segment. The rest of the week reacts naturally to the stories created on television.',img:'portrait'},
   {k:'FOUR WEEKS · ONE RIVALRY',h:'WIN THE SUPERCARD',p:'Each month builds toward a named Supercard. The Supercard result decides the feud. Win and your rival joins your permanent stable; lose and you must try again in a new story.',img:'full'},
   {k:'BUILD YOUR ROSTER',h:'CHOOSE YOUR WRESTLER',p:'After every Supercard you may continue with your current wrestler or switch to anyone you have unlocked. Choose the first wrestler who will represent your stable.',img:'portrait'}
  ];
- const s=slides[Math.max(0,Math.min(page,slides.length-1))],last=page===slides.length-1;
- render(`<section class="panel live-onboarding live-onboarding-page-${page}"><div class="live-onboarding-art">${npcImage('veronica-vale',s.img)}</div><div class="live-onboarding-copy"><div class="tv-kicker">${s.k}</div><h1>${s.h}</h1><p>${s.p}</p><div class="live-onboarding-progress">${slides.map((_,i)=>`<span class="${i<=page?'on':''}"></span>`).join('')}</div><button class="btn live-primary" onclick="${last?'gauntletLiveFounderSelect()':`gauntletLiveIntro(${page+1})`}">${last?'SELECT STARTING WRESTLER':'CONTINUE'}</button></div></section>`)
+ const s=slides[Math.max(0,Math.min(page,slides.length-1))],last=page===slides.length-1,layoutClass=s.img==='full'?'live-onboarding-full':'live-onboarding-portrait';
+ render(`<section class="panel live-onboarding ${layoutClass} live-onboarding-page-${page}"><div class="live-onboarding-art">${npcImage('veronica-vale',s.img)}</div><div class="live-onboarding-copy"><div class="tv-kicker">${s.k}</div><h1>${s.h}</h1><p>${s.p}</p><div class="live-onboarding-progress">${slides.map((_,i)=>`<span class="${i<=page?'on':''}"></span>`).join('')}</div><button class="btn live-primary" onclick="${last?'gauntletLiveFounderSelect()':`gauntletLiveIntro(${page+1})`}">${last?'SELECT STARTING WRESTLER':'CONTINUE'}</button></div></section>`)
 }
 const _gauntletLiveChooseFounder65=gauntletLiveChooseFounder;
 gauntletLiveChooseFounder=function(id){
@@ -1328,7 +1335,7 @@ function lpw8Rankings(c){lpw8Init(c);return [...c.rankings].sort((a,b)=>b.points
 function lpw8RankingScreen(){const c=lpw8Init(liveLoad());liveSave(c);const rows=lpw8Rankings(c);render(`<section class="panel lpw8-rankings">${shellBack()}<div class="tv-kicker">CHAMPIONSHIP ERA</div><h1>POWER RANKINGS</h1><p class="sub">Wins, losses and major performances shape every title opportunity.</p><div class="lpw8-title-strip">${LPW8_TITLES.map(t=>{const h=c.championships[t.id],names=Array.isArray(h)?h.map(id=>liveFounder(id)?.name).join(' & '):liveFounder(h)?.name;return `<article><small>${t.short} CHAMPION</small><b>${names||'VACANT'}</b></article>`}).join('')}</div><div class="lpw8-ranking-list">${rows.map((r,i)=>{const w=liveFounder(r.id);return `<article><strong>${i+1}</strong>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><b>${w.name}</b><small>${w.title}</small></span><em>${r.points} PTS<br>${r.wins}-${r.losses}</em></article>`}).join('')}</div><button class="btn live-primary" onclick="gauntletLiveHome()">RETURN TO CAREER</button></section>`)}
 function lpw8Championships(){const c=lpw8Init(liveLoad());liveSave(c);render(`<section class="panel lpw8-championships">${shellBack()}<div class="tv-kicker">LEGACY GOLD</div><h1>CHAMPIONSHIPS</h1><div class="lpw8-belt-grid">${LPW8_TITLES.map(t=>{const h=c.championships[t.id],ids=Array.isArray(h)?h:[h],names=ids.map(id=>liveFounder(id)?.name).filter(Boolean).join(' & ');return `<article><div class="lpw8-belt">★</div><small>${t.name}</small><h2>${names||'VACANT'}</h2><p>Prestige ${t.prestige}</p></article>`}).join('')}</div><button class="btn live-primary" onclick="lpw8RankingScreen()">VIEW POWER RANKINGS</button></section>`)}
 const _lpw8Home=gauntletLiveHome;
-gauntletLiveHome=function(){_lpw8Home();const actions=document.querySelector('.live-home-actions');if(actions)actions.insertAdjacentHTML('beforeend','<button class="btn secondary" onclick="lpw8Championships()">CHAMPIONSHIPS</button><button class="btn secondary" onclick="lpw8RankingScreen()">POWER RANKINGS</button>');const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent='VERSION 8.0';};
+gauntletLiveHome=function(){setActiveGameMode('career');_lpw8Home();const actions=document.querySelector('.live-home-actions');if(actions)actions.insertAdjacentHTML('beforeend','<button class="btn secondary" onclick="lpw8Championships()">CHAMPIONSHIPS</button><button class="btn secondary" onclick="lpw8RankingScreen()">POWER RANKINGS</button>');const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent='VERSION 8.0';};
 const _lpw8Finish=gauntletLiveFinishMatch65;
 gauntletLiveFinishMatch65=function(win,oppId){const c=lpw8Init(liveLoad()),me=c.rankings.find(x=>x.id===c.active),op=c.rankings.find(x=>x.id===oppId);if(me){me.points=Math.max(0,me.points+(win?18:-6));me[win?'wins':'losses']++}if(op){op.points=Math.max(0,op.points+(win?-4:14));op[win?'losses':'wins']++}liveSave(c);return _lpw8Finish(win,oppId)};
 
