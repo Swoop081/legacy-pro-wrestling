@@ -1784,3 +1784,7 @@ body.career-view main > section.panel::before,body.career-view main > section.pa
   min-width:190px;
 }
 .decision-outcome .outcome-progress{color:#ffd15b;font-weight:800;}
+
+/* 8.2.6 outcome gate hard fix */
+.decision-outcome .outcome-continue{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;position:relative!important;z-index:5!important;margin:18px auto 2px!important;min-width:210px!important;}
+.decision-outcome .outcome-progress{display:block!important;}
