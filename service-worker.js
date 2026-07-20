@@ -1,5 +1,5 @@
-/* LEGACY Pro Wrestling Service Worker 8.2.4 */
-const APP_VERSION = '8.2.4-build-1-match-psychology-balance';
+/* LEGACY Pro Wrestling Service Worker 8.2.5 */
+const APP_VERSION = '8.2.5-build-1-outcome-continue-hotfix';
 const CACHE_NAME = `lpw-${APP_VERSION}`;
 const CRITICAL_FILES = ['index.html','game.js','onboarding-wording-fix.js','data.js','styles.css','version.json','service-worker.js','update-manager.js','assets/config/imageManager.js'];
 
