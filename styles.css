@@ -1408,3 +1408,82 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
     font-size:1.55rem!important;
   }
 }
+
+/* VERSION 8.0.20 — final structural matchup row: no absolute positioning. */
+.lpw-feud-origin .origin-matchup.origin-matchup-820{
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  width:100%!important;
+  height:190px!important;
+  margin:.45rem 0 .8rem!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+.lpw-feud-origin .origin-matchup-820 .origin-wrestler-frame{
+  flex:1 1 0!important;
+  min-width:0!important;
+  height:190px!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+.lpw-feud-origin .origin-matchup-820 .origin-wrestler-image{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:center bottom!important;
+  position:static!important;
+  transform:none!important;
+  margin:0!important;
+}
+.lpw-feud-origin .origin-matchup-820>.origin-vs-820{
+  position:static!important;
+  flex:0 0 54px!important;
+  width:54px!important;
+  height:48px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  align-self:flex-end!important;
+  margin:0 0 0!important;
+  transform:none!important;
+  color:#f2c84b!important;
+  background:#101116!important;
+  border:2px solid #6f5721!important;
+  font-size:1.7rem!important;
+  line-height:1!important;
+  z-index:1!important;
+}
+.lpw-date-forecast{
+  display:flex!important;
+  gap:8px!important;
+  overflow-x:auto!important;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  padding:0 0 9px!important;
+  margin:0 0 12px!important;
+  scrollbar-width:none;
+}
+.lpw-date-forecast::-webkit-scrollbar{display:none}
+.lpw-date-forecast .live-day{
+  flex:0 0 78px!important;
+  min-width:78px!important;
+  scroll-snap-align:start;
+  position:relative;
+}
+.lpw-date-forecast .live-day b{font-size:1.35rem!important}
+.lpw-date-forecast .live-day em{
+  position:absolute;right:5px;top:5px;font-size:.5rem;color:#f2c84b;font-style:normal;letter-spacing:.08em
+}
+@media(max-width:700px){
+ .lpw-feud-origin .origin-matchup.origin-matchup-820{height:176px!important;gap:8px!important}
+ .lpw-feud-origin .origin-matchup-820 .origin-wrestler-frame{height:176px!important}
+ .lpw-feud-origin .origin-matchup-820>.origin-vs-820{flex-basis:50px!important;width:50px!important;height:44px!important;font-size:1.55rem!important}
+ .lpw-date-forecast .live-day{flex-basis:72px!important;min-width:72px!important}
+}

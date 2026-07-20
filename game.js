@@ -1262,7 +1262,7 @@ function gauntletLiveFeudOrigin(){const c=liveLoad(),r=liveFeudOpponent(c),p=liv
  {title:'A BACKSTAGE ATTACK',npc:'leon-ward',copy:`${r.name} blindsides ${p.name} in the corridor. My security team and I separate them before the situation escalates.`},
  {title:'A SOCIAL MEDIA FIRESTORM',npc:'ava-cross',copy:`Ava Cross reports that ${r.name} has insulted ${p.name} in a post now trending across LPW.`},
  {title:'A CHALLENGE FROM MANAGEMENT',npc:'veronica-vale',copy:`Veronica Vale announces that tension between ${p.name} and ${r.name} will be settled over the coming month.`}
- ];const o=one(origins),pSources=wrestlerImageCandidates(p,'portrait'),rSources=wrestlerImageCandidates(r,'portrait');c.world.feud.reason=o.copy;c.world.feudOriginSeen=c.month;liveSave(c);render(`<section class="panel lpw-feud-origin"><div class="tv-kicker">NEW MONTH · FEUD ORIGIN</div><h1>${o.title}</h1><div class="origin-matchup origin-matchup-819"><div class="origin-wrestler-frame origin-wrestler-left"><img class="origin-wrestler-image" src="${pSources[0]}" data-sources="${pSources.join('|')}" data-source-index="0" alt="${p.name}" onerror="advanceImageFallback(this)"></div><div class="origin-wrestler-frame origin-wrestler-right"><img class="origin-wrestler-image" src="${rSources[0]}" data-sources="${rSources.join('|')}" data-source-index="0" alt="${r.name}" onerror="advanceImageFallback(this)"></div><strong class="origin-vs-819">VS</strong></div><div class="live-npc-scene expanded origin-report origin-report-${o.npc}">${npcImage(o.npc,'full')}<div class="origin-report-copy"><b>${npc(o.npc)?.name||''}</b><small>${npc(o.npc)?.role||''}</small><p>${o.copy}</p></div></div><p class="origin-close">The rivalry will culminate at <b>${liveCurrentSupercard(c)}</b>.</p><button class="btn live-primary" onclick="gauntletLiveCalendar()">BEGIN THE MONTH</button></section>`)}
+ ];const o=one(origins),pSources=wrestlerImageCandidates(p,'portrait'),rSources=wrestlerImageCandidates(r,'portrait');c.world.feud.reason=o.copy;c.world.feudOriginSeen=c.month;liveSave(c);render(`<section class="panel lpw-feud-origin"><div class="tv-kicker">NEW MONTH · FEUD ORIGIN</div><h1>${o.title}</h1><div class="origin-matchup origin-matchup-820"><div class="origin-wrestler-frame origin-wrestler-left"><img class="origin-wrestler-image" src="${pSources[0]}" data-sources="${pSources.join('|')}" data-source-index="0" alt="${p.name}" onerror="advanceImageFallback(this)"></div><strong class="origin-vs-820">VS</strong><div class="origin-wrestler-frame origin-wrestler-right"><img class="origin-wrestler-image" src="${rSources[0]}" data-sources="${rSources.join('|')}" data-source-index="0" alt="${r.name}" onerror="advanceImageFallback(this)"></div></div><div class="live-npc-scene expanded origin-report origin-report-${o.npc}">${npcImage(o.npc,'full')}<div class="origin-report-copy"><b>${npc(o.npc)?.name||''}</b><small>${npc(o.npc)?.role||''}</small><p>${o.copy}</p></div></div><p class="origin-close">The rivalry will culminate at <b>${liveCurrentSupercard(c)}</b>.</p><button class="btn live-primary" onclick="gauntletLiveCalendar()">BEGIN THE MONTH</button></section>`)}
 const _lpwStartNextMonth=gauntletLiveStartNextMonth;
 gauntletLiveStartNextMonth=function(id){const c=liveLoad();c.active=id;c.world.katieThisWeek=0;const opp=livePickDifferent(c,c.stable);liveStartFeud(c,opp.id,'A new rivalry is about to begin.');liveGenerateMonthlyPlan(c);liveSave(c);gauntletLiveFeudOrigin()};
 const _lpwChooseFounder=gauntletLiveChooseFounder;
@@ -1373,5 +1373,41 @@ gauntletLiveCalendar=function(){
   ${f?`<div class="live-feud-banner calendar-feud"><div>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}</div><span><small>CURRENT FEUD</small><b>${w.name} vs ${r.name}</b><em>${liveCurrentSupercard(c)} · Intensity ${f.intensity}%</em></span><div>${imageWithFallback(r,'portrait','art-portrait','matchPortrait')}</div></div>`:''}
   <div class="live-today"><div><small>TODAY · ${LIVE_DAYS[c.day].toUpperCase()}</small><h2>${liveDayLabel(c,c.day)}</h2><p>${liveDayDescription(c)}</p></div><button class="btn live-primary" onclick="gauntletLiveBeginDay()">BEGIN</button></div>
   <div class="lpw-ple-card"><small>UPCOMING PREMIUM EVENT</small><b>${liveCurrentSupercard(c)}</b><span>${Math.max(0,4-liveMonthWeek(c))} week${Math.max(0,4-liveMonthWeek(c))===1?'':'s'} away</span></div>
+ </section>`)
+};
+
+
+/* VERSION 8.0.20 — real calendar forecast and structural feud-origin row. */
+const LPW_CALENDAR_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function lpwCalendarDate(c,offset=0){
+ const absolute=((Math.max(1,c.week)-1)*7)+(Number.isInteger(c.day)?c.day:0)+offset;
+ const date=new Date(Date.UTC(2025,0,1+absolute));
+ return {date,day:date.getUTCDate(),month:date.getUTCMonth(),year:date.getUTCFullYear()-2024,weekday:(date.getUTCDay()+6)%7};
+}
+function lpwCalendarLabel(c,offset){
+ const d=lpwCalendarDate(c,offset),future={...c,day:(c.day+offset)%7,week:c.week+Math.floor((c.day+offset)/7)};
+ const supercard=d.weekday===6&&future.week%4===0;
+ let label;
+ if(d.weekday===0) label='MAYHEM';
+ else if(d.weekday===3) label='THROWDOWN';
+ else if(supercard) label='SUPERCARD';
+ else label=liveDayLabel(future,future.day);
+ return {...d,label,supercard};
+}
+function lpwCalendarTimeline(c){const d=lpwCalendarDate(c);return `YEAR ${d.year} · ${LPW_CALENDAR_MONTHS[d.month].toUpperCase()} ${d.day} · WEEK ${c.week}`}
+
+gauntletLiveCalendar=function(){
+ const c=liveLoad(); if(!c)return gauntletLiveHome();
+ const w=liveFounder(c.active),f=liveFeud(c),r=liveFeudOpponent(c);
+ const nickname=(w.name.match(/^"[^"]+"/)||[''])[0],ringName=w.name.replace(/^"[^"]+"\s*/, '');
+ const forecast=Array.from({length:7},(_,i)=>lpwCalendarLabel(c,i));
+ render(`<section class="panel live-calendar-screen lpw-calendar-compact lpw-calendar-820">
+  <div class="live-calendar-top"><button class="shell-back" onclick="home()">← MAIN MENU</button><button class="shell-back" onclick="gauntletLiveHome()">CAREER MENU</button></div>
+  <div class="tv-kicker">${lpwCalendarTimeline(c)}</div><h1>CAREER</h1>
+  <div class="live-week-strip lpw-date-forecast" aria-label="Next seven days">${forecast.map((d,i)=>`<div class="live-day ${i===0?'current':''} ${d.supercard?'supercard':''}"><small>${LIVE_DAYS[d.weekday].slice(0,3).toUpperCase()}</small><b>${d.day}</b><span>${d.label}</span>${i>0&&d.day===1?`<em>${LPW_CALENDAR_MONTHS[d.month].slice(0,3).toUpperCase()}</em>`:''}</div>`).join('')}</div>
+  <div class="lpw-active-wrestler-feature"><small class="lpw-feature-label">ACTIVE WRESTLER</small><div class="lpw-feature-portrait">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}</div><div class="lpw-active-copy">${nickname?`<span class="lpw-active-nickname">${nickname}</span>`:''}<b class="lpw-active-name">${ringName}</b><span class="lpw-active-record">${c.wins}-${c.losses} record · ${c.stable.length} stable member${c.stable.length===1?'':'s'}</span></div></div>
+  <div class="live-mini-stats lpw-stats-below-feature"><span><small>MOMENTUM</small><b>${c.momentum}</b></span><span><small>POPULARITY</small><b>${c.popularity}</b></span><button onclick="gauntletLiveStable()">MANAGE STABLE</button></div>
+  ${f?`<div class="live-feud-banner calendar-feud"><div>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}</div><span><small>CURRENT FEUD</small><b>${w.name} vs ${r.name}</b><em>${liveCurrentSupercard(c)} · Intensity ${f.intensity}%</em></span><div>${imageWithFallback(r,'portrait','art-portrait','matchPortrait')}</div></div>`:''}
+  <div class="live-today"><div><small>TODAY · ${LIVE_DAYS[forecast[0].weekday].toUpperCase()} · ${LPW_CALENDAR_MONTHS[forecast[0].month].toUpperCase()} ${forecast[0].day}</small><h2>${forecast[0].label}</h2><p>${liveDayDescription(c)}</p></div><button class="btn live-primary" onclick="gauntletLiveBeginDay()">BEGIN</button></div>
  </section>`)
 };
