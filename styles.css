@@ -1514,3 +1514,18 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
   text-align:center!important;
 }
 .lpw-calendar-821 .lpw-active-stable{margin-top:1px!important}
+
+
+/* LEGACY Pro Wrestling 8.1 — Match Psychology 2.0 */
+.choice-grid.neutral .choice,.neutral-choice{background:linear-gradient(180deg,#24252b,#15161a)!important;border:1px solid #666!important;color:#fff!important;box-shadow:none!important}
+.choice-grid.neutral .choice:hover,.neutral-choice:hover{border-color:#f3c34d!important;transform:translateY(-2px)}
+.choice-grid.neutral .choice small{color:#c8c8cc!important}
+.psychology-result{margin:10px auto 14px;padding:16px;border:1px solid #777;border-radius:14px;background:linear-gradient(180deg,#23242a,#111216);text-align:center;animation:psychologyIn .28s ease-out}
+.psychology-result small{letter-spacing:.18em;color:#f3c34d;font-weight:900}.psychology-result h2{margin:5px 0;font-size:1.65rem}.psychology-result p{margin:0 auto 12px;max-width:680px;color:#ddd}
+.psychology-result.major-success{border-color:#f3c34d}.psychology-result.major-failure{border-color:#a45b5b}.psychology-result.mixed{border-color:#999}
+.psychology-deltas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.psychology-deltas span{padding:8px;background:#090a0d;border-radius:8px;font-size:.72rem;letter-spacing:.08em}.psychology-deltas b{display:block;font-size:1.1rem;color:#fff;margin-top:3px}
+.control-meter i,.crowd-meter i{transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.scoreboard-strip strong{transition:transform .35s ease}.psychology-result+*{animation:meterPulse .45s ease}
+@keyframes psychologyIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes meterPulse{50%{transform:scale(1.015)}}
+@media(max-width:620px){.psychology-deltas{grid-template-columns:1fr}.psychology-result{padding:12px}.psychology-result h2{font-size:1.35rem}}

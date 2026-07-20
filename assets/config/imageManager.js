@@ -308,3 +308,13 @@ Object.assign(window.TTG_IMAGE_MANAGER, Object.fromEntries([
   transforms:{full:{scale,x:0,y:0},portrait:{scale:1,x:0,y:0},victory:{scale:1.14,x:0,y:0}},
   screens:{quickMatch:{scale,x:0,y:0,anchor:'feet'},collection:{scale,x:0,y:0,anchor:'feet'},profile:{scale,x:0,y:0,anchor:'feet'},homeFeature:{scale:1.5,x:0,y:0,anchor:'head'},quickLanding:{scale:1.55,x:0,y:0,anchor:'head'},classicLanding:{scale:1.52,x:0,y:0,anchor:'head'},matchPortrait:{scale:1,x:0,y:0,anchor:'centre'},victory:{scale:1.14,x:0,y:0,anchor:'feet'},resultVictory:{scale:1.62,x:0,y:0,anchor:'head'}}
 }])));
+
+
+/* LEGACY Pro Wrestling 8.1 — roster 25–28 image integration */
+Object.assign(window.TTG_IMAGE_MANAGER, Object.fromEntries([
+  ['savannah-sinclair',1.42],['bianca-balboa',1.48],['zara-monroe',1.50],['chloe-carter',1.46]
+].map(([id,scale])=>[id,{
+  assets:{full:`assets/wrestlers/${id}/full.png`,portrait:`assets/wrestlers/${id}/portrait.png`,victory:`assets/wrestlers/${id}/victory.png`},
+  transforms:{full:{scale,x:0,y:0},portrait:{scale:1,x:0,y:0},victory:{scale:1.14,x:0,y:0}},
+  screens:{quickMatch:{scale,x:0,y:0,anchor:'feet'},collection:{scale,x:0,y:0,anchor:'feet'},partner:{scale:1.58,x:0,y:0,anchor:'head'},profile:{scale,x:0,y:0,anchor:'feet'},homeFeature:{scale:1.52,x:0,y:0,anchor:'head'},quickLanding:{scale:1.55,x:0,y:0,anchor:'head'},classicLanding:{scale:1.52,x:0,y:0,anchor:'head'},preMatch:{scale:1,x:0,y:0,anchor:'centre'},matchPortrait:{scale:1,x:0,y:0,anchor:'centre'},matchStage:{scale:1,x:0,y:0,anchor:'centre'},victory:{scale:1.14,x:0,y:0,anchor:'feet'},resultVictory:{scale:1.62,x:0,y:0,anchor:'head'}}
+}])))
