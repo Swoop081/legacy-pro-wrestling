@@ -1210,3 +1210,22 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
   transform:translateX(-50%)!important;
   z-index:20!important;
 }
+
+
+/* VERSION 8.0.15 — hard-pin feud-origin VS to the portrait baseline. */
+.lpw-feud-origin .origin-matchup.origin-matchup-811{
+  position:relative!important;
+  overflow:visible!important;
+}
+.lpw-feud-origin .origin-matchup-811>.origin-vs-815{
+  position:absolute!important;
+  left:50%!important;
+  bottom:-2px!important;
+  top:auto!important;
+  right:auto!important;
+  transform:translateX(-50%)!important;
+  margin:0!important;
+  align-self:auto!important;
+  justify-self:auto!important;
+  z-index:30!important;
+}
