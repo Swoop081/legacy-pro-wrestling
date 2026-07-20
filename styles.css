@@ -1788,3 +1788,41 @@ body.career-view main > section.panel::before,body.career-view main > section.pa
 /* 8.2.6 outcome gate hard fix */
 .decision-outcome .outcome-continue{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;position:relative!important;z-index:5!important;margin:18px auto 2px!important;min-width:210px!important;}
 .decision-outcome .outcome-progress{display:block!important;}
+
+/* LEGACY 8.2.7 — consolidated Career testing polish */
+body.career-view .presentation-summary .result-banner,
+body.career-view .presentation-summary .winner-celebration,
+body.career-view .presentation-summary .result-broadcast-header,
+body.career-view .presentation-summary .result-accolades > article,
+body.career-view .presentation-summary .psychology-breakdown,
+body.career-view .presentation-summary .match-breakdown,
+body.career-view .presentation-summary .match-story,
+body.career-view .presentation-summary .story-panel,
+body.career-view .presentation-summary .highlight-reel,
+body.career-view .presentation-summary .milestone-grid article {
+  border-color: rgba(255,255,255,.16) !important;
+  box-shadow: none !important;
+}
+body.career-view .presentation-summary .result-banner,
+body.career-view .presentation-summary .winner-celebration,
+body.career-view .presentation-summary .result-broadcast-header {
+  border: 0 !important;
+}
+.live-result-winner-only { text-align:center; border:0 !important; }
+.live-result-winner-only .live-result-solo {
+  min-height: 44vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin: .5rem auto 0;
+  overflow:visible;
+}
+.live-result-winner-only .live-result-solo img {
+  width:auto !important;
+  height:min(52vh,560px) !important;
+  max-width:88vw !important;
+  object-fit:contain !important;
+  animation: lpwWinnerRise .45s ease-out both;
+}
+.live-result-winner-only h2 { font-size:clamp(2rem,8vw,4.5rem); margin:.25rem 0 .5rem; }
+@keyframes lpwWinnerRise { from{opacity:0;transform:translateY(18px) scale(.94)} to{opacity:1;transform:none} }

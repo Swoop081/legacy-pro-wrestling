@@ -593,8 +593,18 @@ function resolveFinish(){
  if(psychologyCarry>0)M.decisionPlayer+=psychologyCarry;else if(psychologyCarry<0)M.decisionOpp+=Math.abs(psychologyCarry);
  const finishVariancePlayer=Math.round(rnd(-3,3)),finishVarianceOpp=Math.round(rnd(-3,3));
  M.performancePlayer+=finishVariancePlayer;M.performanceOpp+=finishVarianceOpp;
+ // Career opponents must remain active participants unless a future explicit squash flag says otherwise.
+ if(S.liveMode){
+  const aiPerfFloor=Math.round(rnd(12,24));
+  const aiDecisionFloor=Math.round(rnd(4,11));
+  const aiCrowdFloor=Math.round(rnd(10,28));
+  M.performanceOpp=Math.max(M.performanceOpp,aiPerfFloor);
+  M.decisionOpp=Math.max(M.decisionOpp,aiDecisionFloor);
+  M.crowdOpp=Math.max(M.crowdOpp,aiCrowdFloor);
+ }
+ const adjustedCrowdBonusOpp=Math.round(M.crowdOpp*.12);
  M.finalPlayer=Math.round(M.startPlayer+M.performancePlayer+M.decisionPlayer+crowdBonusPlayer);
- M.finalOpp=Math.round(M.startOpp+M.performanceOpp+M.decisionOpp+crowdBonusOpp);
+ M.finalOpp=Math.round(M.startOpp+M.performanceOpp+M.decisionOpp+adjustedCrowdBonusOpp);
  const positiveDecisions=(M.decisionHistory||[]).filter(x=>x.outcome==='SUCCESS'||x.outcome==='MAJOR SUCCESS').length;
  const allPositive=M.decisionHistory?.length>=3&&positiveDecisions===M.decisionHistory.length;
  if(allPositive&&M.finalPlayer<M.finalOpp&&(M.finalOpp-M.finalPlayer)<=24&&Math.random()<.82){
@@ -641,7 +651,7 @@ function showSummary(win){
  clearStoryTimer();
  const length=formatTime(M.matchSeconds);
  const rating=clamp(1.65+M.highlights.length*.11+M.nearFalls*.20+M.finishers*.12+M.tags*.05+M.eventTarget*.045+M.crowd*.006,1,5);
- const ratingData=matchRatingData(rating),highlights=[...M.highlights].slice(-5),story=buildSummaryStory();
+ const ratingData=matchRatingData(rating),highlights=[...new Set(M.highlights)].slice(-5),story=buildSummaryStory();
  recordCompletedMatch(win,rating);
  M.lossMessage=`${M.winner.name} wins after a ${rating.toFixed(1)}-star match.`;
  const playerCrowd=Math.round(M.crowdPlayer*.12),oppCrowd=Math.round(M.crowdOpp*.12);
@@ -1650,4 +1660,122 @@ gauntletLiveMatchCard65=function(){
   const c=liveLoad();if(c){liveGenerateMonthlyPlan(c);liveSave(c)}
   render(`<section class="panel live-world-screen"><div class="tv-kicker">CAREER RECOVERY</div><h1>MATCH CARD REPAIRED</h1><p>The match card could not be loaded, so Career rebuilt tonight's segment.</p><button class="btn live-primary" onclick="gauntletLiveShowIntro()">RETURN TO SHOW</button><button class="btn secondary" onclick="gauntletLiveCalendar()">RETURN TO CALENDAR</button></section>`);
  }
+};
+
+
+/* ==========================================================================\n   LEGACY PRO WRESTLING 8.2.7 — CAREER TESTING CONSOLIDATION\n   ========================================================================== */
+function lpwCleanDecisionName(name){
+ const wrestler=S?.team?.[0];
+ let clean=String(name||'').trim();
+ const prefixes=[];
+ if(wrestler){
+  prefixes.push(wrestler.title,wrestler.nickname);
+  if(wrestler.id==='jett-valentine')prefixes.push('Heartbreaker','The Heartbreaker');
+ }
+ prefixes.filter(Boolean).sort((a,b)=>b.length-a.length).forEach(prefix=>{
+  const escaped=String(prefix).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  clean=clean.replace(new RegExp(`^${escaped}\\s+`,'i'),'');
+ });
+ const fixes={
+  'Claim the Spotlight':'Claim the Spotlight',
+  'Force the Mistake':'Force the Mistake',
+  'Steal the Finish':'Steal the Finish',
+  'Take the First Step':'Take the First Step'
+ };
+ return fixes[clean]||clean;
+}
+const _resolveDecision827=resolveDecision;
+resolveDecision=function(index){
+ if(M?.currentDecision?.choices?.[index])M.currentDecision.choices[index].name=lpwCleanDecisionName(M.currentDecision.choices[index].name);
+ return _resolveDecision827(index);
+};
+const _showDecision827=showDecision;
+showDecision=function(){
+ const result=_showDecision827();
+ if(M?.currentDecision?.choices)M.currentDecision.choices.forEach(c=>c.name=lpwCleanDecisionName(c.name));
+ return result;
+};
+
+milestoneData=function(){
+ if(S?.liveMode){
+  const c=liveLoad();
+  if(!c)return [];
+  const wins=Number(c.wins||0);
+  if(wins===1)return [['FIRST VICTORY','Your first Career victory is officially in the record books.']];
+  if(wins===3)return [['THREE MATCH STREAK','Three Career victories have established real momentum.']];
+  if(wins===5)return [['RISING STAR','Five Career victories have changed how LPW views you.']];
+  if(wins>5&&wins%5===0)return [['CAREER MILESTONE',`${wins} Career victories have set a new standard.`]];
+  return [];
+ }
+ const stats=loadStats(),items=[];
+ if(S.streak===1)items.push(['FIRST VICTORY','The Gauntlet journey is officially underway.']);
+ if(S.streak===5)items.push(['FIVE MATCH STREAK','Momentum is becoming a legacy.']);
+ if(S.streak===10)items.push(['DOMINATING THE GAUNTLET','Ten straight victories have changed the entire broadcast.']);
+ if(S.streak>1&&S.streak===stats.bestGauntlet)items.push(['NEW PERSONAL BEST',`A new standard has been set at ${S.streak} victories.`]);
+ return items.slice(0,2);
+};
+
+buildSummaryStory=function(){
+ const playerWon=M.winner&&S.team.some(x=>x.id===M.winner.id);
+ const margin=Math.abs((M.finalPlayer||0)-(M.finalOpp||0));
+ const outcomes=(M.decisionHistory||[]).map(x=>x.outcome);
+ const good=outcomes.filter(x=>x==='SUCCESS'||x==='MAJOR SUCCESS').length;
+ const bad=outcomes.filter(x=>x==='FAILURE'||x==='MAJOR FAILURE').length;
+ let flow;
+ if(margin>=55)flow=`${M.winner.name} steadily pulled away and controlled the decisive phases`;
+ else if(margin>=25)flow=`${M.winner.name} earned a clear advantage after a competitive opening`;
+ else if(bad&&good)flow=`Momentum changed hands repeatedly before the closing exchange`;
+ else flow=`The match remained competitive deep into the final phase`;
+ if(outcomes.length){
+  if(good>=2&&bad===0)flow=`A series of strong calls allowed ${playerWon?S.team[0].name:S.opp[0].name} to build sustained momentum`;
+  else if(bad>=2)flow=`Early mistakes created a difficult recovery before the finish`;
+ }
+ return `${flow}. ${M.winner.name} sealed the result with ${M.winner.finisher}.`;
+};
+
+function lpwWorldResultText(winner,loser){
+ const templates=[
+  `${winner.name} defeated ${loser.name} after a competitive closing stretch.`,
+  `${winner.name} secured the victory when one final opening appeared.`,
+  `${winner.name} outlasted ${loser.name} in one of the night's most discussed matches.`,
+  `${loser.name} pushed the pace, but ${winner.name} found the decisive answer.`,
+  `${winner.name} left the arena with momentum after defeating ${loser.name}.`,
+  `${winner.name} survived a late surge from ${loser.name}.`,
+  `${winner.name} delivered a composed performance and put away ${loser.name}.`,
+  `${winner.name} shocked the locker room with a victory over ${loser.name}.`
+ ];
+ return one(templates);
+}
+liveSimulateWorld=function(c){
+ const pool=liveShuffle(liveOtherPool(c)).slice(0,8),stories=[];
+ for(let i=0;i+1<pool.length&&stories.length<3;i+=2){
+  const a=pool[i],b=pool[i+1],winner=Math.random()<.5?a:b,loser=winner===a?b:a;
+  stories.push({a:a.id,b:b.id,winner:winner.id,text:lpwWorldResultText(winner,loser)});
+ }
+ const newsTemplates=[
+  (a,b)=>`Social media erupted after ${a.name} publicly called out ${b.name}.`,
+  (a,b)=>`${a.name} and ${b.name} had to be separated backstage.`,
+  (a,b)=>`Championship rankings shifted after another unpredictable night.`,
+  (a,b)=>`Medical staff confirmed that the roster will be evaluated before the next broadcast.`,
+  (a,b)=>`Fans are already debating which match stole the show.`,
+  (a,b)=>`Ticket demand increased following the latest LPW broadcast.`
+ ];
+ if(pool.length>=2){const a=one(pool),b=one(pool.filter(x=>x.id!==a.id));stories.push({a:a.id,b:b.id,text:one(newsTemplates)(a,b)})}
+ c.world.worldStories=stories;stories.forEach(s=>liveAddNews(c,s.text));return stories;
+};
+
+gauntletLiveWorldRecap=function(){
+ const c=liveLoad(),last=c.world.lastResult,player=liveFounder(c.active);if(!c.world.worldStories.length)liveSimulateWorld(c);
+ const other=c.world.worldStories;let lead='Another LPW broadcast has reshaped the wider wrestling world.',analysis='Every headline creates pressure before the next show.';
+ if(last){const opp=liveFounder(last.opponent);lead=last.win?`${player.name}'s victory over ${opp.name} leads tonight's headlines.`:`${opp.name}'s victory over ${player.name} has changed the conversation.`;analysis=last.win?one([`${player.name} is becoming impossible to ignore.`,`The locker room now has to take ${player.name} seriously.`,`That result could influence the next set of rankings.`]):one([`The response in the next match will matter.`,`A setback can create an even larger opportunity.`,`The pressure is now firmly on ${player.name}.`])}
+ render(`<section class="panel live-world-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">AROUND LPW</div><h1>WORLD RECAP</h1><div class="live-commentary-duo"><div>${npcImage('mike-sullivan','portrait')}<b>Mike Sullivan</b><p>${lead}</p></div><div>${npcImage('johnny-cannon','portrait')}<b>Johnny Cannon</b><p>${analysis}</p></div></div><div class="live-world-results">${other.slice(0,4).map(s=>`<article><span>${s.a?imageWithFallback(liveFounder(s.a),'portrait','art-portrait','matchPortrait'):''}</span><p>${s.text}</p>${s.b?`<span>${imageWithFallback(liveFounder(s.b),'portrait','art-portrait','matchPortrait')}</span>`:''}</article>`).join('')}</div><button class="btn live-primary" onclick="gauntletLiveCompleteWorldRecap()">CONTINUE</button></section>`);
+};
+function gauntletLiveCompleteWorldRecap(){
+ const c=liveLoad();liveAwardXp(c,c.active,35,'World recap');c.popularity=liveClamp((c.popularity||0)+3,0,100);liveAdvanceDay(c);liveSave(c);gauntletLiveCalendar();
+}
+
+gauntletLiveFinishMatch65=function(win,oppId){
+ const c=liveLoad(),opp=liveFounder(oppId),player=liveFounder(c.active),xp=c.lastXpAward||{amount:0};c.lastXpAward=null;if(!win)xp.amount=0;liveSave(c);
+ const winner=win?player:opp;
+ render(`<section class="panel live-day-complete live-result-winner-only ${win?'live-win':'live-loss'}"><div class="tv-kicker">MATCH RESULT</div><h1>${win?'VICTORY':'DEFEAT'}</h1><div class="live-result-solo">${imageWithFallback(winner,'victory','art-full','resultVictory')}</div><h2>${winner.name}</h2><p>${win?`${player.name} defeated ${opp.name}.`:`${opp.name} defeated ${player.name}.`}</p><div class="live-xp-award"><b>${win?`+${xp.amount} XP`:'NO XP EARNED'}</b><span>${c.world.injury?'An injury will require medical attention tomorrow.':'The world will react tomorrow.'}</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`);
 };
