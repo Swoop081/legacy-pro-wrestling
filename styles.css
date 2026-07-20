@@ -1759,3 +1759,28 @@ body.career-view main > section.panel::before,body.career-view main > section.pa
   line-height: 1.05;
   letter-spacing: .02em;
 }
+
+/* v8.2.4 Match Psychology 2.3 — readable choices and manual outcome advance */
+.story-decision .choice-grid .choice.choice-name-only b,
+.story-decision .choice-grid .psychology-choice.choice-name-only b{
+  font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif!important;
+  font-style:italic!important;
+  font-weight:400!important;
+  text-transform:uppercase!important;
+  letter-spacing:.015em!important;
+  font-size:clamp(1.45rem,5.5vw,2.15rem)!important;
+  line-height:1.02!important;
+  width:100%;
+  text-align:center;
+}
+.story-decision .choice-grid .choice.choice-name-only,
+.story-decision .choice-grid .psychology-choice.choice-name-only{
+  justify-content:center!important;
+  padding:20px 18px!important;
+}
+.decision-outcome .outcome-continue{
+  display:block;
+  margin:18px auto 2px;
+  min-width:190px;
+}
+.decision-outcome .outcome-progress{color:#ffd15b;font-weight:800;}
