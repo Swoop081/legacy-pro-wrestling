@@ -1,16 +1,1 @@
-LEGACY Pro Wrestling v8.1.2.6 Build 1.5 — Onboarding Vertical Alignment
-
-Copy these files over the current v8.1.2.5 project, preserving the existing assets and project structure.
-
-Changed files:
-- game.js
-- styles.css
-- index.html
-- service-worker.js
-- version.json
-
-Fix:
-- Career onboarding Screens 3 and 4 now receive their own stable page classes.
-- On mobile, Screens 3 and 4 are shifted downward to match the visual top position of Screens 1 and 2.
-- Artwork scale remains unchanged.
-- Career streak/header removal remains intact.
+Replace the matching files in the game root with the files from this patch. Preserve all assets and the root-level .nojekyll file.
