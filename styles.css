@@ -1670,3 +1670,15 @@ body.career-mode main{padding-top:0!important}
     translate:none!important;
   }
 }
+
+
+/* VERSION 8.1.2.6 BUILD 1.5 — page 3/4 vertical alignment correction
+   Pages 3 and 4 have shorter copy than their master pages, which caused the
+   mobile onboarding panel to sit higher after rerender. Give those two pages
+   the same visual top offset as pages 1 and 2 without changing art scale. */
+@media (max-width:760px){
+  .panel.live-onboarding.live-onboarding-page-2 .live-onboarding-art,
+  .panel.live-onboarding.live-onboarding-page-3 .live-onboarding-art{
+    margin-top:72px!important;
+  }
+}

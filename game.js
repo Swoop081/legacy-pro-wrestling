@@ -1107,7 +1107,7 @@ function gauntletLiveIntro(page=0){
  ];
  const s=slides[Math.max(0,Math.min(page,slides.length-1))],last=page===slides.length-1;
  window.scrollTo(0,0);
- render(`<section class="panel live-onboarding live-onboarding-template-${s.img}"><div class="live-onboarding-art">${npcImage('veronica-vale',s.img)}</div><div class="live-onboarding-copy"><div class="tv-kicker">${s.k}</div><h1>${s.h}</h1><p>${s.p}</p><div class="live-onboarding-progress">${slides.map((_,i)=>`<span class="${i<=page?'on':''}"></span>`).join('')}</div><button class="btn live-primary" onclick="${last?'gauntletLiveFounderSelect()':`gauntletLiveIntro(${page+1})`}">${last?'SELECT STARTING WRESTLER':'CONTINUE'}</button></div></section>`)
+ render(`<section class="panel live-onboarding live-onboarding-template-${s.img} live-onboarding-page-${page}"><div class="live-onboarding-art">${npcImage('veronica-vale',s.img)}</div><div class="live-onboarding-copy"><div class="tv-kicker">${s.k}</div><h1>${s.h}</h1><p>${s.p}</p><div class="live-onboarding-progress">${slides.map((_,i)=>`<span class="${i<=page?'on':''}"></span>`).join('')}</div><button class="btn live-primary" onclick="${last?'gauntletLiveFounderSelect()':`gauntletLiveIntro(${page+1})`}">${last?'SELECT STARTING WRESTLER':'CONTINUE'}</button></div></section>`)
  requestAnimationFrame(()=>window.scrollTo(0,0));
 }
 const _gauntletLiveChooseFounder65=gauntletLiveChooseFounder;
