@@ -1068,3 +1068,66 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
   .lpw-feud-origin .origin-matchup>img{max-height:176px!important}
   .lpw-feud-origin .origin-matchup>strong{top:73%!important}
 }
+
+/* VERSION 8.0.11 — structural feud-origin matchup repair.
+   Uses isolated portrait frames so global wrestler transforms cannot distort either side. */
+.lpw-feud-origin .origin-matchup.origin-matchup-811{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 58px minmax(0,1fr)!important;
+  align-items:end!important;
+  gap:8px!important;
+  height:190px!important;
+  margin:.35rem 0 .7rem!important;
+  overflow:visible!important;
+  position:relative!important;
+}
+.lpw-feud-origin .origin-matchup-811 .origin-wrestler-frame{
+  height:190px!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  position:relative!important;
+}
+.lpw-feud-origin .origin-matchup-811 .origin-wrestler-image{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  padding:0!important;
+  margin:0!important;
+  object-fit:cover!important;
+  object-position:center 18%!important;
+  transform:none!important;
+  position:static!important;
+}
+.lpw-feud-origin .origin-matchup-811>strong{
+  position:static!important;
+  grid-column:2!important;
+  align-self:center!important;
+  justify-self:center!important;
+  transform:none!important;
+  display:grid!important;
+  place-items:center!important;
+  width:58px!important;
+  height:50px!important;
+  margin:0!important;
+  padding:0!important;
+  color:#f2c84b!important;
+  background:#101116!important;
+  border:2px solid #6f5721!important;
+  font-size:1.8rem!important;
+  line-height:1!important;
+  z-index:5!important;
+}
+@media(max-width:700px){
+  .lpw-feud-origin .origin-matchup.origin-matchup-811{
+    grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr)!important;
+    height:174px!important;
+    gap:5px!important;
+  }
+  .lpw-feud-origin .origin-matchup-811 .origin-wrestler-frame{height:174px!important}
+  .lpw-feud-origin .origin-matchup-811>strong{width:54px!important;height:46px!important;font-size:1.65rem!important}
+}
