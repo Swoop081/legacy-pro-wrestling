@@ -1805,3 +1805,183 @@ gauntletLiveFinishMatch65=function(win,oppId){
  const winner=win?player:opp;
  render(`<section class="panel live-day-complete live-result-winner-only ${win?'live-win':'live-loss'}"><div class="tv-kicker">MATCH RESULT</div><h1>${win?'VICTORY':'DEFEAT'}</h1><div class="live-result-solo">${imageWithFallback(winner,'victory','art-full','resultVictory')}</div><h2>${winner.name}</h2><p>${win?`${player.name} defeated ${opp.name}.`:`${opp.name} defeated ${player.name}.`}</p><div class="live-xp-award"><b>${win?`+${xp.amount} XP`:'NO XP EARNED'}</b><span>${c.world.injury?'An injury will require medical attention tomorrow.':'The world will react tomorrow.'}</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`);
 };
+
+/* ==========================================================================\n   LEGACY PRO WRESTLING 8.3.0 — CAREER MONTH ONE POLISH\n   ========================================================================== */
+
+/* Introduction wording */
+gauntletLiveIntro=function(page=0){
+ setActiveGameMode('career');
+ const slides=[
+  {k:'WELCOME TO LEGACY PRO WRESTLING',h:'THIS IS YOUR CAREER',p:'I am Veronica Vale, General Manager of LEGACY Pro Wrestling. You will guide one wrestler through a living wrestling world where every victory, injury, rivalry and decision changes what happens next.',img:'full'},
+  {k:'TWO LIVE SHOWS EVERY WEEK',h:'MAYHEM & THROWDOWN',p:'Monday Night Mayhem and Thursday Night Throwdown always feature you in a match or major story segment. The rest of the week reacts naturally to the stories your career creates.',img:'portrait'},
+  {k:'FOUR WEEKS · ONE RIVALRY',h:'WIN THE SUPERCARD',p:'Each month builds toward a named Supercard. The Supercard result decides the feud. Win and your rival joins your permanent stable; lose and you must try again in a new story.',img:'full'},
+  {k:'BUILD YOUR ROSTER',h:'CHOOSE YOUR WRESTLER',p:'After every Supercard you may continue with your current wrestler or switch to anyone you have unlocked. Choose the first wrestler who will represent your stable.',img:'portrait'}
+ ];
+ const s=slides[Math.max(0,Math.min(page,slides.length-1))],last=page===slides.length-1;
+ window.scrollTo(0,0);
+ render(`<section class="panel live-onboarding live-onboarding-template-${s.img} live-onboarding-page-${page}"><div class="live-onboarding-art">${npcImage('veronica-vale',s.img)}</div><div class="live-onboarding-copy"><div class="tv-kicker">${s.k}</div><h1>${s.h}</h1><p>${s.p}</p><div class="live-onboarding-progress">${slides.map((_,i)=>`<span class="${i<=page?'on':''}"></span>`).join('')}</div><button class="btn live-primary" onclick="${last?'gauntletLiveFounderSelect()':`gauntletLiveIntro(${page+1})`}">${last?'SELECT STARTING WRESTLER':'CONTINUE'}</button></div></section>`);
+ requestAnimationFrame(()=>window.scrollTo(0,0));
+};
+
+/* Founder selection: identity only, no signature move line. */
+gauntletLiveFounderSelect=function(){
+ const founders=LIVE_FOUNDERS.map(liveFounder).filter(Boolean);
+ render(`<section class="panel live-founder-screen lpw-founder-clean"><button class="shell-back" onclick="gauntletLiveHome()">← CAREER</button><div class="tv-kicker">NEW CAREER</div><h1>CHOOSE YOUR WRESTLER</h1><p class="sub">This wrestler becomes the first member of your stable.</p><div class="live-founder-grid">${founders.map(w=>`<button class="live-founder-card" onclick="gauntletLiveChooseFounder('${w.id}')">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`);
+};
+
+/* Fictional calendar: Monday January 1, month lengths advance independently of a real year. */
+const LPW_FICTIONAL_MONTH_LENGTHS=[31,28,31,30,31,30,31,31,30,31,30,31];
+function lpwCalendarDate(c,offset=0){
+ const absolute=((Math.max(1,Number(c.week)||1)-1)*7)+(Number.isInteger(c.day)?c.day:0)+offset;
+ let remaining=Math.max(0,absolute),year=1,month=0;
+ while(remaining>=365){remaining-=365;year++}
+ while(remaining>=LPW_FICTIONAL_MONTH_LENGTHS[month]){remaining-=LPW_FICTIONAL_MONTH_LENGTHS[month];month=(month+1)%12;if(month===0)year++}
+ return {absolute,day:remaining+1,month,year,weekday:absolute%7};
+}
+function lpwCalendarIsSupercard(d){return d.weekday===6&&Math.floor(d.absolute/7)%4===3}
+function lpwCalendarTimeline(c){const d=lpwCalendarDate(c);return `YEAR ${d.year} · ${LPW_CALENDAR_MONTHS[d.month].toUpperCase()} ${d.day} · WEEK ${c.week}`}
+
+/* Career planning: hide unfinished multi-person matches and force the onboarding match. */
+const _lpw830GenerateMonthlyPlan=liveGenerateMonthlyPlan;
+liveGenerateMonthlyPlan=function(c){
+ _lpw830GenerateMonthlyPlan(c);
+ if(!Array.isArray(c.world.monthPlan))c.world.monthPlan=[];
+ c.world.monthPlan=c.world.monthPlan.map(item=>item?.type==='multi'?{type:'singles',week:item.week,day:item.day,opponents:[lpwPickCareerOpponent(c)?.id].filter(Boolean)}:item);
+ if(Number(c.month)===1&&Number(c.week)===1){
+  const rival=liveFeudOpponent(c);
+  if(rival)c.world.monthPlan[0]={type:'singles',week:1,day:0,opponents:[rival.id],onboarding:true};
+ }
+ liveSave(c);
+};
+
+const _lpw830RepairShowItem=lpwRepairShowItem;
+lpwRepairShowItem=function(c,item){
+ const fixed=_lpw830RepairShowItem(c,item);
+ if(fixed?.type==='multi')return _lpw830RepairShowItem(c,{type:'singles'});
+ if(Number(c?.month)===1&&Number(c?.week)===1&&Number(c?.day)===0){
+  const rival=liveFeudOpponent(c);
+  if(rival)return {type:'singles',opponents:[rival.id],onboarding:true};
+ }
+ return fixed;
+};
+
+/* Feud origin wording; preserve approved VS composition. */
+gauntletLiveFeudOrigin=function(){
+ const c=liveLoad(),r=liveFeudOpponent(c),p=liveFounder(c.active),origins=[
+  {title:'A PUBLIC CALL-OUT',npc:'katie-morgan',copy:`${r.name} interrupts a live interview and claims ${p.name} has been avoiding real competition.`},
+  {title:'A LINE IS CROSSED',npc:'leon-ward',copy:`Security reports that ${r.name} tried to confront ${p.name} away from the cameras.`},
+  {title:'A MESSAGE IS SENT',npc:'mike-sullivan',copy:`${r.name} uses live television to guarantee victory over ${p.name}.`}
+ ];
+ const o=one(origins),pSources=wrestlerImageCandidates(p,'portrait'),rSources=wrestlerImageCandidates(r,'portrait');
+ c.world.feud.reason=o.copy;c.world.feudOriginSeen=c.month;liveSave(c);
+ render(`<section class="panel lpw-feud-origin"><div class="tv-kicker">NEW MONTH · FEUD ORIGIN</div><h1>${o.title}</h1><div class="origin-matchup origin-matchup-820"><div class="origin-wrestler-frame origin-wrestler-left"><img class="origin-wrestler-image" src="${pSources[0]}" data-sources="${pSources.join('|')}" data-source-index="0" alt="${p.name}" onerror="advanceImageFallback(this)"></div><strong class="origin-vs-820">VS</strong><div class="origin-wrestler-frame origin-wrestler-right"><img class="origin-wrestler-image" src="${rSources[0]}" data-sources="${rSources.join('|')}" data-source-index="0" alt="${r.name}" onerror="advanceImageFallback(this)"></div></div><div class="live-npc-scene expanded origin-report origin-report-${o.npc}">${npcImage(o.npc,'full')}<div class="origin-report-copy"><b>${npc(o.npc)?.name||''}</b><small>${npc(o.npc)?.role||''}</small><p>${o.copy}</p></div></div><p class="origin-close">This rivalry will culminate at <b>${liveCurrentSupercard(c)}</b>.</p><button class="btn live-primary" onclick="gauntletLiveCalendar()">BEGIN THE MONTH</button></section>`);
+};
+
+/* Career hub: primary action immediately below calendar. */
+gauntletLiveCalendar=function(){
+ const c=liveLoad();if(!c)return gauntletLiveHome();
+ const w=liveFounder(c.active),f=liveFeud(c),r=liveFeudOpponent(c);
+ const nickname=(w.name.match(/^"[^"]+"/)||[''])[0],ringName=w.name.replace(/^"[^"]+"\s*/, '');
+ const forecast=Array.from({length:7},(_,i)=>lpwCalendarLabel(c,i)),today=forecast[0];
+ render(`<section class="panel live-calendar-screen lpw-calendar-compact lpw-calendar-807 lpw-calendar-821 lpw-calendar-830"><div class="live-calendar-top"><button class="shell-back" onclick="home()">← MAIN MENU</button><button class="shell-back" onclick="gauntletLiveHome()">CAREER MENU</button></div><div class="tv-kicker">${lpwCalendarTimeline(c)}</div><h1>CAREER</h1><div class="live-week-strip lpw-date-forecast" aria-label="Next seven days">${forecast.map((d,i)=>`<div class="live-day ${i===0?'current':''} ${d.supercard?'supercard':''}"><small>${LIVE_DAYS[d.weekday].slice(0,3).toUpperCase()}</small><b>${d.day}</b><span>${d.label}</span>${i>0&&d.day===1?`<em>${LPW_CALENDAR_MONTHS[d.month].slice(0,3).toUpperCase()}</em>`:''}</div>`).join('')}</div><div class="live-today"><div><small>TODAY · ${LIVE_DAYS[today.weekday].toUpperCase()} · ${LPW_CALENDAR_MONTHS[today.month].toUpperCase()} ${today.day}</small><h2>${today.label}</h2><p>${lpwCalendarDescription(today)}</p></div><button class="btn live-primary" onclick="gauntletLiveBeginDay()">BEGIN</button></div><div class="lpw-active-wrestler-feature"><small class="lpw-feature-label">ACTIVE WRESTLER</small><div class="lpw-feature-portrait">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}</div><div class="lpw-active-copy">${nickname?`<span class="lpw-active-nickname">${nickname}</span>`:''}<b class="lpw-active-name">${ringName}</b><span class="lpw-active-record">${c.wins}-${c.losses} Record</span><span class="lpw-active-stable">${c.stable.length} Stable Member${c.stable.length===1?'':'s'}</span></div></div><div class="live-mini-stats lpw-stats-below-feature"><span><small>MOMENTUM</small><b>${c.momentum}</b></span><span><small>POPULARITY</small><b>${c.popularity}</b></span><button onclick="gauntletLiveStable()">MANAGE STABLE</button></div>${f?`<div class="live-feud-banner calendar-feud"><div>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}</div><span><small>CURRENT FEUD</small><b>${w.name} vs ${r.name}</b><em>${liveCurrentSupercard(c)} · Intensity ${f.intensity}%</em></span><div>${imageWithFallback(r,'portrait','art-portrait','matchPortrait')}</div></div>`:''}<div class="lpw-future-hub"><small>MORE FROM LEGACY</small><p>Future social, news, rankings and championship modules will live here without blocking daily progression.</p></div></section>`);
+};
+
+/* Unique, context-aware Katie questions. */
+gauntletLiveKatieInterview=function(){
+ const c=liveLoad(),r=liveFeudOpponent(c),last=c.world.lastResult;
+ c.world.askedInterviewKeys=Array.isArray(c.world.askedInterviewKeys)?c.world.askedInterviewKeys:[];
+ const prompts=[
+  ['opening-warning',`${r.name} says you are avoiding a decisive confrontation. What is your response?`],
+  ['result-reaction',last?`${last.win?'You won':'You lost'} your last match. What did that result prove about your path to ${liveCurrentSupercard(c)}?`:`What message do you want to send before ${liveCurrentSupercard(c)}?`],
+  ['personal-line',`Your rivalry with ${r.name} is becoming personal. Where does competition end and hatred begin?`],
+  ['roster-pressure',`The rest of the roster is watching this feud closely. Do you feel pressure to represent your stable?`],
+  ['balance-power',`Would defeating ${r.name} and recruiting them change the balance of power in LEGACY Pro Wrestling?`],
+  ['rival-guarantee',`${r.name} has guaranteed victory the next time you meet. What do you say to that?`],
+  ['supercard-stakes',`What will defeating ${r.name} at ${liveCurrentSupercard(c)} mean to your career?`],
+  ['momentum-shift',`Who holds the psychological advantage in this rivalry right now?`]
+ ];
+ let available=prompts.filter(([key])=>!c.world.askedInterviewKeys.includes(key));
+ if(!available.length){c.world.askedInterviewKeys=[];available=prompts}
+ const [key,q]=one(available);c.world.askedInterviewKeys.push(key);liveSave(c);
+ render(`<section class="panel live-world-screen lpw-katie-interview"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">EXCLUSIVE · BACKSTAGE</div><h1>KATIE MORGAN INTERVIEW</h1><div class="live-npc-scene large">${npcImage('katie-morgan','full')}<div><small>BACKSTAGE INTERVIEWER</small><h2>Katie Morgan</h2><p>“${q}”</p></div></div><div class="live-choice-grid"><button onclick="gauntletLiveResolveDynamic('popularity',8,'You answered with confidence.')"><b>CONFIDENT</b><span>Popularity +8</span></button><button onclick="gauntletLiveResolveDynamic('momentum',8,'You delivered a direct warning.')"><b>DIRECT WARNING</b><span>Momentum +8</span></button><button onclick="gauntletLiveResolveDynamic('feud',12,'You made the rivalry deeply personal.')"><b>MAKE IT PERSONAL</b><span>Feud +12</span></button></div></section>`);
+};
+
+/* World recap action first; reading remains optional. */
+gauntletLiveWorldRecap=function(){
+ const c=liveLoad(),last=c.world.lastResult,player=liveFounder(c.active);if(!c.world.worldStories.length)liveSimulateWorld(c);
+ const other=c.world.worldStories;let lead='Another LEGACY Pro Wrestling broadcast has reshaped the wider wrestling world.',analysis='Every headline creates pressure before the next show.';
+ if(last){const opp=liveFounder(last.opponent);lead=last.win?`${player.name}'s victory over ${opp.name} leads tonight's headlines.`:`${opp.name}'s victory over ${player.name} has changed the conversation.`;analysis=last.win?one([`${player.name} is becoming impossible to ignore.`,`The locker room now has to take ${player.name} seriously.`,`That result could influence the next set of rankings.`]):one([`The response in the next match will matter.`,`A setback can create an even larger opportunity.`,`The pressure is now firmly on ${player.name}.`])}
+ render(`<section class="panel live-world-screen lpw-world-recap-830"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">AROUND LPW</div><h1>WORLD RECAP</h1><button class="btn live-primary recap-continue-top" onclick="gauntletLiveCompleteWorldRecap()">CONTINUE</button><div class="live-commentary-duo"><div>${npcImage('mike-sullivan','portrait')}<b>Mike Sullivan</b><p>${lead}</p></div><div>${npcImage('johnny-cannon','portrait')}<b>Johnny Cannon</b><p>${analysis}</p></div></div><div class="live-world-results">${other.slice(0,4).map(s=>`<article><span>${s.a?imageWithFallback(liveFounder(s.a),'portrait','art-portrait','matchPortrait'):''}</span><p>${s.text}</p>${s.b?`<span>${imageWithFallback(liveFounder(s.b),'portrait','art-portrait','matchPortrait')}</span>`:''}</article>`).join('')}</div></section>`);
+};
+
+/* Thursday reacts to the week rather than repeating Monday's generic introduction. */
+gauntletLiveShowIntro=function(){
+ const c=liveLoad(),item=lpwPersistRepairedShowItem(c,lpwRepairShowItem(c,livePlanItem(c))),stories=liveSimulateWorld(c),venue=one(VENUES),attendance=Math.floor(rnd(11000,20500)).toLocaleString();liveSave(c);
+ const show=liveIsSupercard(c)?liveCurrentSupercard(c).toUpperCase():liveShowName(c),last=c.world.lastResult,rival=liveFeudOpponent(c),player=liveFounder(c.active);
+ let mike=`Welcome to ${show}. Tonight could change the direction of several LEGACY Pro Wrestling careers.`,johnny='The pressure is rising, and nobody on this roster can afford to stand still.';
+ if(c.day===3){
+  if(last){const opp=liveFounder(last.opponent);mike=last.win?`${player.name}'s victory earlier this week has shifted the mood around the locker room.`:`${player.name}'s setback against ${opp.name} has created immediate pressure.`;johnny=last.win?`${rival?.name||'The opposition'} has seen the momentum change and will be looking for an answer tonight.`:`Tonight tells us whether ${player.name} can respond before this rivalry slips away.`}
+  else{mike=`The fallout from Monday Night Mayhem has followed us into Throwdown.`;johnny=`Every unresolved issue from Mayhem is waiting to explode tonight.`}
+ }
+ const card=stories.slice(0,2).map(s=>`<li>${s.a?`${liveFounder(s.a)?.name||'A LEGACY star'} is scheduled to appear tonight.`:s.text}</li>`).join('');
+ render(`<section class="panel live-show-intro lpw-show-open"><div class="show-intro-copy">${liveIsSupercard(c)?`<div class="lpw-ple-title">${show}</div>`:lpwShowLogo(show)}<div class="tv-kicker">LIVE FROM ${venue.toUpperCase()} · ${attendance} IN ATTENDANCE</div><div class="live-commentary-duo show-preview"><div>${npcImage('mike-sullivan','portrait')}<b>Mike Sullivan</b><p>${mike}</p></div><div>${npcImage('johnny-cannon','portrait')}<b>Johnny Cannon</b><p>${johnny}</p></div></div><div class="show-card-list"><small>TONIGHT ON LPW</small><ul>${card||'<li>Major developments from across LEGACY Pro Wrestling.</li>'}</ul><b>YOUR SEGMENT · ${liveIsSupercard(c)?'FEUD FINALE':item.type==='segment'?liveSegmentTitle(item.segment):item.type.toUpperCase()+' MATCH'}</b></div><button class="btn live-primary" onclick="gauntletLiveRunShowSegment()">START THE SHOW</button></div></section>`);
+};
+
+/* Match introduction without decorative information boxes. */
+gauntletLiveMatchCard65=function(){
+ try{
+  const c=liveLoad();if(!c)return gauntletLiveHome();const isSC=liveIsSupercard(c),player=liveFounder(c.active);if(!player)throw new Error('Active wrestler is missing.');
+  let item=lpwRepairShowItem(c,livePlanItem(c));const rival=liveFeudOpponent(c);
+  if(isSC){const opponent=(rival&&lpwValidCareerWrestler(rival.id)&&rival.id!==c.active)?rival:lpwPickCareerOpponent(c);if(!opponent)throw new Error('No valid Supercard opponent is available.');item={type:'singles',opponents:[opponent.id]}}else item=lpwPersistRepairedShowItem(c,item);
+  const type=item.type,opponents=item.opponents||[],partner=item.partner||null,roster=[player,...(partner?[liveFounder(partner)]:[]),...opponents.map(liveFounder)].filter(Boolean),expected=type==='tag'?4:2;if(roster.length<expected)throw new Error('Tonight\'s match roster is incomplete.');
+  c.pending={opponent:opponents[0],opponents,type,partner,isSupercard:isSC};liveSave(c);
+  render(`<section class="panel live-match-card lpw-match-card-830"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button>${isSC?`<div class="lpw-ple-title">${liveCurrentSupercard(c).toUpperCase()}</div>`:lpwShowLogo(liveShowName(c))}<h1>${isSC?'FEUD FINALE':type==='tag'?'TAG TEAM MATCH':'FEATURED SINGLES MATCH'}</h1><div class="live-match-lineup ${type} portrait-lineup">${roster.map((w,i)=>lpwPortraitCard(w,i===0?'YOUR WRESTLER':i===1&&partner?'YOUR PARTNER':'OPPONENT')).join('')}</div><div class="live-npc-scene compact producer-card">${npcImage('raymond-briggs','portrait')}<div><small>MATCH PRODUCER</small><b>Raymond Briggs</b><p>Use the broadcast decisions to control the pace. The result will shape what happens tomorrow.</p></div></div><button class="btn live-primary" onclick="gauntletLiveLaunchBroadcast65()">BEGIN MATCH BROADCAST</button></section>`);
+ }catch(err){console.error('Career match card failed:',err);const c=liveLoad();if(c){liveGenerateMonthlyPlan(c);liveSave(c)}render(`<section class="panel live-world-screen"><div class="tv-kicker">CAREER RECOVERY</div><h1>MATCH CARD REPAIRED</h1><p>The match card could not be loaded, so Career rebuilt tonight's segment.</p><button class="btn live-primary" onclick="gauntletLiveShowIntro()">RETURN TO SHOW</button><button class="btn secondary" onclick="gauntletLiveCalendar()">RETURN TO CALENDAR</button></section>`)}
+};
+
+/* Career achievements use the actual completed Career record only. */
+milestoneData=function(){
+ const c=liveLoad();
+ const careerResult=!!(c&&c.world&&c.world.lastResult&&Array.isArray(c.history)&&c.history.length);
+ if(careerResult&&document.body.classList.contains('career-view')){
+  const wins=Number(c.wins||0),lastWin=!!c.world.lastResult.win;
+  if(!lastWin)return [];
+  if(wins===1)return [['FIRST CAREER VICTORY','Your first Career victory is officially in the record books.']];
+  if([5,10,20,50].includes(wins))return [['CAREER MILESTONE',`${wins} completed Career victories have set a new standard.`]];
+  return [];
+ }
+ const stats=loadStats(),items=[];
+ if(S.streak===1)items.push(['FIRST VICTORY','The Gauntlet journey is officially underway.']);
+ if(S.streak===5)items.push(['FIVE MATCH STREAK','Momentum is becoming a legacy.']);
+ if(S.streak===10)items.push(['DOMINATING THE GAUNTLET','Ten straight victories have changed the entire broadcast.']);
+ if(S.streak>1&&S.streak===stats.bestGauntlet)items.push(['NEW PERSONAL BEST',`A new standard has been set at ${S.streak} victories.`]);
+ return items.slice(0,2);
+};
+
+/* Sudden feud-driven breaking news interruptions. */
+function lpwBreakingNews(c){
+ const rival=liveFeudOpponent(c),player=liveFounder(c.active);if(!rival||!player)return false;
+ const intensity=liveFeud(c)?.intensity||25;
+ const lines=intensity<50?[
+  `${rival.name} mocked ${player.name} and guaranteed victory the next time they meet.`,
+  `${rival.name} told reporters that ${player.name} has not faced real pressure yet.`,
+  `${rival.name} released a message promising to expose ${player.name} at ${liveCurrentSupercard(c)}.`
+ ]:intensity<75?[
+  `${rival.name} interrupted a media appearance and warned ${player.name} that the rivalry is now personal.`,
+  `${rival.name} demanded that ${player.name} answer a public challenge on the next broadcast.`,
+  `Security separated ${rival.name} from ${player.name} after a heated backstage confrontation.`
+ ]:[
+  `${rival.name} attempted to ambush ${player.name} before officials intervened.`,
+  `Veronica Vale has ordered extra security after another confrontation involving ${rival.name}.`,
+  `${rival.name} vowed that ${player.name} will not make it through ${liveCurrentSupercard(c)} unchanged.`
+ ];
+ const line=one(lines);c.world.breakingWeek=c.week;c.world.breakingResume=true;liveSave(c);
+ render(`<section class="panel lpw-breaking-news"><div class="tv-kicker">BREAKING NEWS</div><h1>RIVALRY UPDATE</h1><div class="breaking-rival-art">${imageWithFallback(rival,'full','art-full','quickMatch')}</div><h2>${rival.name}</h2><p>${line}</p><button class="btn live-primary" onclick="lpwResumeAfterBreakingNews()">CONTINUE</button></section>`);return true;
+}
+function lpwResumeAfterBreakingNews(){const c=liveLoad();c.world.breakingResume=false;liveSave(c);gauntletLiveBeginDay(true)}
+const _lpw830BeginDay=gauntletLiveBeginDay;
+gauntletLiveBeginDay=function(skipBreaking=false){
+ const c=liveLoad();if(!c)return gauntletLiveHome();
+ if(!skipBreaking&&c.week>1&&c.world.breakingWeek!==c.week&&Math.random()<.24&&liveFeud(c))return lpwBreakingNews(c);
+ return _lpw830BeginDay();
+};
