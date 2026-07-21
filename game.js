@@ -650,7 +650,7 @@ function victoryCelebration(w){return VICTORY_CELEBRATIONS[w.id]||`${w.name} cel
 function showSummary(win){
  clearStoryTimer();
  const length=formatTime(M.matchSeconds);
- const rating=clamp(1.65+M.highlights.length*.11+M.nearFalls*.20+M.finishers*.12+M.tags*.05+M.eventTarget*.045+M.crowd*.006,1,5);
+ const rating=clamp(1.45+M.highlights.length*.085+M.nearFalls*.14+M.finishers*.09+M.tags*.035+M.eventTarget*.032+M.crowd*.0045+(Math.random()<.025?.35:0),1,5);
  const ratingData=matchRatingData(rating),highlights=[...new Set(M.highlights)].slice(-5),story=buildSummaryStory();
  recordCompletedMatch(win,rating);
  M.lossMessage=`${M.winner.name} wins after a ${rating.toFixed(1)}-star match.`;
@@ -2185,3 +2185,87 @@ gauntletLiveHome=function(){_lpw836Home();const actions=document.querySelector('
 
 /* Natural wrestler decision wording: remove archetype labels from any legacy-generated option. */
 Object.keys(WRESTLER_DECISIONS).forEach(id=>{WRESTLER_DECISIONS[id]=WRESTLER_DECISIONS[id].map(stage=>stage.map(text=>String(text).replace(/^Supernatural\s+/i,'').replace(/^Royal\s+/i,'').replace(/^Hollywood\s+/i,''))) });
+
+/* ==========================================================================\n   LEGACY PRO WRESTLING 8.3.7 — CAREER CONTINUITY & BROADCAST POLISH\n   ========================================================================== */
+const LPW837_VERSION='8.3.7';
+function lpw837Ensure(c){
+ c.world=c.world||{};
+ c.world.storyLog=Array.isArray(c.world.storyLog)?c.world.storyLog:[];
+ c.world.mediaArchive=Array.isArray(c.world.mediaArchive)?c.world.mediaArchive:[];
+ c.world.pendingConsequences=Array.isArray(c.world.pendingConsequences)?c.world.pendingConsequences:[];
+ c.world.championIntroSeen=!!c.world.championIntroSeen;
+ c.world.recentHeadings=Array.isArray(c.world.recentHeadings)?c.world.recentHeadings:[];
+ return c;
+}
+function lpw837Log(c,type,text,meta={}){
+ lpw837Ensure(c);c.world.storyLog.unshift({type,text,week:c.week,month:c.month,day:c.day,time:Date.now(),...meta});
+ c.world.storyLog=c.world.storyLog.slice(0,40);if(text)liveAddNews(c,text);return c;
+}
+function lpw837Recent(c,type,limit=3){return lpw837Ensure(c).world.storyLog.filter(x=>!type||x.type===type).slice(0,limit)}
+function lpw837AssignChampions(c){
+ lpw8Init(c);const pool=WRESTLERS.map(w=>w.id).filter(id=>id!==c.active),pick=()=>pool.splice(Math.floor(Math.random()*pool.length),1)[0];
+ c.championships={world:pick(),television:pick(),heritage:pick(),tag:[pick(),pick()]};return c;
+}
+function lpw837ChampionOnboarding(){
+ const c=lpw837Ensure(liveLoad());if(!c)return gauntletLiveHome();const champ=liveFounder(c.championships?.world)||liveFounder('jack-mercer');
+ c.world.championIntroSeen=true;lpw837Log(c,'champion',`${champ.name} opened the new Career as reigning LEGACY World Champion.`);liveSave(c);
+ render(`<section class="panel live-world-screen lpw837-champion-intro"><div class="tv-kicker">THE CHAMPIONSHIP ERA</div><h1>MEET THE WORLD CHAMPION</h1><div class="lpw837-champion-stage">${imageWithFallback(champ,'full','art-full','resultVictory')}<div><small>REIGNING LEGACY WORLD CHAMPION</small><h2>${champ.name}</h2><p>“This championship is the standard. Every wrestler enters LEGACY Pro Wrestling believing they can reach me. Most discover how far away they really are.”</p><p class="lpw837-veronica-note"><b>Veronica Vale:</b> Every match, ranking point and rivalry can move your wrestler closer to this title.</p></div></div><button class="btn live-primary" onclick="gauntletLiveFeudOrigin()">BEGIN MONTH ONE</button></section>`);
+}
+const _lpw837ChooseFounder=lpw835ChooseFounder;
+lpw835ChooseFounder=function(id){
+ const wrestler=liveFounder(id);if(!wrestler||!LIVE_FOUNDERS.includes(id))return gauntletLiveFounderSelect();
+ const career={version:9,founder:id,active:id,stable:[id],week:1,month:1,day:0,wins:0,losses:0,momentum:50,popularity:20,training:{power:0,speed:0,technique:0,charisma:0,recovery:0},progression:{},history:[],created:new Date().toISOString(),world:{onboardingSeen:true,news:[],worldStories:[],storyLog:[],mediaArchive:[],katieThisWeek:0,lastResult:null,manager:null,nextMatchBonus:0,championIntroSeen:false}};
+ try{liveEnsureProgression(career);liveEnsureWorld(career);lpw837AssignChampions(career);const rival=livePickDifferent(career);if(rival)liveStartFeud(career,rival.id,'Veronica Vale has selected your first monthly rival.');liveGenerateMonthlyPlan(career);liveSave(career);return lpw837ChampionOnboarding()}catch(error){console.error('8.3.7 Career opening failed:',error);liveSave(career);return gauntletLiveCalendar()}
+};
+window.lpw835ChooseFounder=lpw835ChooseFounder;window.gauntletLiveChooseFounder=lpw835ChooseFounder;gauntletLiveChooseFounder=lpw835ChooseFounder;
+
+const _lpw837Promo=gauntletLiveResolvePromo;
+gauntletLiveResolvePromo=function(type){const c=liveLoad(),r=liveFeudOpponent(c),p=liveFounder(c.active);if(c&&r&&p){lpw837Log(c,'promo',`${p.name} answered ${r.name} with a ${type} promo.`,{rival:r.id});liveSave(c)}return _lpw837Promo(type)};
+const _lpw837Outcome=lpw836ApplyOutcome;
+lpw836ApplyOutcome=function(npcId,title,changes,reaction,ripple){const c=liveLoad(),p=liveFounder(c.active);if(c&&p){lpw837Log(c,'decision',`${p.name}: ${title}. ${reaction}`,{npc:npcId,changes});liveSave(c)}return _lpw837Outcome(npcId,title,changes,reaction,ripple)};
+
+function lpw837Rating(){const c=liveLoad(),last=c?.world?.lastResult;let base=2.75+Math.random()*.85;if(last?.win)base+=.15;if(c?.momentum>70)base+=.15;if(Math.random()<.08)base+=.45;if(Math.random()<.015)base+=.45;return Math.min(5,Math.round(base*4)/4)}
+function lpw837Stars(v){const whole=Math.floor(v),frac=v-whole;return '★'.repeat(whole)+(frac>=.75?'¾':frac>=.5?'½':frac>=.25?'¼':'')}
+function lpw837DirtSheet(supercard=false){
+ const c=lpw837Ensure(liveLoad()),p=liveFounder(c.active),r=liveFeudOpponent(c),last=c.world.lastResult,pool=liveOtherPool(c).filter(w=>w.id!==p.id),a=one(pool),b=one(pool.filter(x=>x.id!==a?.id)),rise=one(pool),fall=one(pool.filter(x=>x.id!==rise?.id)),rating=lpw837Rating();
+ const match=last?`${p.name} vs ${liveFounder(last.opponent)?.name||r?.name||'an LPW rival'}`:`${a?.name||p.name} vs ${b?.name||r?.name||'an LPW contender'}`;
+ const rumour=r?`Sources say officials are considering a stipulation for ${p.name} and ${r.name}.`:`Sources say a major challenge is being prepared for ${p.name}.`;
+ const body=`${match} earned ${rating.toFixed(2).replace(/0$/,'')} stars. ${rise?.name||p.name} is trending upward while ${fall?.name||r?.name||p.name} faces pressure.`;
+ lpw836Archive(c,supercard?'supercard-reaction':'dirt-sheet',supercard?'SuperCard Instant Reaction':'Dirt Sheet Digest',body);lpw837Log(c,'media',body);liveSave(c);
+ render(`<section class="panel live-world-screen lpw-media-screen lpw837-dirt"><div class="tv-kicker">${supercard?'SUPERCARD SPECIAL':'WEEKLY MEDIA'}</div><h1>${supercard?'INSTANT REACTION':'DIRT SHEET DIGEST 2.0'}</h1><div class="live-npc-scene large">${lpw836NpcVisual('derek-pierce','full')}<div><small>DIRT SHEET WRITER</small><h2>Derek Pierce</h2><p>“Results are public. Everything else depends on who is willing to talk.”</p></div></div><div class="lpw-media-grid lpw837-media-grid"><article><small>MATCH OF THE ${supercard?'NIGHT':'WEEK'}</small><b>${match}</b><p>${lpw837Stars(rating)} · ${rating.toFixed(2).replace(/0$/,'')} stars</p></article><article><small>SUPERSTAR OF THE ${supercard?'NIGHT':'WEEK'}</small><b>${last?.win?p.name:(a?.name||r?.name||p.name)}</b><p>The performance creating the loudest conversation.</p></article><article><small>DUD OF THE WEEK</small><b>${fall?.name||r?.name||'Undisclosed'}</b><p>A difficult week has raised uncomfortable questions.</p></article><article><small>STOCK RISING</small><b>${rise?.name||p.name}</b><p>Momentum, reactions and internal confidence are moving upward.</p></article><article><small>STOCK FALLING</small><b>${fall?.name||r?.name||p.name}</b><p>The next appearance now carries added pressure.</p></article><article><small>INJURY WATCH</small><b>${c.world.injury?p.name:'ROSTER CLEARED'}</b><p>${c.world.injury?'Medical clearance remains under review.':'No major absence has been confirmed this week.'}</p></article><article><small>CONTRACT GOSSIP</small><b>${a?.name||'A TOP CONTENDER'}</b><p>Talent Relations is believed to be discussing future opportunities.</p></article><article><small>RUMOUR OF THE WEEK</small><b>SOURCES SAY...</b><p>${rumour}</p></article></div><p class="lpw-disclaimer">Rumours are based on anonymous sources and backstage speculation. LPW has not verified these claims.</p><button class="btn live-primary" onclick="lpw836CompleteMedia()">CONTINUE</button></section>`)
+}
+lpw836DirtSheet=lpw837DirtSheet;
+
+function lpw837AvaPulse(){
+ const c=lpw837Ensure(liveLoad()),p=liveFounder(c.active),r=liveFeudOpponent(c),last=c.world.lastResult;
+ render(`<section class="panel live-world-screen lpw-media-screen"><div class="tv-kicker">LPW SOCIAL</div><h1>AVA'S PULSE</h1><div class="live-npc-scene large">${lpw836NpcVisual('ava-cross','full')}<div><small>SOCIAL MEDIA CORRESPONDENT</small><h2>Ava Cross</h2><p>“The audience is reacting now. Choose the message they hear from you.”</p></div></div><div class="lpw-media-grid"><article><small>TRENDING</small><b>#${p.name.replace(/[^A-Za-z0-9]/g,'')}</b><p>${last?.win?'Victory clips are spreading quickly.':'Fans are waiting for a response.'}</p></article><article><small>RIVALRY HEAT</small><b>${r?`${p.name} vs ${r.name}`:'OPEN CHALLENGE'}</b><p>${r?'The rivalry dominates discussion.':'The audience wants a new challenger.'}</p></article></div><div class="live-choice-grid"><button onclick="lpw837SocialChoice('YOUR POST GOES VIRAL',{popularity:4,momentum:2,feud:5},'A confident post is shared across the LPW audience.')"><b>POST A BOLD MESSAGE</b><span>Popularity, momentum and rivalry</span></button><button onclick="lpw837SocialChoice('FANS RESPECT THE FOCUS',{popularity:3,momentum:4},'A measured response earns respect without losing focus.')"><b>KEEP IT PROFESSIONAL</b><span>Popularity and momentum</span></button></div></section>`)
+}
+function lpw837SocialChoice(title,changes,reaction){lpw836ApplyOutcome('ava-cross',title,changes,reaction,'Commentary, the Dirt Sheet and your rival may reference this post later.')}
+lpw836AvaPulse=lpw837AvaPulse;
+
+function lpw837Medical(){
+ const c=liveLoad(),p=liveFounder(c.active),prog=liveProgress(c.active,c),condition=c.world.injury?'Medical clearance is not yet guaranteed.':'No acute injury is currently preventing competition.';
+ render(`<section class="panel live-world-screen lpw-npc-standard"><div class="tv-kicker">MEDICAL DEPARTMENT</div><h1>MEDICAL CHECK-IN</h1><div class="live-npc-scene large">${lpw836NpcVisual('dr-lena-hart','full')}<div><small>CHIEF MEDICAL OFFICER</small><h2>Dr. Lena Hart</h2><p>“${p.name}, I have reviewed your recent workload and recovery markers. ${condition} Your recovery rating is ${prog.stats.recovery}, so we need to balance readiness with long-term durability.”</p></div></div><div class="live-choice-grid"><button onclick="lpw836ApplyOutcome('dr-lena-hart','RECOVERY PLAN ACCEPTED',{recovery:1},'Dr. Hart records improved recovery compliance.','Better recovery can protect future availability and performance.')"><b>FOLLOW THE RECOVERY PLAN</b><span>Recovery +1</span></button><button onclick="lpw836ApplyOutcome('dr-lena-hart','CLEARANCE REQUESTED',{momentum:3},'Dr. Hart documents your request and schedules reassessment.','Determination increases momentum, but medical risk remains monitored.')"><b>REQUEST REASSESSMENT</b><span>Momentum +3</span></button></div></section>`)
+}
+function lpw837Competition(){
+ const c=lpw8Init(liveLoad()),p=liveFounder(c.active),r=liveFeudOpponent(c),rows=lpw8Rankings(c),rank=Math.max(1,rows.findIndex(x=>x.id===c.active)+1),recent=c.world.lastResult,trend=recent?(recent.win?'rising after your latest victory':'under pressure after your latest defeat'):'still being established';
+ render(`<section class="panel live-world-screen lpw-npc-standard"><div class="tv-kicker">COMPETITION OFFICE</div><h1>COMPETITION UPDATE</h1><div class="live-npc-scene large">${lpw836NpcVisual('ethan-brooks','full')}<div><small>DIRECTOR OF COMPETITION</small><h2>Ethan Brooks</h2><p>“${p.name}, you are currently ranked #${rank}. Your position is ${trend}.${r?` The rivalry with ${r.name} is influencing how officials view your next opportunity.`:''} Another strong result can move you toward a featured match.”</p></div></div><div class="live-choice-grid"><button onclick="lpw836ApplyOutcome('ethan-brooks','RANKING CHALLENGE ISSUED',{popularity:4},'Competition officials record your demand for stronger opposition.','Your next result will be judged as evidence that you belong higher than #${rank}.')"><b>PUSH FOR A HIGHER RANKING</b><span>Popularity +4</span></button><button onclick="lpw836ApplyOutcome('ethan-brooks','RESULTS FIRST',{momentum:4},'Ethan respects the commitment to earning advancement in the ring.','The next match carries added competitive significance.')"><b>EARN IT IN THE RING</b><span>Momentum +4</span></button></div></section>`)
+}
+const lenaEntry=LPW836_DEVELOPMENT.find(x=>x.id==='dr-lena-hart');if(lenaEntry)lenaEntry.run='lpw837Medical()';
+const ethanEntry=LPW836_DEVELOPMENT.find(x=>x.id==='ethan-brooks');if(ethanEntry)ethanEntry.run='lpw837Competition()';
+
+const _lpw837WorldRecap=gauntletLiveWorldRecap;
+gauntletLiveWorldRecap=function(){
+ const c=lpw837Ensure(liveLoad()),last=c.world.lastResult,p=liveFounder(c.active),r=liveFeudOpponent(c);if(!c.world.worldStories.length)liveSimulateWorld(c);const stories=c.world.worldStories.slice(0,4),rank=lpw8Rankings(lpw8Init(c)).findIndex(x=>x.id===c.active)+1;
+ const surprise=stories[0]?.text||'A new contender has entered the conversation.',disappointment=stories[1]?.text||'One expected breakthrough failed to arrive.';
+ render(`<section class="panel live-world-screen lpw-world-recap-830 lpw837-recap"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">AROUND LPW</div><h1>WORLD RECAP</h1><div class="live-commentary-duo"><div>${npcImage('mike-sullivan','portrait')}<b>Mike Sullivan</b><p>${last?(last.win?`${p.name}'s win leads the broadcast fallout.`:`The response to ${p.name}'s defeat is now the central question.`):'The LPW landscape continues to change around every result.'}</p></div><div>${npcImage('johnny-cannon','portrait')}<b>Johnny Cannon</b><p>${r?`${r.name} will be studying every weakness before the next confrontation.`:`Somebody in that locker room is already planning the next challenge.`}</p></div></div><div class="lpw837-recap-cards"><article><small>CHAMPIONSHIP IMPLICATIONS</small><b>RANKED #${rank}</b><p>${p.name} needs sustained results to move toward the LEGACY World Championship.</p></article><article><small>BIGGEST SURPRISE</small><p>${surprise}</p></article><article><small>BIGGEST DISAPPOINTMENT</small><p>${disappointment}</p></article><article><small>RIVALRY WATCH</small><p>${r?`${p.name} and ${r.name} remain on a collision course.`:'A new rivalry has yet to be confirmed.'}</p></article></div><div class="live-world-results">${stories.map(s=>`<article><span>${s.a?imageWithFallback(liveFounder(s.a),'portrait','art-portrait','matchPortrait'):''}</span><p>${s.text}</p>${s.b?`<span>${imageWithFallback(liveFounder(s.b),'portrait','art-portrait','matchPortrait')}</span>`:''}</article>`).join('')}</div><button class="btn live-primary" onclick="gauntletLiveCompleteWorldRecap()">CONTINUE</button></section>`)
+};
+
+const _lpw837ShowIntro=gauntletLiveShowIntro;
+gauntletLiveShowIntro=function(){_lpw837ShowIntro();const c=liveLoad(),recent=lpw837Recent(c,null,2),list=document.querySelector('.show-card-list ul');if(list&&recent.length)list.insertAdjacentHTML('beforeend',recent.map(x=>`<li class="lpw837-continuity">FOLLOW-UP: ${x.text}</li>`).join(''))};
+
+const _lpw837Finish=gauntletLiveFinishMatch65;
+gauntletLiveFinishMatch65=function(win,oppId){const c=liveLoad(),p=liveFounder(c.active),o=liveFounder(oppId);if(c&&p&&o){lpw837Log(c,'match',`${win?p.name:o.name} defeated ${win?o.name:p.name}; the result will affect rankings, commentary and media coverage.`,{win,opponent:oppId});liveSave(c)}return _lpw837Finish(win,oppId)};
+
+const _lpw837Home=gauntletLiveHome;
+gauntletLiveHome=function(){_lpw837Home();const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent='VERSION 8.3.7';const tag=document.querySelector('.build-tag');if(tag)tag.textContent='VERSION 8.3.7'};
