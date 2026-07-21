@@ -1827,7 +1827,7 @@ body.career-view .presentation-summary .result-broadcast-header {
 .live-result-winner-only h2 { font-size:clamp(2rem,8vw,4.5rem); margin:.25rem 0 .5rem; }
 @keyframes lpwWinnerRise { from{opacity:0;transform:translateY(18px) scale(.94)} to{opacity:1;transform:none} }
 
-/* LEGACY Pro Wrestling 8.3.0 — Career Month One polish */
+/* LEGACY Pro Wrestling 8.3.1 — Career Month One polish */
 .lpw-founder-clean .live-founder-card>span{padding-top:16px!important;min-height:70px}
 .lpw-founder-clean .live-founder-card em{display:none!important}
 
@@ -1867,3 +1867,13 @@ body.career-view .presentation-summary .winner-celebration{
  .lpw-founder-clean .live-founder-card>span{padding-top:14px!important}
  .lpw-calendar-830 .live-today{margin-top:12px}
 }
+
+/* LEGACY 8.3.1 hotfix — founder cards must remain directly interactive on touch devices. */
+.lpw-founder-clean .live-founder-card{
+  pointer-events:auto!important;
+  touch-action:manipulation;
+  cursor:pointer;
+  position:relative;
+  z-index:2;
+}
+.lpw-founder-clean .live-founder-card>*{pointer-events:none}

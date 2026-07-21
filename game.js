@@ -1806,7 +1806,7 @@ gauntletLiveFinishMatch65=function(win,oppId){
  render(`<section class="panel live-day-complete live-result-winner-only ${win?'live-win':'live-loss'}"><div class="tv-kicker">MATCH RESULT</div><h1>${win?'VICTORY':'DEFEAT'}</h1><div class="live-result-solo">${imageWithFallback(winner,'victory','art-full','resultVictory')}</div><h2>${winner.name}</h2><p>${win?`${player.name} defeated ${opp.name}.`:`${opp.name} defeated ${player.name}.`}</p><div class="live-xp-award"><b>${win?`+${xp.amount} XP`:'NO XP EARNED'}</b><span>${c.world.injury?'An injury will require medical attention tomorrow.':'The world will react tomorrow.'}</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`);
 };
 
-/* ==========================================================================\n   LEGACY PRO WRESTLING 8.3.0 — CAREER MONTH ONE POLISH\n   ========================================================================== */
+/* ==========================================================================\n   LEGACY PRO WRESTLING 8.3.1 — CAREER MONTH ONE POLISH\n   ========================================================================== */
 
 /* Introduction wording */
 gauntletLiveIntro=function(page=0){
@@ -1826,8 +1826,23 @@ gauntletLiveIntro=function(page=0){
 /* Founder selection: identity only, no signature move line. */
 gauntletLiveFounderSelect=function(){
  const founders=LIVE_FOUNDERS.map(liveFounder).filter(Boolean);
- render(`<section class="panel live-founder-screen lpw-founder-clean"><button class="shell-back" onclick="gauntletLiveHome()">← CAREER</button><div class="tv-kicker">NEW CAREER</div><h1>CHOOSE YOUR WRESTLER</h1><p class="sub">This wrestler becomes the first member of your stable.</p><div class="live-founder-grid">${founders.map(w=>`<button class="live-founder-card" onclick="gauntletLiveChooseFounder('${w.id}')">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`);
+ render(`<section class="panel live-founder-screen lpw-founder-clean"><button class="shell-back" onclick="gauntletLiveHome()">← CAREER</button><div class="tv-kicker">NEW CAREER</div><h1>CHOOSE YOUR WRESTLER</h1><p class="sub">This wrestler becomes the first member of your stable.</p><div class="live-founder-grid">${founders.map(w=>`<button type="button" class="live-founder-card" data-founder-id="${w.id}" aria-label="Choose ${w.name}">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`);
+ const cards=document.querySelectorAll('.live-founder-card[data-founder-id]');
+ cards.forEach(card=>{
+  const choose=event=>{
+   event.preventDefault();
+   event.stopPropagation();
+   if(card.dataset.choosing==='1')return;
+   card.dataset.choosing='1';
+   const id=card.getAttribute('data-founder-id');
+   if(id)window.gauntletLiveChooseFounder(id);
+  };
+  card.addEventListener('click',choose,{once:true});
+  card.addEventListener('touchend',choose,{once:true,passive:false});
+ });
 };
+window.gauntletLiveFounderSelect=gauntletLiveFounderSelect;
+window.gauntletLiveChooseFounder=gauntletLiveChooseFounder;
 
 /* Fictional calendar: Monday January 1, month lengths advance independently of a real year. */
 const LPW_FICTIONAL_MONTH_LENGTHS=[31,28,31,30,31,30,31,31,30,31,30,31];
