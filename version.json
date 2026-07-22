@@ -1,5 +1,5 @@
 {
-  "version": "8.4.5",
+  "version": "8.4.6",
   "build": "Battle Royal Playable Test",
   "released": "2026-07-22",
   "notes": "Adds a standalone 20-person Battle Royal with a dedicated stamina, decision, CPU elimination, final-two and results engine. Career integration remains reserved for the September SuperCard after testing."
