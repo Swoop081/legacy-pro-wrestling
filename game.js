@@ -3579,3 +3579,122 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  window.battleRoyalConfirmExit=function(){if(confirm('Leave this Battle Royal and lose the current match?')){BR=null;home()}};
  setTimeout(installMenuButton,0);
 })();
+
+/* ============================================================
+   LEGACY PRO WRESTLING 8.5.1 HOTFIX — RANKINGS & RECORDS
+   Fixes #99 fallback rankings, records AI match results, repairs
+   existing Career saves, and corrects first-show grammar.
+   ============================================================ */
+(function(){
+ const HOTFIX_VERSION='8.5.1-hotfix';
+
+ function hfChampionIds(c){return new Set(Object.values(c?.championships||{}).flat().filter(Boolean))}
+ function hfContenders(c){const champs=hfChampionIds(c);return WRESTLERS.filter(w=>!champs.has(w.id))}
+ function hfCareer(c,id){
+  c.livingCareers=c.livingCareers||{};
+  return c.livingCareers[id]||(c.livingCareers[id]={id,wins:0,losses:0,streak:0,momentum:50,popularity:20,status:'Active',history:[],monthsControlled:0,monthsAI:0});
+ }
+ function hfHistoryRecord(c,id){
+  let wins=0,losses=0;
+  for(const h of Array.isArray(c?.history)?c.history:[]){
+   if(id===c.active){if(h?.win===true)wins++;else if(h?.win===false)losses++}
+   if(h?.opponent===id){if(h?.win===true)losses++;else if(h?.win===false)wins++}
+  }
+  return {wins,losses};
+ }
+ function hfEnsureRankings(c){
+  if(!c)return c;
+  const contenders=hfContenders(c),old=new Map((Array.isArray(c.rankings)?c.rankings:[]).map(r=>[r.id,r]));
+  const validIds=new Set(contenders.map(w=>w.id));
+  const needsRepair=!Array.isArray(c.rankings)||c.rankings.length!==contenders.length||c.rankings.some(r=>!validIds.has(r.id));
+  if(needsRepair){
+   const ordered=[...contenders].sort((a,b)=>(b.overall-a.overall)||a.name.localeCompare(b.name));
+   const activeIndex=ordered.findIndex(w=>w.id===c.active);
+   if(activeIndex>=0&&!old.has(c.active)){const [active]=ordered.splice(activeIndex,1);ordered.splice(Math.floor(ordered.length*.52),0,active)}
+   c.rankings=ordered.map((w,i)=>{
+    const prior=old.get(w.id),career=hfCareer(c,w.id),hist=hfHistoryRecord(c,w.id);
+    const wins=Math.max(Number(prior?.wins)||0,Number(career.wins)||0,hist.wins);
+    const losses=Math.max(Number(prior?.losses)||0,Number(career.losses)||0,hist.losses);
+    career.wins=wins;career.losses=losses;
+    return {id:w.id,points:Number.isFinite(Number(prior?.points))?Number(prior.points):100-i*3,wins,losses};
+   });
+  }else{
+   c.rankings.forEach(row=>{
+    const career=hfCareer(c,row.id),hist=hfHistoryRecord(c,row.id);
+    row.wins=Math.max(Number(row.wins)||0,Number(career.wins)||0,hist.wins);
+    row.losses=Math.max(Number(row.losses)||0,Number(career.losses)||0,hist.losses);
+    career.wins=row.wins;career.losses=row.losses;
+   });
+  }
+  return c;
+ }
+ function hfApplyResult(c,winnerId,loserId,points=true){
+  if(!c||!winnerId||!loserId||winnerId===loserId)return;
+  hfEnsureRankings(c);
+  const winner=c.rankings.find(r=>r.id===winnerId),loser=c.rankings.find(r=>r.id===loserId);
+  const wc=hfCareer(c,winnerId),lc=hfCareer(c,loserId);
+  if(winner){winner.wins=(Number(winner.wins)||0)+1;if(points)winner.points=Math.max(0,(Number(winner.points)||0)+5)}
+  if(loser){loser.losses=(Number(loser.losses)||0)+1;if(points)loser.points=Math.max(0,(Number(loser.points)||0)-3)}
+  wc.wins=(Number(wc.wins)||0)+1;lc.losses=(Number(lc.losses)||0)+1;
+ }
+ function hfApplyWorldStories(c){
+  if(!c?.world)return;
+  const stories=Array.isArray(c.world.worldStories)?c.world.worldStories:[];
+  stories.forEach((s,index)=>{
+   if(!s||s._recordsApplied||!s.winner||!s.a||!s.b)return;
+   const loser=s.winner===s.a?s.b:s.a;
+   hfApplyResult(c,s.winner,loser,true);
+   s._recordsApplied=true;
+  });
+ }
+ function hfRepair(c){hfEnsureRankings(c);hfApplyWorldStories(c);return c}
+
+ /* Replace the broken #99 fallback with the actual contender table. */
+ currentRank=function(c){
+  try{
+   hfRepair(c);
+   const rows=[...c.rankings].sort((a,b)=>(Number(b.points)||0)-(Number(a.points)||0));
+   const i=rows.findIndex(x=>x.id===c.active);
+   return i>=0?i+1:Math.max(1,rows.length);
+  }catch(_){return 1}
+ };
+
+ /* Preserve records whenever roster expansion forces rankings to be reseeded. */
+ const seed0=lpw837SeedRankings;
+ lpw837SeedRankings=function(c,force=false){
+  if(!c)return c;
+  hfEnsureRankings(c);
+  if(force)return seed0(c,true),hfRepair(c);
+  return hfRepair(c);
+ };
+ lpw8Rankings=function(c){hfRepair(c);return [...c.rankings].sort((a,b)=>(Number(b.points)||0)-(Number(a.points)||0))};
+
+ /* Every simulated AI match now updates both rankings and living-career records. */
+ const simulate0=liveSimulateWorld;
+ liveSimulateWorld=function(c){
+  const stories=simulate0(c)||[];
+  hfApplyWorldStories(c);
+  liveSave(c);
+  return stories;
+ };
+
+ /* Repair existing saves before the affected screens render. */
+ const recap0=gauntletLiveWorldRecap;
+ gauntletLiveWorldRecap=function(){const c=liveLoad();if(c){hfRepair(c);liveSave(c)}return recap0()};
+ const rankings0=lpw8RankingScreen;
+ lpw8RankingScreen=function(){const c=liveLoad();if(c){hfRepair(c);liveSave(c)}return rankings0()};
+ const calendar0=gauntletLiveCalendar;
+ gauntletLiveCalendar=function(){const c=liveLoad();if(c){hfRepair(c);liveSave(c)}return calendar0()};
+
+ /* Correct the two first-show grammar lines without disturbing the layout. */
+ const intro0=gauntletLiveShowIntro;
+ gauntletLiveShowIntro=function(){
+  const result=intro0();
+  document.querySelectorAll('.show-card-list li').forEach(li=>{
+   li.textContent=li.textContent.replace(' makes an LPW debut tonight.',' makes his LPW debut tonight.').replace(' is expected to make a presence felt tonight.',' is expected to make his presence felt tonight.');
+  });
+  return result;
+ };
+
+ window.LPW_HOTFIX_VERSION=HOTFIX_VERSION;
+})();

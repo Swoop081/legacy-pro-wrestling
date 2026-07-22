@@ -1,6 +1,6 @@
 {
-  "version": "8.5.0",
-  "build": "Roster Expansion and Career Hub Polish",
+  "version": "8.5.1",
+  "build": "Rankings and Records Hotfix",
   "released": "2026-07-22",
-  "notes": "Adds Valkyrie Hale, Sienna, Kaori Mizuno and Jasmine Monroe as playable wrestlers, integrates Derek Pierce artwork, alphabetises Collections and polishes the Career Hub. The uploaded baseline contained 32 playable wrestlers, so this build contains 36."
+  "notes": "Fixes Career rank #99, preserves and displays wrestler records, records AI world matches, and corrects first-show grammar."
 }
