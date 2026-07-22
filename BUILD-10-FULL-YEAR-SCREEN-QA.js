@@ -1,0 +1,34 @@
+const fs=require('fs'),vm=require('vm');
+class LS{constructor(){this.m=new Map()}getItem(k){return this.m.has(k)?this.m.get(k):null}setItem(k,v){this.m.set(k,String(v))}removeItem(k){this.m.delete(k)}}
+function el(){return {innerHTML:'',textContent:'',classList:{add(){},remove(){},toggle(){}},dataset:{},style:{},querySelector(){return null},querySelectorAll(){return []},insertAdjacentHTML(){},appendChild(){},scrollTop:0,scrollHeight:0}}
+const app=el(),dummy=el();const doc={body:dummy,documentElement:dummy,getElementById(id){return id==='app'?app:dummy},querySelector(){return null},querySelectorAll(){return []},createElement(){return el()},addEventListener(){}};
+let seed=83710;function rng(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}const math=Object.create(Math);math.random=rng;
+const ctx={console,Math:math,JSON,Date,document:doc,window:null,localStorage:new LS(),navigator:{serviceWorker:{register(){return Promise.resolve()}}},location:{reload(){},search:''},URLSearchParams,confirm:()=>true,alert(){},setTimeout:(fn)=>{fn();return 1},clearTimeout(){},setInterval(){},clearInterval(){},requestAnimationFrame:(fn)=>fn(),MutationObserver:class{observe(){}},Image:function(){},performance:{now:()=>0}};ctx.window=ctx;ctx.globalThis=ctx;
+const context=vm.createContext(ctx);for(const f of ['data.js','game.js'])vm.runInContext(fs.readFileSync('/mnt/data/lpw_build10/'+f,'utf8'),context,{filename:f});
+const run=code=>vm.runInContext(code,context);const load=()=>run('liveLoad()');const save=c=>{context.__c=c;run('liveSave(__c)')};
+function dayKey(c){return `${c.month}-${c.week}-${c.day}`}
+function html(){return app.innerHTML||dummy.innerHTML||''}
+function cleanAction(s){return s.replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&')}
+function actions(){const h=html(),out=[];for(const re of [/onclick="([^"]+)"/g,/onclick='([^']+)'/g]){let m;while((m=re.exec(h)))out.push(cleanAction(m[1]))}return [...new Set(out)]}
+function clickAction(){const bad=/gauntletLive(Calendar|Home)|home\(|shellBack|MAIN MENU|CAREER MENU/;const a=actions().find(x=>!bad.test(x));if(!a)return false;try{run(a);return true}catch(e){return false}}
+function playMatch(){run('gauntletLiveMatchCard();gauntletLiveLaunchBroadcast()');let guard=0;while(run('M&&!M.ended')&&guard++<240){if(run('M.waiting')){run('if(!M.currentDecision)renderMatch()');const n=run('(M.currentDecision?.options||[]).length');run(`storyChoice('choice-${Math.floor(rng()*Math.max(1,n))}')`);if(run('M.decisionOutcome'))run('continueDecisionOutcome()')}else run('advanceStory()')}if(!run('M||!M.ended')){}const win=run('M.finalPlayer>=M.finalOpp');run(`showSummary(${win});liveCompleteBroadcast(${win})`);return {win,rating:run('Number(M.completedRating||3)'),player:run('M.finalPlayer'),opp:run('M.finalOpp')}}
+function screenAudit(){
+ run("gauntletLiveChooseFounder('victor-royale')");let c=load();const champ=c.championships.world,firstRival=c.world.feud.opponent;
+ const checks={championNotFirstRival:firstRival!==champ};
+ run("gauntletLiveStorySegment('commentary-confrontation')");checks.mikeHeader=/Mike Sullivan/.test(html())&&!/CommentatorMike/.test(html());run("gauntletLiveResolveSegment('commentary-confrontation','fight')");checks.mikeOutcome=/Mike Sullivan/.test(html())&&!/Katie Morgan/.test(html());
+ c=load();c.day=2;save(c);run("render(`<section class='panel lpw-npc-standard'><h1>KATIE MORGAN INTERVIEW</h1>${lpw836NpcVisual('katie-morgan','full')}<div class='live-choice-grid'></div></section>`)");run("lpw836ApplyOutcome('katie-morgan','YOU ANSWERED WITH CONFIDENCE',{popularity:8},'Fans responded positively to your confidence.','Your words may shape the weeks ahead.')");checks.katieOutcome=/Katie Morgan/.test(html())&&!/Coach Hank Dawson/.test(html());checks.noSavedLanguage=!/has been saved|choice has been saved/i.test(html());
+ c=load();c.week=1;c.day=0;c.world.lastResult=null;save(c);run('gauntletLiveShowIntro()');checks.noCareerPreview=!/Career appearance/i.test(html())&&/LPW debut/i.test(html());
+ return {checks,champion:champ,firstRival};
+}
+const audit=screenAudit();
+// Fresh full year
+context.localStorage=new LS();run("gauntletLiveChooseFounder('victor-royale')");let matches=[],screenIssues=[],steps=0;
+while(load().month<=12&&steps++<900){let c=load();const before=dayKey(c);if(c.world?.injury){if(!c.world.injury.diagnosed){run("gauntletLiveDoctorVisit();gauntletLiveClearInjury('rest')");continue}run('gauntletLiveBeginDay()');let after=load();if(dayKey(after)===before){run('lpw837b8AdvanceRecovery?lpw837b8AdvanceRecovery():lpw837b6CompleteRecoveryDay()')}continue}
+ if(c.day===0||c.day===3||run('liveIsSupercard(liveLoad())')){const pendingSC=run('liveIsSupercard(liveLoad())');const rival=c.world.feud?.opponent||null;const res=playMatch();let after=load();matches.push({month:c.month,week:c.week,day:c.day,opponent:after.world?.lastResult?.opponent||rival,win:res.win,supercard:pendingSC,rating:res.rating,collected:after.stable.includes(after.world?.lastResult?.opponent||rival),presenter:after.world?.activePresenter||null});if(pendingSC)run('gauntletLiveStartNextMonth(liveLoad().active)');continue}
+ run('gauntletLiveBeginDay()');let guard=0;while(dayKey(load())===before&&guard++<12){if(!clickAction())break}
+ if(dayKey(load())===before){c=load();run("liveAwardXp(liveLoad(),liveLoad().active,30,'QA activity')");c=load();run('liveAdvanceDay(__c);liveSave(__c)')}
+ const t=html();if(/has been saved|Career appearance|measurable improvement/i.test(t))screenIssues.push({at:before,text:t.match(/.{0,40}(has been saved|Career appearance|measurable improvement).{0,80}/i)?.[0]})
+}
+const c=load(),supercards=matches.filter(x=>x.supercard),feuds=(c.world.feudHistory||[]).slice().reverse().map(x=>({month:x.month,opponent:x.opponent,championship:x.championship}));
+const result={audit,final:{month:c.month,week:c.week,day:c.day,wins:c.wins,losses:c.losses,stable:c.stable,stableCount:c.stable.length,level:run('liveProgress(liveLoad().active,liveLoad()).level'),momentum:c.momentum,popularity:c.popularity},matches:{played:matches.length,wins:matches.filter(x=>x.win).length,losses:matches.filter(x=>!x.win).length,averageRating:matches.reduce((a,b)=>a+b.rating,0)/Math.max(1,matches.length)},supercards:{played:supercards.length,wins:supercards.filter(x=>x.win).length,losses:supercards.filter(x=>!x.win).length,results:supercards},feuds,npcUsage:c.world.npcUsage||{},injury:{active:!!c.world.injury,lastCleared:c.world.lastClearedInjury||null,cooldownUntil:c.world.injuryCooldownUntil||null},screenIssues};
+fs.writeFileSync('/mnt/data/lpw_build10/BUILD-10-FULL-YEAR-SCREEN-QA.json',JSON.stringify(result,null,2));console.log(JSON.stringify({audit:result.audit,final:result.final,matches:result.matches,supercards:result.supercards,npcUsage:result.npcUsage,screenIssues:result.screenIssues},null,2));

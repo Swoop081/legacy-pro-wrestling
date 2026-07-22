@@ -3110,3 +3110,472 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  /* Version and cache-visible identity. */
  const home0=gauntletLiveHome;gauntletLiveHome=function(){const r=home0();document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent=`VERSION 8.3.7 BUILD ${BUILD}`);return r};
 })();
+
+/* ============================================================
+   LEGACY PRO WRESTLING 8.3.7 BUILD 10 — BROADCAST AUTHENTICITY QA
+   ============================================================ */
+(function(){
+ const BUILD='10';
+ const NPC_IDS=['mike-sullivan','johnny-cannon','katie-morgan','veronica-vale','dr-lena-hart','coach-hank-dawson','leon-ward','raymond-briggs','ava-cross','derek-pierce','ethan-brooks','madison-price','noah-grant','marcus-steele','olivia-chase','tommy-sparks'];
+ const PRESENTER_BY_SEGMENT={
+  'commentary-confrontation':'mike-sullivan',interview:'katie-morgan','contract-signing':'veronica-vale',
+  'medical-angle':'dr-lena-hart','backstage-attack':'leon-ward',promo:'katie-morgan',
+  'locker-room':'leon-ward','video-message':'mike-sullivan'
+ };
+ function ensure10(c){c.world=c.world||{};c.world.npcUsage=c.world.npcUsage||{};c.world.eventHistory=Array.isArray(c.world.eventHistory)?c.world.eventHistory:[];return c}
+ function rememberPresenter(c,id,source='event'){
+  if(!c||!id)return;ensure10(c);c.world.activePresenter=id;c.world.npcUsage[id]=(Number(c.world.npcUsage[id])||0)+1;
+  c.world.eventHistory.unshift({month:c.month,week:c.week,day:c.day,presenter:id,source});c.world.eventHistory=c.world.eventHistory.slice(0,160);liveSave(c)
+ }
+ function cleanBroadcastText(text=''){
+  return String(text)
+   .replace(/\bCareer appearance\b/gi,'LPW appearance')
+   .replace(/\bCareer career\b/gi,'career')
+   .replace(/The choice has been saved and can influence the rivalry and future coverage\.?/gi,'The fallout from tonight will follow this rivalry into the weeks ahead.')
+   .replace(/This result has been saved and can influence future broadcasts and events\.?/gi,'What happened here may shape future opportunities and confrontations.')
+   .replace(/Popularity changed because of your decision\.?/gi,'The audience responded immediately to what they heard.')
+   .replace(/Momentum changed because of your decision\.?/gi,'The response added fresh energy heading into the next appearance.')
+   .replace(/Feud intensity changed because of your decision\.?/gi,'The exchange pushed the rivalry closer to another confrontation.')
+   .replace(/The technical repetitions produced a measurable improvement\.?/gi,'The final repetitions looked sharper, cleaner and more confident.')
+   .replace(/The improved attribute will influence future match performance\.?/gi,'The work should be noticeable the next time the bell rings.')
+ }
+ function currentRank(c){try{const rows=lpw837Rankings(c);const i=rows.findIndex(x=>x.id===c.active);return i<0?99:i+1}catch(_){return 99}}
+ function championIds(c){return new Set(Object.values(c.championships||{}).flat().filter(Boolean))}
+ function playerCanFeudChampion(c,id){return currentRank(c)===1&&id===c.championships?.world}
+ function safeRival(c,exclude=[]){
+  const blocked=championIds(c),list=[...(Array.isArray(exclude)?exclude:[exclude]),c.active];
+  WRESTLERS.forEach(w=>{if(blocked.has(w.id)&&!playerCanFeudChampion(c,w.id))list.push(w.id)});
+  const pool=liveOtherPool(c,list);return one(pool)||liveOtherPool(c,[c.active])[0]
+ }
+
+ /* Capture the actual on-screen presenter before any choice is made. */
+ const render0=render;
+ render=function(html){
+  const text=String(html||'');
+  if(!/lpw-consequence-screen/.test(text)&&/(live-choice-grid|story-centre|lpw-npc-standard)/.test(text)){
+   const found=NPC_IDS.find(id=>{const n=npc(id);return n&&(text.includes(id)||text.includes(n.name))});
+   if(found){const c=liveLoad();if(c)rememberPresenter(c,found,'screen')}
+  }
+  return render0(cleanBroadcastText(text));
+ };
+
+ /* Champion protection: ordinary rival selection can never choose a champion before #1 contender status. */
+ const pick0=livePickDifferent;
+ livePickDifferent=function(c,exclude=[]){const r=safeRival(c,exclude);return r||pick0(c,exclude)};
+ const start0=liveStartFeud;
+ liveStartFeud=function(c,opponentId,reason){
+  if(championIds(c).has(opponentId)&&!playerCanFeudChampion(c,opponentId)){const replacement=safeRival(c,[opponentId]);opponentId=replacement?.id||opponentId;reason='A rising contender stepped forward to begin a new rivalry.'}
+  start0(c,opponentId,reason);ensure10(c);c.world.feudHistory=Array.isArray(c.world.feudHistory)?c.world.feudHistory:[];
+  c.world.feudHistory.unshift({month:c.month,opponent:opponentId,championship:playerCanFeudChampion(c,opponentId)});c.world.feudHistory=c.world.feudHistory.slice(0,24)
+ };
+
+ /* Presenter continuity and in-universe outcome language. */
+ const outcome0=lpw836Outcome;
+ lpw836Outcome=function(title,npcId,before,after,reaction,ripple){
+  const c=liveLoad(),presenter=c?.world?.activePresenter||npcId;
+  if(c){rememberPresenter(c,presenter,'outcome');c.world.activePresenter=null;liveSave(c)}
+  return outcome0(cleanBroadcastText(title),presenter,before,after,cleanBroadcastText(reaction),cleanBroadcastText(ripple));
+ };
+ const apply0=lpw836ApplyOutcome;
+ lpw836ApplyOutcome=function(npcId,title,changes,reaction,ripple){const c=liveLoad();if(c){rememberPresenter(c,npcId,'choice');liveSave(c)}return apply0(npcId,title,changes,cleanBroadcastText(reaction),cleanBroadcastText(ripple))};
+
+ gauntletLiveResolveDynamic=function(type,val,msg){
+  const c=liveLoad();if(!c)return gauntletLiveHome();const p=liveProgress(c.active,c),f=liveFeud(c),before={};
+  const presenter=c.world?.activePresenter||(type==='feud'?'katie-morgan':type==='recovery'?'dr-lena-hart':'coach-hank-dawson');rememberPresenter(c,presenter,'dynamic-choice');
+  before[type]=['power','speed','technique','charisma','recovery'].includes(type)?p.stats[type]:type==='feud'?(f?.intensity||0):(c[type]||0);
+  if(type==='feud'){if(f)f.intensity=liveClamp(f.intensity+val,0,100)}else if(['power','speed','technique','charisma','recovery'].includes(type))p.stats[type]=Math.min(p.caps[type],p.stats[type]+val);else c[type]=liveClamp((c[type]||0)+val,0,100);
+  const after={};after[type]=['power','speed','technique','charisma','recovery'].includes(type)?p.stats[type]:type==='feud'?(f?.intensity||0):(c[type]||0);
+  liveAwardXp(c,c.active,35,'Career activity');liveAdvanceDay(c);liveSave(c);
+  const reaction={popularity:'The audience responded immediately, and the comments quickly became a talking point.',momentum:'The response added fresh energy heading into the next appearance.',feud:'The exchange pushed the rivalry closer to another confrontation.',recovery:'Medical staff noted steady progress without changing the current restrictions.'}[type]||cleanBroadcastText(msg);
+  lpw836Outcome(cleanBroadcastText(msg).toUpperCase(),presenter,before,after,reaction,'The consequences will become clearer as the next show approaches.')
+ };
+
+ const story0=gauntletLiveStorySegment;
+ gauntletLiveStorySegment=function(seg){const c=liveLoad();if(c){rememberPresenter(c,PRESENTER_BY_SEGMENT[seg]||'katie-morgan',seg);liveSave(c)}const r=story0(seg);setTimeout(()=>{
+  document.querySelectorAll('.live-npc-scene compact span,.live-npc-scene.compact span').forEach(()=>{});
+  const host=document.querySelector('.live-npc-scene.compact div');if(host){const small=host.querySelector('small'),b=host.querySelector('b');if(small&&b){small.style.display='block';b.style.display='block'}}
+ },0);return r};
+ gauntletLiveResolveSegment=function(seg,choice){
+  const c=liveLoad(),f=liveFeud(c),presenter=PRESENTER_BY_SEGMENT[seg]||c.world?.activePresenter||'katie-morgan';rememberPresenter(c,presenter,`${seg}-choice`);
+  const before={momentum:c.momentum,popularity:c.popularity,feud:f?.intensity||0};
+  if(choice==='fight'){c.momentum=liveClamp(c.momentum+6,0,100);if(f)f.intensity=liveClamp(f.intensity+10,0,100)}else c.popularity=liveClamp(c.popularity+6,0,100);
+  liveAwardXp(c,c.active,45,'Television segment');liveAdvanceDay(c);liveSave(c);
+  const after={momentum:c.momentum,popularity:c.popularity,feud:f?.intensity||0};
+  const escalated=choice==='fight';
+  lpw836Outcome(escalated?'CONFRONTATION ESCALATED':'CONTROL MAINTAINED',presenter,before,after,escalated?'The confrontation became one of the night’s most discussed moments.':'The measured response earned respect and kept the segment from boiling over.',escalated?'The fallout from tonight will follow this rivalry into the weeks ahead.':'The restraint may change how your rival approaches the next encounter.')
+ };
+
+ /* First-show language and a more natural television rundown. */
+ gauntletLiveShowIntro=function(){
+  const c=liveLoad(),item=livePlanItem(c),firstShow=c.week===1&&c.day===0&&!c.world.lastResult,venue=one(VENUES),attendance=Math.floor(rnd(11000,20500)).toLocaleString(),show=liveIsSupercard(c)?liveCurrentSupercard(c).toUpperCase():liveShowName(c),p=liveFounder(c.active),r=liveFeudOpponent(c);
+  let stories=[];if(!firstShow)stories=liveSimulateWorld(c);liveSave(c);
+  const card=firstShow?`<li>${p.name} makes an LPW debut tonight.</li><li>${r?`${r.name} is expected to make a presence felt tonight.`:'The LEGACY World Championship picture begins to take shape.'}</li>`:stories.slice(0,3).map(s=>`<li>${cleanBroadcastText(s.text)}</li>`).join('');
+  const mike=firstShow?`Welcome to Monday Night Mayhem, LPW's flagship show—where rivalries begin and reputations are made.`:`${p.name} enters tonight with a ${c.wins}-${c.losses} record, and every result now carries more weight.`;
+  const johnny=firstShow?`Everybody on this roster has something to prove, and somebody is going to make an unforgettable first impression.`:r?`${r.name} is watching closely. One bad decision could change the entire rivalry.`:'The pressure is rising, and nobody can afford to stand still.';
+  render(`<section class="panel live-show-intro lpw-show-open lpw837-show-open-b2"><div class="show-intro-copy">${liveIsSupercard(c)?`<div class="lpw-ple-title">${show}</div>`:lpwShowLogo(show)}<button class="btn live-primary lpw837-start-first" onclick="gauntletLiveRunShowSegment()">START THE SHOW</button><div class="tv-kicker">LIVE FROM ${venue.toUpperCase()} · ${attendance} IN ATTENDANCE</div><div class="live-commentary-duo show-preview"><div>${npcImage('mike-sullivan','portrait')}<b>Mike Sullivan</b><p>${mike}</p></div><div>${npcImage('johnny-cannon','portrait')}<b>Johnny Cannon</b><p>${johnny}</p></div></div><div class="show-card-list"><small>TONIGHT ON LPW</small><ul>${card}</ul><b>YOUR SEGMENT · ${liveIsSupercard(c)?'FEUD FINALE':item.type==='segment'?liveSegmentTitle(item.segment):item.type.toUpperCase()+' MATCH'}</b></div></div></section>`)
+ };
+
+ /* World Recap 2.0: editorial copy is distinct from factual results. */
+ gauntletLiveWorldRecap=function(){
+  const c=liveLoad(),p=liveFounder(c.active),r=liveFeudOpponent(c),last=c.world.lastResult;if(!c.world.worldStories?.length)liveSimulateWorld(c);
+  const stories=(c.world.worldStories||[]).slice(0,5),rank=currentRank(c),lastOpp=last?liveFounder(last.opponent):null;
+  const unique=[];const seen=new Set();for(const s of stories){const key=[s.a,s.b].filter(Boolean).sort().join('|')||s.text;if(!seen.has(key)){seen.add(key);unique.push(s)}}
+  const featured=unique[0],surprise=featured&&featured.a&&featured.b?`Few expected ${liveFounder(featured.a)?.name} to seize the spotlight, but the result became one of the night's biggest talking points.`:'An unexpected result elsewhere on the card changed the mood of the entire broadcast.';
+  const disappointment=unique[1]?.b?`${liveFounder(unique[1].b)?.name} missed an opportunity to build momentum and now faces added pressure before the next appearance.`:'One contender left the arena knowing an important opportunity had slipped away.';
+  const resultRows=unique.map(s=>{const a=s.a?liveFounder(s.a):null,b=s.b?liveFounder(s.b):null;const factual=a&&b?`${a.name} defeated ${b.name}.`:cleanBroadcastText(s.text);return `<article><span>${a?imageWithFallback(a,'portrait','art-portrait','matchPortrait'):''}</span><p>${factual}</p>${b?`<span>${imageWithFallback(b,'portrait','art-portrait','matchPortrait')}</span>`:''}</article>`}).join('');
+  const lead=last?(last.win?`${p.name}'s victory is the lead story coming out of the latest broadcast.`:`The response to ${p.name}'s defeat is now one of the week's central questions.`):'The LPW landscape continues to shift around every result.';
+  render(`<section class="panel live-world-screen lpw-world-recap-830 lpw837-recap"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">AROUND LPW</div><h1>WORLD RECAP</h1><div class="live-commentary-duo"><div>${npcImage('mike-sullivan','portrait')}<b>Mike Sullivan</b><p>${lead}</p></div><div>${npcImage('johnny-cannon','portrait')}<b>Johnny Cannon</b><p>${r?`${r.name} is unlikely to let the latest chapter go unanswered.`:'Somebody in the locker room is already preparing the next challenge.'}</p></div></div><div class="lpw837-recap-cards"><article><small>CHAMPIONSHIP OUTLOOK</small><b>RANKED #${rank}</b><p>${rank===1?`${p.name} has reached the front of the line. A World Championship program can now begin.`:rank<=10?`${p.name} is in the wider contender conversation, but more sustained results are still required.`:`Management is watching the early progress, but the championship picture remains some distance away.`}</p></article><article><small>BIGGEST SURPRISE</small><p>${surprise}</p></article><article><small>BIGGEST DISAPPOINTMENT</small><p>${disappointment}</p></article><article><small>RIVALRY WATCH</small><p>${r?`${p.name} and ${r.name} appear destined for another confrontation.`:'A new rivalry has yet to be confirmed.'}</p></article></div><div class="live-world-results">${resultRows}</div><div class="lpw-ripple"><b>LOOKING AHEAD</b><span>${r?`${r.name} may respond before the next SuperCard.`:`The next broadcast could reshape the contender picture.`}</span></div><button class="btn live-primary" onclick="gauntletLiveCompleteWorldRecap()">CONTINUE</button></section>`)
+ };
+
+ /* Slight player-side control correction: competitive, not punitive. */
+ const finish0=resolveFinish;
+ resolveFinish=function(){if(S?.liveMode&&M&&!M.ended){M.performancePlayer=(M.performancePlayer||0)+5;M.decisionPlayer=(M.decisionPlayer||0)+4;M.performanceOpp=Math.max(0,(M.performanceOpp||0)-3);M.decisionOpp=Math.max(0,(M.decisionOpp||0)-2)}return finish0()};
+
+ /* Result history explicitly records collection and feud outcome. */
+ const complete0=liveCompleteBroadcast;
+ liveCompleteBroadcast=function(win){
+  const before=liveLoad(),pending=before?.pending?{...before.pending}:null,feud=before?liveFeudOpponent(before):null;const r=complete0(win);const c=liveLoad();if(c&&pending){ensure10(c);c.world.matchAudit=Array.isArray(c.world.matchAudit)?c.world.matchAudit:[];c.world.matchAudit.unshift({month:before.month,week:before.week,day:before.day,opponent:pending.opponent,win,supercard:!!pending.isSupercard,feudOpponent:feud?.id||null,collected:c.stable.includes(pending.opponent)});c.world.matchAudit=c.world.matchAudit.slice(0,160);liveSave(c)}return r
+ };
+
+ const home0=gauntletLiveHome;gauntletLiveHome=function(){const r=home0();document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent=`VERSION 8.3.7 BUILD ${BUILD}`);return r};
+})();
+
+/* Build 10 QA follow-up: remove final system-language leak and rival recycling. */
+(function(){
+ const clean0=typeof cleanBroadcastText==='function'?cleanBroadcastText:(x=>String(x||''));
+ const render0=render;
+ render=function(html){return render0(String(html||'').replace(/This decision has been saved and can influence future broadcasts and events\.?/gi,'The consequences will become clearer as the next show approaches.').replace(/THE RIPPLE EFFECT/gi,'THE FALLOUT'))};
+ const pick0=livePickDifferent;
+ livePickDifferent=function(c,exclude=[]){
+  const recent=(c?.world?.feudHistory||[]).slice(0,4).map(x=>x.opponent);return pick0(c,[...(Array.isArray(exclude)?exclude:[exclude]),...recent])
+ };
+ const start0=liveStartFeud;
+ liveStartFeud=function(c,opponentId,reason){
+  const recent=(c?.world?.feudHistory||[]).slice(0,3).map(x=>x.opponent);
+  if(recent.includes(opponentId)){const replacement=livePickDifferent(c,[opponentId,...recent]);if(replacement)opponentId=replacement.id}
+  return start0(c,opponentId,reason)
+ };
+ const launch0=gauntletLiveLaunchBroadcast;gauntletLiveLaunchBroadcast=function(){const c=liveLoad();if(c){c.world.activePresenter=null;liveSave(c)}return launch0()};
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.4 — LIVING CAREERS & #1 CONTENDER TOURNAMENT
+   ============================================================================= */
+(function(){
+ const BUILD='8.4.1';
+ const rosterIds=()=>LIVE_ROSTER.map(w=>w.id);
+ const monthKey=c=>String(c.month||1);
+ function rankOf(c,id){const i=lpw8Rankings(c).findIndex(x=>x.id===id);return i<0?rosterIds().length:i+1}
+ function ensureCareer(c,id){
+  c.livingCareers=c.livingCareers||{};
+  const row=(c.rankings||[]).find(x=>x.id===id)||{wins:0,losses:0,points:50};
+  const p=liveProgress(id,c);
+  const x=c.livingCareers[id]||(c.livingCareers[id]={id,wins:Number(row.wins)||0,losses:Number(row.losses)||0,streak:0,lastResult:null,momentum:50,popularity:20,rival:null,status:'Active',history:[],monthsControlled:0,monthsAI:0});
+  x.wins=Number(x.wins)||0;x.losses=Number(x.losses)||0;x.streak=Number(x.streak)||0;x.history=Array.isArray(x.history)?x.history:[];
+  x.level=p?.level||x.level||1;x.xp=p?.xp||x.xp||0;
+  return x
+ }
+ /* Player-only progression rule: CPU-controlled Living Careers may change records,
+    rankings, streaks and status, but can never gain XP, levels or attributes. */
+ const awardXpBeforeLivingCareers=liveAwardXp;
+ liveAwardXp=function(c,id,amount,reason){
+  if(c?.world?.livingCareersEnabled&&id!==c.active){
+   const p=liveProgress(id,c);
+   return {amount:0,reason,levels:0,level:p.level,points:p.points,pointsEarned:0,milestonesEarned:0,cpuProgressionBlocked:true};
+  }
+  return awardXpBeforeLivingCareers(c,id,amount,reason);
+ };
+
+ function ensure84(c){
+  if(!c)return c;lpw837SeedRankings(c);c.version=8.4;
+  c.championships={world:c.championships?.world||'jack-mercer'};
+  rosterIds().forEach(id=>ensureCareer(c,id));
+  const active=ensureCareer(c,c.active);if(!active.synced){active.wins=Number(c.wins)||active.wins;active.losses=Number(c.losses)||active.losses;active.momentum=Number(c.momentum)||active.momentum;active.popularity=Number(c.popularity)||active.popularity;active.synced=true}
+  c.wins=active.wins;c.losses=active.losses;c.momentum=active.momentum;c.popularity=active.popularity;
+  c.world=c.world||{};c.world.livingCareersEnabled=true;c.world.monthSwitchOnly=true;
+  return c
+ }
+ function syncActive(c){const x=ensureCareer(c,c.active);x.wins=Number(c.wins)||0;x.losses=Number(c.losses)||0;x.momentum=Number(c.momentum)||50;x.popularity=Number(c.popularity)||20;x.level=liveProgress(c.active,c)?.level||x.level;x.xp=liveProgress(c.active,c)?.xp||x.xp;return x}
+ function setActive(c,id){syncActive(c);c.active=id;const x=ensureCareer(c,id);c.wins=x.wins;c.losses=x.losses;c.momentum=x.momentum;c.popularity=x.popularity;x.monthsControlled++;}
+ function applyResult(c,id,win,opponent,source='AI'){const x=ensureCareer(c,id),row=c.rankings.find(r=>r.id===id);x.wins+=win?1:0;x.losses+=win?0:1;x.streak=win?Math.max(1,x.streak+1):Math.min(-1,x.streak-1);x.lastResult=win?'W':'L';x.history.unshift({month:c.month,opponent,win,source});x.history=x.history.slice(0,36);if(row){row.wins=x.wins;row.losses=x.losses;row.points=Math.max(0,row.points+(win?5:-3))}}
+ function simulateInactiveMonth(c){
+  if(c.world.lastAISimulatedMonth===c.month)return;c.world.lastAISimulatedMonth=c.month;
+  const ids=rosterIds().filter(id=>id!==c.active);const shuffled=liveShuffle(ids);
+  for(let i=0;i<shuffled.length;i+=2){const a=shuffled[i],b=shuffled[i+1];if(!b)break;const ar=c.rankings.find(r=>r.id===a),br=c.rankings.find(r=>r.id===b);const chance=.5+((ar?.points||50)-(br?.points||50))/180;const awin=Math.random()<Math.max(.25,Math.min(.75,chance));applyResult(c,a,awin,b);applyResult(c,b,!awin,a);}
+  ids.forEach(id=>{const x=ensureCareer(c,id);x.monthsAI++;if(Math.random()<.22){const opp=one(ids.filter(z=>z!==id));x.rival=opp}x.status=x.streak>=3?'Rising':x.streak<=-3?'Slumping':'Active'});
+ }
+ function tournamentSlots(){return [{w:1,d:0,r:'QF',n:1},{w:1,d:3,r:'QF',n:2},{w:2,d:0,r:'QF',n:3},{w:2,d:3,r:'QF',n:4},{w:3,d:0,r:'SF',n:1},{w:3,d:3,r:'SF',n:2},{w:4,d:0,r:'F',n:1},{w:4,d:3,r:'CONTRACT',n:1}]}
+ function tournamentSlot(c){if(c.month!==3)return null;return tournamentSlots().find(s=>s.w===liveMonthWeek(c)&&s.d===c.day)||null}
+ function seedTournament(c){
+  if(c.month!==3)return null;if(c.world.tournament?.year===Math.ceil(c.month/12))return c.world.tournament;
+  const champ=c.championships.world,ranked=lpw8Rankings(c).map(x=>x.id).filter(id=>id!==champ),field=[c.active,...ranked.filter(id=>id!==c.active).slice(0,7)];
+  c.world.tournament={year:Math.ceil(c.month/12),name:'#1 Contender Tournament',field,round:'Quarter-finals',matches:[
+   {round:'QF',a:field[0],b:field[7],winner:null},{round:'QF',a:field[3],b:field[4],winner:null},{round:'QF',a:field[1],b:field[6],winner:null},{round:'QF',a:field[2],b:field[5],winner:null}
+  ],eliminated:[],winner:null,announced:false};return c.world.tournament
+ }
+ function getTournamentMatch(c,slot){const t=seedTournament(c);if(!slot||!t)return null;if(slot.r==='QF')return t.matches.filter(m=>m.round==='QF')[slot.n-1];if(slot.r==='SF'){let semis=t.matches.filter(m=>m.round==='SF');if(!semis.length&&t.matches.filter(m=>m.round==='QF').every(m=>m.winner)){const q=t.matches.filter(m=>m.round==='QF');semis=[{round:'SF',a:q[0].winner,b:q[1].winner,winner:null},{round:'SF',a:q[2].winner,b:q[3].winner,winner:null}];t.matches.push(...semis)}return semis[slot.n-1]||null}if(slot.r==='F'){let f=t.matches.find(m=>m.round==='F');const s=t.matches.filter(m=>m.round==='SF');if(!f&&s.length===2&&s.every(m=>m.winner)){f={round:'F',a:s[0].winner,b:s[1].winner,winner:null};t.matches.push(f)}return f||null}return null}
+ function resolveAIMatch(c,m){if(!m||m.winner)return;const ar=c.rankings.find(r=>r.id===m.a),br=c.rankings.find(r=>r.id===m.b);m.winner=Math.random()<(.5+((ar?.points||50)-(br?.points||50))/200)?m.a:m.b;const loser=m.winner===m.a?m.b:m.a;applyResult(c,m.winner,true,loser,'Tournament');applyResult(c,loser,false,m.winner,'Tournament');c.world.tournament.eliminated.push(loser)}
+ function tournamentAdvance(c,win){const p=c.pending;if(!p?.tournament)return;const t=seedTournament(c),m=t.matches[p.tournamentMatchIndex];if(!m||m.winner)return;const loser=win?p.opponent:c.active;m.winner=win?c.active:p.opponent;t.eliminated.push(loser);if(m.round==='F')t.winner=m.winner;}
+ function tournamentLabel(c){const s=tournamentSlot(c);if(!s)return null;return s.r==='CONTRACT'?'WORLD CHAMPIONSHIP CONTRACT SIGNING':s.r==='F'?'#1 CONTENDER TOURNAMENT FINAL':s.r==='SF'?`TOURNAMENT SEMI-FINAL ${s.n}`:`TOURNAMENT QUARTER-FINAL ${s.n}`}
+
+ const load0=liveLoad;liveLoad=function(){const c=load0();if(c){ensure84(c);liveSave(c)}return c};
+ const save0=liveSave;liveSave=function(c){if(c)ensure84(c);return save0(c)};
+ const choose0=gauntletLiveChooseFounder;gauntletLiveChooseFounder=function(id){choose0(id);const c=liveLoad();if(c){ensure84(c);ensureCareer(c,id).monthsControlled=1;liveSave(c)}};
+
+ /* Only the World Championship exists in Career Mode. */
+ lpw8Championships=function(){const c=ensure84(liveLoad()),w=liveFounder(c.championships.world);liveSave(c);render(`<section class="panel lpw8-championships">${shellBack()}<div class="tv-kicker">THE ULTIMATE PRIZE</div><h1>LPW WORLD CHAMPIONSHIP</h1><div class="lpw8-belt-grid lpw84-one-title"><article><div class="lpw8-belt">★</div><small>LPW WORLD CHAMPION</small><h2>${w?.name||'VACANT'}</h2><p>Every wrestler in the Power Rankings is chasing one championship.</p></article></div><button class="btn live-primary" onclick="lpw8RankingScreen()">VIEW POWER RANKINGS</button></section>`)};
+ lpw8RankingScreen=function(){const c=ensure84(liveLoad()),rows=lpw8Rankings(c),champ=liveFounder(c.championships.world);liveSave(c);render(`<section class="panel lpw8-rankings lpw837-rankings-b2">${shellBack()}<div class="tv-kicker">WORLD CHAMPIONSHIP PICTURE</div><h1>POWER RANKINGS</h1><p class="sub">One roster. One ranking. One World Championship.</p><div class="lpw8-title-strip"><article class="lpw837-champion-tile"><div class="lpw837-champion-portraits">${imageWithFallback(champ,'portrait','art-portrait','matchPortrait')}</div><span><small>LPW WORLD CHAMPION</small><b>${champ?.name||'VACANT'}</b></span></article></div><div class="lpw8-ranking-list">${rows.map((r,i)=>{const w=liveFounder(r.id),x=ensureCareer(c,r.id);return `<article><strong>${i+1}</strong>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><b>${w.name}</b><small>${x.status}${r.id===c.active?' · CAMERA FOCUS':''}</small></span><em>${r.points} PTS<br>${x.wins}-${x.losses}</em></article>`}).join('')}</div><button class="btn live-primary" onclick="gauntletLiveHome()">RETURN TO CAREER</button></section>`)};
+
+ /* Tournament month presentation and booking. */
+ const begin0=gauntletLiveBeginDay;gauntletLiveBeginDay=function(skip=false){const c=liveLoad();if(c?.month===3){const t=seedTournament(c);if(!t.announced){t.announced=true;liveSave(c);return render(`<section class="panel live-world-screen lpw84-tournament-news"><div class="tv-kicker">BREAKING NEWS · VERONICA VALE</div><h1>THE ROAD TO THE WORLD CHAMPIONSHIP</h1><div class="live-npc-scene large">${npcImage('veronica-vale','portrait')}<div><small>GENERAL MANAGER</small><h2>Veronica Vale</h2><p>Eight wrestlers will compete throughout March. The winner challenges the LPW World Champion at the SuperCard.</p></div></div><div class="lpw84-bracket-field">${t.field.map((id,i)=>`<span><b>${i+1}</b>${liveFounder(id).name}</span>`).join('')}</div><button class="btn live-primary" onclick="gauntletLiveBeginDay(true)">CONTINUE TO TODAY'S SHOW</button></section>`)}
+   const s=tournamentSlot(c);if(s&&s.r==='CONTRACT')return lpw84ContractSigning();
+  }return begin0(skip)};
+ const label0=liveDayLabel;liveDayLabel=function(c,i){if(c.month===3){const temp={...c,day:i},lab=tournamentLabel(temp);if(lab)return lab;if(i===6&&liveMonthWeek(c)===4)return 'WORLD CHAMPIONSHIP SUPERCARD'}return label0(c,i)};
+ const desc0=liveDayDescription;liveDayDescription=function(c){const lab=tournamentLabel(c);if(lab)return lab.includes('CONTRACT')?'The tournament winner and World Champion sign the contract for the March SuperCard.':`${lab} continues the month-long race for a World Championship opportunity.`;if(c.month===3&&liveIsSupercard(c))return 'The tournament winner challenges the LPW World Champion in the March main event.';return desc0(c)};
+ const run0=gauntletLiveRunShowSegment;gauntletLiveRunShowSegment=function(){const c=liveLoad(),s=tournamentSlot(c);if(c?.month===3&&s&&s.r!=='CONTRACT')return lpw84TournamentBooking(s);return run0()};
+ window.lpw84TournamentBooking=function(s){const c=liveLoad(),t=seedTournament(c),m=getTournamentMatch(c,s);if(!m)return render(`<section class="panel live-world-screen"><h1>TOURNAMENT UPDATE</h1><p>The bracket is being finalised.</p><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`);if(![m.a,m.b].includes(c.active)){resolveAIMatch(c,m);liveAdvanceDay(c);liveSave(c);const win=liveFounder(m.winner),lose=liveFounder(m.winner===m.a?m.b:m.a);return render(`<section class="panel live-day-complete"><div class="tv-kicker">${tournamentLabel(c)}</div><h1>${win.name} ADVANCES</h1><div class="live-versus"><div>${imageWithFallback(win,'victory','art-full','resultVictory')}<b>${win.name}</b></div><strong>DEFEATED</strong><div>${imageWithFallback(lose,'full','art-full','resultVictory')}<b>${lose.name}</b></div></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`)}const opp=m.a===c.active?m.b:m.a;c.pending={opponent:opp,isSupercard:false,tournament:true,tournamentRound:m.round,tournamentMatchIndex:t.matches.indexOf(m)};liveSave(c);return gauntletLiveMatchCard65()};
+ window.lpw84ContractSigning=function(){const c=liveLoad(),t=seedTournament(c);if(!t.winner){const f=getTournamentMatch(c,{r:'F',n:1});resolveAIMatch(c,f);t.winner=f.winner}const winner=liveFounder(t.winner),champ=liveFounder(c.championships.world);render(`<section class="panel live-world-screen lpw84-contract"><div class="tv-kicker">THURSDAY NIGHT THROWDOWN</div><h1>WORLD CHAMPIONSHIP CONTRACT SIGNING</h1><div class="live-versus"><div>${imageWithFallback(winner,'portrait','art-portrait','matchPortrait')}<b>${winner.name}</b><small>TOURNAMENT WINNER</small></div><strong>VS</strong><div>${imageWithFallback(champ,'portrait','art-portrait','matchPortrait')}<b>${champ.name}</b><small>WORLD CHAMPION</small></div></div><div class="live-npc-scene compact">${npcImage('veronica-vale','portrait')}<div><small>GENERAL MANAGER</small><b>Veronica Vale</b><p>The contract is signed. The World Championship match is official.</p></div></div><button class="btn live-primary" onclick="lpw84FinishContract()">CONTINUE</button></section>`)};
+ window.lpw84FinishContract=function(){const c=liveLoad();liveAdvanceDay(c);liveSave(c);gauntletLiveCalendar()};
+
+ /* Persist player results into that wrestler's living career and tournament bracket. */
+ const complete0=liveCompleteBroadcast;liveCompleteBroadcast=function(win){const before=liveLoad(),pending=before?.pending?{...before.pending}:null;if(before&&pending?.tournament)tournamentAdvance(before,win),liveSave(before);const result=complete0(win);const c=liveLoad();if(c){const x=syncActive(c),row=c.rankings.find(r=>r.id===c.active);if(row){x.wins=row.wins;x.losses=row.losses}x.streak=win?Math.max(1,x.streak+1):Math.min(-1,x.streak-1);x.lastResult=win?'W':'L';liveSave(c)}return result};
+
+ /* End-of-month only character selection; everyone else lives a simulated month. */
+ gauntletLiveMonthRosterChoice=function(){const c=ensure84(liveLoad());syncActive(c);simulateInactiveMonth(c);liveSave(c);const rows=lpw8Rankings(c);render(`<section class="panel live-founder-screen lpw84-living-careers"><div class="tv-kicker">MONTH COMPLETE · LIVING CAREERS</div><h1>WHOSE STORY WILL THE CAMERAS FOLLOW?</h1><p class="sub">This choice is locked for the entire next month. Every other wrestler continues under CPU control.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=liveFounder(id),x=ensureCareer(c,id),rank=rows.findIndex(r=>r.id===id)+1,streak=x.streak>0?`W${x.streak}`:x.streak<0?`L${Math.abs(x.streak)}`:'—';return `<button class="live-founder-card lpw84-career-card" onclick="gauntletLiveStartNextMonth('${id}')">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'CURRENT CAMERA FOCUS':'AVAILABLE CAREER'}</small><b>${w.name}</b><em>#${rank} · ${x.wins}-${x.losses} · ${streak}</em><i>${x.status}${x.rival?` · Rival: ${liveFounder(x.rival)?.name}`:''}</i></span></button>`}).join('')}</div></section>`)};
+ gauntletLiveStartNextMonth=function(id){const c=ensure84(liveLoad());if(!c.stable.includes(id))return gauntletLiveMonthRosterChoice();setActive(c,id);c.world.katieThisWeek=0;c.monthSwitchLocked=true;const opp=livePickDifferent(c,c.stable);liveStartFeud(c,opp.id,'A new monthly rivalry begins.');liveGenerateMonthlyPlan(c);if(c.month===3)seedTournament(c);liveSave(c);gauntletLiveCalendar()};
+
+ /* Calendar and stable use wrestler-owned records instead of one shared record. */
+ const cal0=gauntletLiveCalendar;gauntletLiveCalendar=function(){const c=liveLoad();if(c)syncActive(c);const r=cal0();setTimeout(()=>{const c2=liveLoad(),x=c2&&ensureCareer(c2,c2.active),hero=document.querySelector('.live-career-hero span');if(hero&&x)hero.textContent=`${x.wins}-${x.losses} record · Rank #${rankOf(c2,c2.active)} · ${c2.stable.length} roster members`;const small=document.querySelector('.live-career-hero small');if(small)small.textContent=c2.month===1?'LPW DEBUT':rankOf(c2,c2.active)===1?'#1 CONTENDER':c2.active===c2.championships.world?'WORLD CHAMPION':'CAMERA FOCUS'},0);return r};
+ gauntletLiveStable=function(){const c=ensure84(liveLoad()),rows=lpw8Rankings(c);render(`<section class="panel live-stable-screen">${shellBack()}<div class="tv-kicker">LIVING CAREERS</div><h1>YOUR ROSTER</h1><p class="sub">Wrestlers can only be selected after the monthly SuperCard.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=liveFounder(id),x=ensureCareer(c,id),rank=rows.findIndex(r=>r.id===id)+1;return `<article class="live-founder-card lpw84-career-card">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'CURRENT CAMERA FOCUS':'CPU CONTROLLED'}</small><b>${w.name}</b><em>Rank #${rank} · ${x.wins}-${x.losses}</em><i>${x.status}</i></span></article>`}).join('')}</div><button class="btn live-primary" onclick="gauntletLiveCalendar()">RETURN TO CALENDAR</button></section>`)};
+
+ const home0=gauntletLiveHome;gauntletLiveHome=function(){const r=home0();document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent='VERSION 8.4');const p=document.querySelector('.live-cycle span');if(p)p.textContent='Living Careers, one World Championship and the annual March #1 Contender Tournament.';return r};
+})();
+
+/* 8.4 March SuperCard championship resolution. */
+(function(){
+ const begin84=gauntletLiveBeginDay;
+ gauntletLiveBeginDay=function(skip=false){
+  const c=liveLoad();
+  if(c?.month===3&&liveIsSupercard(c)){
+   const t=c.world?.tournament,champId=c.championships?.world;
+   if(t?.winner===c.active){c.pending={opponent:champId,isSupercard:true,worldTitle:true,tournamentTitleShot:true,supercardName:liveCurrentSupercard(c)};liveSave(c);return gauntletLiveShowIntro()}
+   if(t?.winner&&t.titleResolved!==true){const challenger=liveFounder(t.winner),champ=liveFounder(champId),cr=c.rankings.find(r=>r.id===champId),rr=c.rankings.find(r=>r.id===t.winner),newChamp=Math.random()<Math.max(.3,Math.min(.65,.46+((rr?.points||50)-(cr?.points||50))/220));const winner=newChamp?challenger:champ,loser=newChamp?champ:challenger;t.titleResolved=true;t.titleWinner=winner.id;if(newChamp)c.championships.world=challenger.id;const apply=(id,win,opp)=>{const x=c.livingCareers[id],row=c.rankings.find(r=>r.id===id);x.wins+=win?1:0;x.losses+=win?0:1;x.streak=win?Math.max(1,x.streak+1):Math.min(-1,x.streak-1);if(row){row.wins=x.wins;row.losses=x.losses;row.points=Math.max(0,row.points+(win?8:-4))}};apply(winner.id,true,loser.id);apply(loser.id,false,winner.id);liveAdvanceDay(c);liveSave(c);return render(`<section class="panel live-supercard-result"><div class="tv-kicker">${liveCurrentSupercard(c).toUpperCase()} · WORLD CHAMPIONSHIP</div><h1>${winner.name} ${newChamp?'WINS THE WORLD CHAMPIONSHIP':'RETAINS THE WORLD CHAMPIONSHIP'}</h1><div class="supercard-result-art">${imageWithFallback(winner,'victory','art-full','resultVictory')}${imageWithFallback(loser,'full','art-full','resultVictory')}</div><p>${challenger.name} earned this opportunity by winning the March #1 Contender Tournament. The title match has now reshaped the Power Rankings.</p><button class="btn live-primary" onclick="gauntletLiveMonthRosterChoice()">CONTINUE TO MONTH-END SELECTION</button></section>`)}
+  }
+  return begin84(skip)
+ };
+ const complete84=liveCompleteBroadcast;
+ liveCompleteBroadcast=function(win){const c0=liveLoad(),title=!!c0?.pending?.worldTitle,challenger=c0?.active,champ=c0?.pending?.opponent;const r=complete84(win);const c=liveLoad();if(c&&title){if(win)c.championships.world=challenger;c.world.tournament.titleResolved=true;c.world.tournament.titleWinner=win?challenger:champ;liveSave(c)}return r};
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.4.2 — LIVING WORLD COMPLETION
+   Broadcast package, career history, dashboard, news network and deeper memory.
+   ============================================================================= */
+(function(){
+ const V='8.4.2';
+ const ids=()=>LIVE_ROSTER.map(w=>w.id);
+ const career=(c,id)=>{c.livingCareers=c.livingCareers||{};return c.livingCareers[id]||(c.livingCareers[id]={id,wins:0,losses:0,streak:0,momentum:50,popularity:20,status:'Active',history:[],monthsControlled:0,monthsAI:0})};
+ const rank=(c,id)=>Math.max(1,lpw8Rankings(c).findIndex(r=>r.id===id)+1);
+ const wrestler=id=>liveFounder(id)||{id,name:'Unknown Wrestler'};
+ const monthName=n=>['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'][(Math.max(1,n)-1)%12];
+ function world(c){
+  c.world=c.world||{};
+  c.world.news=Array.isArray(c.world.news)?c.world.news:[];
+  c.world.titleHistory=Array.isArray(c.world.titleHistory)?c.world.titleHistory:[];
+  c.world.tournamentHistory=Array.isArray(c.world.tournamentHistory)?c.world.tournamentHistory:[];
+  c.world.monthSummaries=c.world.monthSummaries||{};
+  c.world.broadcastMemory=c.world.broadcastMemory||{};
+  const champ=c.championships?.world;
+  if(champ&&!c.world.titleHistory.length)c.world.titleHistory.push({champion:champ,month:c.month||1,reason:'Recognised as LPW World Champion',defences:0});
+  ids().forEach(id=>{const x=career(c,id);x.history=Array.isArray(x.history)?x.history:[];x.highestRank=x.highestRank||rank(c,id);x.lowestRank=x.lowestRank||rank(c,id);x.longestStreak=x.longestStreak||Math.max(0,x.streak||0);x.supercards=x.supercards||0;x.tournamentWins=x.tournamentWins||0;x.titleReigns=x.titleReigns||0;x.titleDefences=x.titleDefences||0;x.injuryHistory=Array.isArray(x.injuryHistory)?x.injuryHistory:[];});
+  return c.world;
+ }
+ function pushNews(c,type,headline,body,subject){
+  const w=world(c);const key=`${c.month}-${c.week}-${c.day}-${headline}`;
+  if(w.news.some(n=>n.key===key))return;
+  w.news.unshift({key,type,headline,body,subject,month:c.month,week:liveMonthWeek(c),day:c.day,stamp:Date.now()});w.news=w.news.slice(0,80);
+ }
+ function recordSnapshot(c){
+  world(c);ids().forEach(id=>{const x=career(c,id),r=rank(c,id);x.highestRank=Math.min(x.highestRank||r,r);x.lowestRank=Math.max(x.lowestRank||r,r);x.longestStreak=Math.max(x.longestStreak||0,Math.max(0,x.streak||0));});
+ }
+ function titleChange(c,newChamp,oldChamp,reason){
+  if(!newChamp||newChamp===oldChamp)return;const w=world(c),prev=w.titleHistory[0];if(prev&&prev.champion===oldChamp)prev.endedMonth=c.month;
+  w.titleHistory.unshift({champion:newChamp,defeated:oldChamp,month:c.month,reason:reason,defences:0});
+  career(c,newChamp).titleReigns=(career(c,newChamp).titleReigns||0)+1;
+  pushNews(c,'breaking',`${wrestler(newChamp).name} WINS THE WORLD CHAMPIONSHIP`,`${wrestler(newChamp).name} defeated ${wrestler(oldChamp).name} to begin a new era in LPW.`,newChamp);
+ }
+ function lastFive(x){return (x.history||[]).slice(0,5).map(h=>h.win?'W':'L').join(' ')||'—'}
+ function summaryFor(c,id){
+  const x=career(c,id),r=rank(c,id),prev=x.lastCameraRank||r,diff=prev-r;
+  const movement=diff>0?`rose ${diff} place${diff===1?'':'s'}`:diff<0?`fell ${Math.abs(diff)} place${diff===-1?'':'s'}`:'held the same position';
+  const ai=(x.history||[]).filter(h=>h.source==='AI'||h.source==='Tournament').slice(0,8),wins=ai.filter(h=>h.win).length,losses=ai.filter(h=>!h.win).length;
+  return {movement,wins,losses,rank:r,from:prev,streak:x.streak,status:x.status};
+ }
+ function updateMonthlyNews(c){
+  const rows=lpw8Rankings(c),top=rows[0],active=career(c,c.active),champ=c.championships.world;
+  pushNews(c,'rankings','POWER RANKINGS UPDATED',`${wrestler(top.id).name} leads the contenders while ${wrestler(c.active).name} is ranked #${rank(c,c.active)}.`,top.id);
+  if(active.streak>=3)pushNews(c,'form',`${wrestler(c.active).name.toUpperCase()} IS ON A ROLL`,`${active.streak} consecutive victories have changed the World Championship conversation.`,c.active);
+  if(active.streak<=-3)pushNews(c,'form',`${wrestler(c.active).name.toUpperCase()} UNDER PRESSURE`,`${Math.abs(active.streak)} consecutive defeats have sent ${wrestler(c.active).name} down the Power Rankings.`,c.active);
+  pushNews(c,'champion','THE CHAMPION WATCH',`${wrestler(champ).name} remains the standard every contender is trying to reach.`,champ);
+ }
+ function ensure(c){if(!c)return c;c.version=8.4;world(c);recordSnapshot(c);return c}
+ const load=liveLoad;liveLoad=function(){const c=load();if(c)ensure(c);return c};
+ const save=liveSave;liveSave=function(c){if(c)ensure(c);return save(c)};
+
+ /* Persistent dashboard and navigation. */
+ window.lpw84Dashboard=function(){
+  const c=ensure(liveLoad()),a=wrestler(c.active),x=career(c,c.active),champ=wrestler(c.championships.world),r=rank(c,c.active),f=liveFeudOpponent(c),news=world(c).news.slice(0,3),t=c.world.tournament;
+  render(`<section class="panel lpw84-dashboard"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">${monthName(c.month)} · LPW LIVING WORLD</div><h1>CAREER DASHBOARD</h1><div class="lpw84-dash-hero">${imageWithFallback(a,'portrait','art-portrait','matchPortrait')}<div><small>${c.active===c.championships.world?'LPW WORLD CHAMPION':r===1?'#1 CONTENDER':'CAMERA FOCUS'}</small><h2>${a.name}</h2><p>Rank #${r} · ${x.wins}-${x.losses} · ${x.streak>0?'W'+x.streak:x.streak<0?'L'+Math.abs(x.streak):'No streak'}</p></div></div><div class="lpw84-dash-grid"><article><small>WORLD CHAMPION</small><b>${champ.name}</b><p>${career(c,champ.id).titleDefences||0} successful defence${career(c,champ.id).titleDefences===1?'':'s'}</p></article><article><small>CURRENT RIVAL</small><b>${f?.name||'No active rival'}</b><p>${f?'The rivalry continues this month.':'The next challenger is still emerging.'}</p></article><article><small>RECENT FORM</small><b>${lastFive(x)}</b><p>${x.status}</p></article><article><small>NEXT SHOW</small><b>${liveDayLabel(c,c.day)}</b><p>${LIVE_DAYS[c.day]}</p></article></div>${t&&c.month===3?`<button class="lpw84-feature-strip" onclick="lpw84TournamentBracket()"><small>MARCH FEATURE</small><b>#1 CONTENDER TOURNAMENT</b><span>View the live bracket →</span></button>`:''}<div class="lpw84-news-preview"><h2>LATEST HEADLINES</h2>${news.length?news.map(n=>`<article><small>${n.type.toUpperCase()}</small><b>${n.headline}</b><p>${n.body}</p></article>`).join(''):'<article><b>THE MONTH IS JUST BEGINNING</b><p>Headlines will develop as LPW moves forward.</p></article>'}</div><div class="lpw84-dashboard-actions"><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE CAREER</button><button class="btn" onclick="lpw84NewsNetwork()">NEWS NETWORK</button><button class="btn" onclick="lpw84CareerHistory('${c.active}')">CAREER HISTORY</button><button class="btn" onclick="gauntletLiveStable()">YOUR ROSTER</button></div></section>`)
+ };
+ window.lpw84NewsNetwork=function(){const c=ensure(liveLoad()),items=world(c).news;render(`<section class="panel lpw84-news"><button class="shell-back" onclick="lpw84Dashboard()">← DASHBOARD</button><div class="tv-kicker">THE LPW NEWS CYCLE</div><h1>NEWS NETWORK</h1><div class="lpw84-news-tabs"><span>BREAKING NEWS</span><span>DIRT SHEET</span><span>LPW SOCIAL</span><span>POWER RANKINGS</span></div><div class="lpw84-news-list">${items.length?items.map(n=>`<article><small>MONTH ${n.month} · WEEK ${n.week} · ${n.type.toUpperCase()}</small><h2>${n.headline}</h2><p>${n.body}</p></article>`).join(''):'<article><h2>NO HEADLINES YET</h2><p>The news cycle begins with the next event.</p></article>'}</div></section>`)};
+ window.lpw84CareerHistory=function(id){const c=ensure(liveLoad()),x=career(c,id),w=wrestler(id),r=rank(c,id),hist=(x.history||[]).slice(0,20);render(`<section class="panel lpw84-history"><button class="shell-back" onclick="gauntletLiveStable()">← ROSTER</button><div class="tv-kicker">LIVING CAREER</div><h1>${w.name.toUpperCase()}</h1><div class="lpw84-history-hero">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<div><b>Rank #${r}</b><span>${x.wins}-${x.losses} record</span><span>${id===c.championships.world?'LPW World Champion':x.status}</span></div></div><div class="lpw84-history-stats"><article><small>HIGHEST RANK</small><b>#${x.highestRank||r}</b></article><article><small>LONGEST STREAK</small><b>W${x.longestStreak||0}</b></article><article><small>WORLD TITLE REIGNS</small><b>${x.titleReigns||0}</b></article><article><small>TOURNAMENT WINS</small><b>${x.tournamentWins||0}</b></article><article><small>SUPERCARDS</small><b>${x.supercards||0}</b></article><article><small>MONTHS FOLLOWED</small><b>${x.monthsControlled||0}</b></article></div><h2>CAREER TIMELINE</h2><div class="lpw84-timeline">${hist.length?hist.map(h=>`<article class="${h.win?'win':'loss'}"><small>MONTH ${h.month||'?'} · ${h.source||'LPW'}</small><b>${h.win?'DEFEATED':'LOST TO'} ${wrestler(h.opponent).name}</b></article>`).join(''):'<article><b>THE STORY IS JUST BEGINNING</b></article>'}</div></section>`)};
+ window.lpw84TournamentBracket=function(){const c=ensure(liveLoad()),t=c.world.tournament;if(!t)return lpw84Dashboard();const rounds=['QF','SF','F'];render(`<section class="panel lpw84-bracket"><button class="shell-back" onclick="lpw84Dashboard()">← DASHBOARD</button><div class="tv-kicker">MARCH SIGNATURE EVENT</div><h1>#1 CONTENDER TOURNAMENT</h1><p>The winner challenges the LPW World Champion at the March SuperCard.</p><div class="lpw84-bracket-rounds">${rounds.map(r=>`<div><h2>${r==='QF'?'QUARTER-FINALS':r==='SF'?'SEMI-FINALS':'FINAL'}</h2>${(t.matches||[]).filter(m=>m.round===r).map(m=>`<article><span>${wrestler(m.a).name}</span><b>${m.winner?`WINNER: ${wrestler(m.winner).name}`:'VS'}</b><span>${wrestler(m.b).name}</span></article>`).join('')||'<article><b>TO BE DETERMINED</b></article>'}</div>`).join('')}</div>${t.winner?`<div class="lpw84-tournament-winner"><small>TOURNAMENT WINNER</small><b>${wrestler(t.winner).name}</b></div>`:''}</section>`)};
+
+ /* Calendar receives the persistent dashboard entry point and broadcast framing. */
+ const cal=gauntletLiveCalendar;gauntletLiveCalendar=function(){const c=ensure(liveLoad());updateMonthlyNews(c);liveSave(c);const r=cal();setTimeout(()=>{const top=document.querySelector('.live-calendar-top');if(top&&!document.querySelector('.lpw84-dashboard-btn'))top.insertAdjacentHTML('beforeend','<button class="shell-back lpw84-dashboard-btn" onclick="lpw84Dashboard()">DASHBOARD</button>');const today=document.querySelector('.live-today');if(today&&!document.querySelector('.lpw84-coming-up'))today.insertAdjacentHTML('beforebegin',`<div class="lpw84-coming-up"><small>COMING UP NEXT</small><b>${liveDayLabel(c,c.day)}</b><span>${liveDayDescription(c)}</span></div>`)},0);return r};
+
+ /* Roster becomes a living-career management screen with history access. */
+ gauntletLiveStable=function(){const c=ensure(liveLoad()),rows=lpw8Rankings(c);render(`<section class="panel live-stable-screen lpw84-roster"><button class="shell-back" onclick="lpw84Dashboard()">← DASHBOARD</button><div class="tv-kicker">LIVING CAREERS</div><h1>YOUR ROSTER</h1><p class="sub">Career focus can only change after the monthly SuperCard. CPU-controlled wrestlers never earn XP or improve attributes.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=wrestler(id),x=career(c,id),r=rows.findIndex(z=>z.id===id)+1;return `<article class="live-founder-card lpw84-career-card">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'CURRENT CAMERA FOCUS':'CPU CONTROLLED'}</small><b>${w.name}</b><em>Rank #${r} · ${x.wins}-${x.losses} · ${x.streak>0?'W'+x.streak:x.streak<0?'L'+Math.abs(x.streak):'—'}</em><i>${x.status}</i><button onclick="lpw84CareerHistory('${id}')">VIEW CAREER</button></span></article>`}).join('')}</div></section>`)};
+
+ /* Returning to a career now receives a factual "Previously on" summary. */
+ const nextMonth=gauntletLiveStartNextMonth;gauntletLiveStartNextMonth=function(id){const c=ensure(liveLoad()),old=c.active,x=career(c,id),s=summaryFor(c,id);x.lastCameraRank=s.rank;nextMonth(id);const c2=ensure(liveLoad());c2.world.pendingReturnSummary={id,old,summary:s};liveSave(c2);return lpw84PreviouslyOn()};
+ window.lpw84PreviouslyOn=function(){const c=ensure(liveLoad()),p=c.world.pendingReturnSummary;if(!p)return gauntletLiveCalendar();const w=wrestler(p.id),s=p.summary,returning=p.id!==p.old;render(`<section class="panel lpw84-previously"><div class="tv-kicker">${returning?'PREVIOUSLY ON':'A NEW MONTH BEGINS'}</div><h1>${w.name.toUpperCase()}</h1>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<p>${returning?`While the cameras were elsewhere, ${w.name} went ${s.wins}-${s.losses} and ${s.movement} in the Power Rankings.`:`The cameras remain focused on ${w.name} for another month.`}</p><div><span><small>CURRENT RANK</small><b>#${s.rank}</b></span><span><small>FORM</small><b>${s.streak>0?'W'+s.streak:s.streak<0?'L'+Math.abs(s.streak):'EVEN'}</b></span><span><small>STATUS</small><b>${s.status}</b></span></div><button class="btn live-primary" onclick="lpw84ClosePreviously()">BEGIN THE MONTH</button></section>`)};
+ window.lpw84ClosePreviously=function(){const c=ensure(liveLoad());c.world.pendingReturnSummary=null;liveSave(c);gauntletLiveCalendar()};
+
+ /* Monthly selection generates history/news and keeps progression ownership with player. */
+ const monthChoice=gauntletLiveMonthRosterChoice;gauntletLiveMonthRosterChoice=function(){const c=ensure(liveLoad()),active=career(c,c.active);recordSnapshot(c);updateMonthlyNews(c);c.world.monthSummaries[c.month]={active:c.active,rank:rank(c,c.active),record:`${active.wins}-${active.losses}`,champion:c.championships.world};pushNews(c,'monthly',`${monthName(c.month)} IS IN THE BOOKS`,`${wrestler(c.active).name} closes the month ranked #${rank(c,c.active)}. The LPW World Champion is ${wrestler(c.championships.world).name}.`,c.active);liveSave(c);return monthChoice()};
+
+ /* Record championship lineage and tournament history at resolution. */
+ const complete=liveCompleteBroadcast;liveCompleteBroadcast=function(win){const before=ensure(liveLoad()),oldChamp=before.championships.world,p={...(before.pending||{})},active=before.active;const r=complete(win);const c=ensure(liveLoad());if(p.isSupercard)career(c,active).supercards++;
+  if(p.worldTitle){if(win)titleChange(c,active,oldChamp,'Won at SuperCard');else{career(c,oldChamp).titleDefences++;const reign=world(c).titleHistory.find(h=>h.champion===oldChamp&&!h.endedMonth);if(reign)reign.defences=(reign.defences||0)+1;pushNews(c,'champion',`${wrestler(oldChamp).name} RETAINS THE WORLD CHAMPIONSHIP`,`${wrestler(active).name} challenged at SuperCard, but the champion survived.`,oldChamp)}}
+  if(p.tournament&&p.tournamentRound==='F'&&win){career(c,active).tournamentWins++;world(c).tournamentHistory.unshift({year:Math.ceil(c.month/12),winner:active,month:c.month});pushNews(c,'tournament',`${wrestler(active).name} WINS THE #1 CONTENDER TOURNAMENT`,`${wrestler(active).name} has earned a World Championship match at the March SuperCard.`,active)}recordSnapshot(c);liveSave(c);return r};
+
+ /* Broadcast memory: show openings and media now surface current-world facts. */
+ const intro=gauntletLiveShowIntro;gauntletLiveShowIntro=function(){const c=ensure(liveLoad()),a=wrestler(c.active),r=liveFeudOpponent(c),champ=wrestler(c.championships.world);pushNews(c,'preview',`${liveShowName(c).toUpperCase()}: ${a.name} IN ACTION`,r?`${a.name}'s rivalry with ${r.name} continues while World Champion ${champ.name} watches the rankings.`:`${a.name} looks to improve a #${rank(c,c.active)} ranking.`,c.active);liveSave(c);const out=intro();setTimeout(()=>{const sec=document.querySelector('.live-show-intro,.panel');if(sec&&!document.querySelector('.lpw84-earlier-tonight'))sec.insertAdjacentHTML('afterbegin',`<div class="lpw84-earlier-tonight"><small>TONIGHT ON LPW</small><b>${a.name} enters ranked #${rank(c,c.active)}</b><span>${r?`${r.name} remains the central threat.`:`The Power Rankings remain wide open.`}</span></div>`)},0);return out};
+
+ const home=gauntletLiveHome;gauntletLiveHome=function(){const r=home();setTimeout(()=>{document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent='VERSION 8.4.2');const menu=document.querySelector('.live-mode-actions,.live-home-actions');if(menu&&!document.querySelector('.lpw84-home-dashboard'))menu.insertAdjacentHTML('beforeend','<button class="btn lpw84-home-dashboard" onclick="lpw84Dashboard()">LIVING WORLD DASHBOARD</button>')},0);return r};
+
+ /* Final language cleanup. */
+ const render0=render;render=function(html){return render0(String(html||'').replace(/stable member(s)?/gi,'roster member$1').replace(/MANAGE STABLE/gi,'VIEW ROSTER').replace(/ACTIVE WRESTLER/gi,'CAMERA FOCUS'))};
+})();
+
+/* =============================================================
+   LEGACY PRO WRESTLING 8.4.3 — 20-PERSON BATTLE ROYAL ENGINE
+   Standalone main-menu test mode. Career integration intentionally
+   deferred until the September SuperCard implementation is approved.
+   ============================================================= */
+(function(){
+ const BR_SAVE_KEY='lpw_battle_royal_history_v1';
+ let BR=null;
+ const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+ const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+ const pick=a=>a[Math.floor(Math.random()*a.length)];
+ const wrestler=id=>WRESTLERS.find(w=>w.id===id);
+ const score=w=>(Number(w?.overall)||75)+(Number(w?.resilience)||75)*.25+(Number(w?.power)||75)*.15;
+ const portrait=w=>imageWithFallback(w,'portrait','art-portrait','matchPortrait');
+ const active=()=>BR?.entrants.filter(e=>!e.eliminated)||[];
+ const remaining=()=>active().length;
+ const player=()=>BR?.entrants.find(e=>e.id===BR.playerId);
+ const stateLabel=e=>e.stamina>75?'FRESH':e.stamina>50?'WINDED':e.stamina>25?'VULNERABLE':e.stamina>0?'IN DANGER':'CRITICAL';
+ const phase=()=>remaining()>14?'OPENING':remaining()>7?'MIDDLE':remaining()>2?'CLOSING':'FINAL TWO';
+ const histLoad=()=>{try{return JSON.parse(localStorage.getItem(BR_SAVE_KEY)||'[]')}catch{return []}};
+ const histSave=r=>{const h=histLoad();h.unshift(r);localStorage.setItem(BR_SAVE_KEY,JSON.stringify(h.slice(0,30)))};
+
+ function installMenuButton(){
+  const nav=document.querySelector('.hub-menu');
+  if(!nav||document.getElementById('battleRoyalMenuButton'))return;
+  const b=document.createElement('button');b.id='battleRoyalMenuButton';b.className='hub-option battle-royal-menu';
+  b.onclick=battleRoyalHome;b.innerHTML='<b>20-PERSON BATTLE ROYAL</b><small>Twenty enter. One survives. Playable now.</small>';
+  const career=nav.querySelector('button');career?.after(b);
+ }
+ const oldHome=window.home;
+ window.home=function(){const r=oldHome.apply(this,arguments);setTimeout(installMenuButton,0);return r};
+
+ window.battleRoyalHome=function(){
+  const h=histLoad(),last=h[0];
+  render(`<section class="panel br-home">${shellBack()}<div class="tv-kicker">PLAYABLE NOW · STANDALONE TEST MODE</div><h1>20-PERSON BATTLE ROYAL</h1><p>Twenty unique wrestlers. One ring. One survivor. This match uses a dedicated survival, stamina and elimination engine.</p><div class="br-home-card"><div><b>20</b><span>ENTRANTS</span></div><div><b>1</b><span>WINNER</span></div><div><b>${h.length}</b><span>MATCHES RECORDED</span></div></div>${last?`<div class="br-last-result"><small>LAST WINNER</small><b>${wrestler(last.winner)?.name||last.winner}</b><span>${last.mostEliminations||0} eliminations led the match</span></div>`:''}<button class="btn live-primary" onclick="battleRoyalChooseWrestler()">CHOOSE YOUR WRESTLER</button><button class="btn secondary" onclick="battleRoyalHistory()">BATTLE ROYAL HISTORY</button></section>`)
+ };
+ window.battleRoyalChooseWrestler=function(){
+  render(`<section class="panel br-select">${shellBack()}<div class="tv-kicker">SELECT YOUR ENTRANT</div><h1>WHO WILL SURVIVE?</h1><p>The other nineteen entrants will be selected randomly with no duplicates.</p><div class="br-select-grid">${WRESTLERS.map(w=>`<button onclick="battleRoyalStart('${w.id}')">${portrait(w)}<b>${w.name}</b><small>OVR ${w.overall||'—'}</small></button>`).join('')}</div></section>`)
+ };
+ window.battleRoyalStart=function(playerId){
+  const field=[wrestler(playerId),...shuffle(WRESTLERS.filter(w=>w.id!==playerId)).slice(0,19)].filter(Boolean);
+  BR={playerId,round:0,entrants:field.map((w,i)=>({id:w.id,stamina:100,eliminated:false,place:null,eliminations:0,survival:0,entry:i+1,lastAction:'Fresh'})),eliminationOrder:[],log:[],watching:false,finished:false,flash:null};
+  battleRoyalRender();
+ };
+ function tile(e){const w=wrestler(e.id),isPlayer=e.id===BR.playerId;return `<article class="br-tile ${isPlayer?'player':''} ${e.eliminated?'out':''}" data-br-id="${e.id}">${portrait(w)}<b>${w.name}</b><div class="br-fatigue"><i style="width:${clamp(e.stamina,0,100)}%"></i></div><small>${stateLabel(e)}${isPlayer?' · YOU':''}</small></article>`}
+ function latestLog(){return BR.log.slice(-3).reverse().map(x=>`<p>${x}</p>`).join('')||'<p>The bell rings and twenty wrestlers collide.</p>'}
+ window.battleRoyalRender=function(){
+  if(!BR)return battleRoyalHome();
+  if(BR.finished)return battleRoyalResults();
+  const p=player(),rem=remaining(),finalTwo=rem===2;
+  render(`<section class="panel br-match ${finalTwo?'br-final-two':''}"><div class="br-top"><button class="shell-back" onclick="battleRoyalConfirmExit()">← MAIN MENU</button><div><small>${phase()}</small><b>${rem} REMAIN</b></div><div><small>ROUND</small><b>${BR.round}</b></div></div><div class="tv-kicker">20-PERSON BATTLE ROYAL</div><h1>${finalTwo?'FINAL TWO':'SURVIVE THE CHAOS'}</h1>${finalTwo?battleRoyalFinalTwoHeader():''}<div class="br-grid">${active().map(tile).join('')}</div><div class="br-commentary">${latestLog()}</div>${p.eliminated&&!BR.finished?battleRoyalSpectatorControls():battleRoyalDecisionPanel()}${BR.flash?`<div class="br-elimination-flash"><small>ELIMINATED</small><b>${BR.flash.text}</b><span>${remaining()} WRESTLERS REMAIN</span></div>`:''}</section>`)
+ };
+ function battleRoyalFinalTwoHeader(){const a=active();return `<div class="br-final-head">${a.map(e=>`<div>${portrait(wrestler(e.id))}<b>${wrestler(e.id).name}</b><small>${Math.round(e.stamina)}% STAMINA</small></div>`).join('<strong>VS</strong>')}</div>`}
+ function battleRoyalSpectatorControls(){return `<div class="br-decisions"><h2>YOU FINISHED #${player().place}</h2><p>The battle continues without you.</p><button onclick="battleRoyalWatchRound()">WATCH THE NEXT ROUND</button><button onclick="battleRoyalSimToWinner()">SIMULATE TO WINNER</button><button onclick="home()">RETURN TO MAIN MENU</button></div>`}
+ function vulnerableTargets(){return active().filter(e=>e.id!==BR.playerId).sort((a,b)=>a.stamina-b.stamina)}
+ function decisionPool(){
+  const p=player(),targets=vulnerableTargets(),pool=[];
+  if(remaining()===2)return battleRoyalFinalChoices();
+  pool.push({id:'conserve',label:'CONSERVE YOUR STAMINA',desc:'Recover while the field fights around you.'});
+  pool.push({id:'scarce',label:'MAKE YOURSELF SCARCE',desc:'Lower your profile and avoid becoming a target.'});
+  pool.push({id:'attack',label:'GO ON THE ATTACK',desc:'Pressure a nearby opponent and drain their stamina.'});
+  pool.push({id:'crowd',label:'RALLY THE CROWD',desc:'Build momentum, but risk being caught celebrating.'});
+  pool.push({id:'brawl',label:'START A BRAWL',desc:'Create chaos that can damage several wrestlers.'});
+  pool.push({id:'letfight',label:'LET THEM FIGHT',desc:'Stay back while the CPU field tears itself apart.'});
+  if(p.stamina<45)pool.push({id:'hangon',label:'HANG ON',desc:'Survive an immediate attempt to throw you out.'});
+  if(p.stamina>35)pool.push({id:'finisher',label:`GO FOR ${wrestler(p.id).finisher||wrestler(p.id).signature||'YOUR FINISHER'}`,desc:'Create a major elimination opportunity.'});
+  if(targets[0]?.stamina<62)pool.push({id:'eliminate',target:targets[0].id,label:`ELIMINATE ${wrestler(targets[0].id).name.toUpperCase()}`,desc:'Attempt to throw out one of the most vulnerable wrestlers.'});
+  if(targets[1]?.stamina<50)pool.push({id:'eliminate',target:targets[1].id,label:`ELIMINATE ${wrestler(targets[1].id).name.toUpperCase()}`,desc:'A second vulnerable target is near the ropes.'});
+  if(targets.length>3)pool.push({id:'alliance',target:targets[targets.length-1].id,label:`FORM A TEMPORARY ALLIANCE`,desc:`Work briefly with ${wrestler(targets[targets.length-1].id).name}. Betrayal is possible.`});
+  if(targets.filter(x=>x.stamina<35).length>=2)pool.push({id:'double',label:'DUMP THEM BOTH',desc:'A rare, high-risk attempt at a double elimination.'});
+  const unique=[];shuffle(pool).forEach(x=>{if(unique.length<3&&!unique.some(y=>y.label===x.label))unique.push(x)});return unique;
+ }
+ function battleRoyalFinalChoices(){const opp=active().find(e=>e.id!==BR.playerId);return shuffle([
+  {id:'final-wear',target:opp?.id,label:'WEAR THEM DOWN',desc:'Reduce their stamina before trying to finish it.'},
+  {id:'final-send',target:opp?.id,label:`SEND ${wrestler(opp?.id)?.name?.toUpperCase()||'THEM'} OVER`,desc:'Go directly for the winning elimination.'},
+  {id:'final-counter',target:opp?.id,label:'COUNTER THEIR CHARGE',desc:'Invite the attack and redirect their momentum.'},
+  {id:'crowd',label:'RALLY THE CROWD',desc:'Draw on the audience for one final surge.'},
+  {id:'finisher',target:opp?.id,label:`GO FOR ${wrestler(player().id).finisher||'YOUR FINISHER'}`,desc:'Use your biggest weapon to set up the victory.'}
+ ]).slice(0,3)}
+ function battleRoyalDecisionPanel(){const choices=decisionPool();return `<div class="br-decisions"><small>YOUR CALL</small><h2>${remaining()===2?'HOW DO YOU WIN IT?':'CHOOSE YOUR NEXT MOVE'}</h2>${choices.map((c,i)=>`<button onclick='battleRoyalChoose(${JSON.stringify(c)})'><b>${c.label}</b><span>${c.desc}</span></button>`).join('')}</div>`}
+
+ window.battleRoyalChoose=function(choice){
+  if(!BR||player().eliminated)return;BR.round++;active().forEach(e=>e.survival++);
+  const p=player(),w=wrestler(p.id),roll=Math.random(),quality=roll>.88?'majorSuccess':roll>.38?'success':roll>.12?'failure':'majorFailure';
+  resolvePlayerChoice(choice,quality,w,p);
+  if(!p.eliminated&&remaining()>1)cpuRound();
+  if(remaining()===1)return finishBattleRoyal();
+  battleRoyalRender();
+ };
+ function fatigue(e,n){e.stamina=clamp(e.stamina+n,0,100)}
+ function log(s){BR.log.push(s);BR.log=BR.log.slice(-12)}
+ function resolvePlayerChoice(c,q,w,p){
+  const target=BR.entrants.find(e=>e.id===c.target&&!e.eliminated),tn=target?wrestler(target.id).name:'';
+  if(c.id==='conserve'){if(q==='majorSuccess'){fatigue(p,22);log(`${w.name} disappears into the traffic and recovers valuable stamina.`)}else if(q==='success'){fatigue(p,13);log(`${w.name} conserves energy while the battle continues.`)}else if(q==='failure'){fatigue(p,-5);log(`${w.name}'s recovery is interrupted.`)}else{fatigue(p,-15);log(`${w.name} is trapped in the corner while trying to rest.`)}}
+  else if(c.id==='scarce'||c.id==='letfight'){if(q==='majorSuccess'){fatigue(p,8);p.hidden=2;log(`${w.name} stays completely out of danger as the field attacks itself.`)}else if(q==='success'){p.hidden=1;log(`${w.name} wisely lowers their profile.`)}else if(q==='failure'){fatigue(p,-8);log(`${w.name} is spotted and dragged back into the fight.`)}else{fatigue(p,-18);log(`The entire field notices ${w.name} hiding and swarms them.`)}}
+  else if(c.id==='attack'||c.id==='final-wear'){const t=target||pick(vulnerableTargets());if(t){const dmg=q==='majorSuccess'?28:q==='success'?18:q==='failure'?8:-12;if(dmg>=0){fatigue(t,-dmg);log(`${w.name} unloads on ${wrestler(t.id).name}, draining ${dmg} stamina.`)}else{fatigue(p,dmg);log(`${wrestler(t.id).name} counters ${w.name}'s attack.`)}}}
+  else if(c.id==='crowd'){if(q==='majorSuccess'){fatigue(p,14);p.momentum=(p.momentum||0)+2;log(`The crowd erupts and ${w.name} finds a second wind.`)}else if(q==='success'){fatigue(p,7);p.momentum=(p.momentum||0)+1;log(`${w.name} feeds off the crowd.`)}else{fatigue(p,q==='failure'?-9:-18);log(`${w.name} is attacked while playing to the audience.`)}}
+  else if(c.id==='finisher'){const t=target||pick(vulnerableTargets());if(t){if(q==='majorSuccess'){fatigue(t,-36);log(`${w.name} hits ${w.finisher||w.signature}! ${wrestler(t.id).name} is left near elimination.`)}else if(q==='success'){fatigue(t,-25);fatigue(p,-5);log(`${w.name} lands the finisher but spends valuable energy.`)}else if(q==='failure'){fatigue(p,-12);log(`${wrestler(t.id).name} escapes the finisher.`)}else{fatigue(p,-24);log(`${w.name}'s finisher is reversed into a dangerous position.`);attemptCpuEliminate(t,p,.38)}}}
+  else if(c.id==='eliminate'||c.id==='final-send'){attemptPlayerEliminate(target,q,c.id==='final-send')}
+  else if(c.id==='hangon'||c.id==='final-counter'){if(q==='majorSuccess'){fatigue(p,8);const t=pick(vulnerableTargets());if(t)fatigue(t,-20);log(`${w.name} hangs on and turns defence into a counterattack.`)}else if(q==='success'){fatigue(p,-5);log(`${w.name} survives by inches.`)}else if(q==='failure'){fatigue(p,-18);log(`${w.name} barely escapes elimination.`)}else eliminate(p,pick(active().filter(e=>e.id!==p.id)),'A desperate escape fails.')}
+  else if(c.id==='brawl'){const others=shuffle(active().filter(e=>e.id!==p.id)).slice(0,4);if(q==='majorSuccess'){others.forEach(e=>fatigue(e,-18));log(`${w.name} cleans house and four opponents are rocked.`)}else if(q==='success'){others.forEach(e=>fatigue(e,-10));fatigue(p,-6);log(`${w.name} starts a wild brawl.`)}else{fatigue(p,q==='failure'?-14:-25);log(`${w.name} loses control of the chaos.`)}}
+  else if(c.id==='alliance'){const t=target||pick(active().filter(e=>e.id!==p.id));if(q==='majorSuccess'){const victim=pick(active().filter(e=>![p.id,t.id].includes(e.id)));if(victim){fatigue(victim,-28);log(`${w.name} and ${wrestler(t.id).name} combine to overwhelm ${wrestler(victim.id).name}.`)}}else if(q==='success'){fatigue(t,5);fatigue(p,4);log(`A temporary alliance gives ${w.name} breathing room.`)}else{fatigue(p,q==='failure'?-12:-24);log(`${wrestler(t.id).name} betrays ${w.name} without warning.`)}}
+  else if(c.id==='double'){const ts=vulnerableTargets().slice(0,2);if(q==='majorSuccess'&&ts.length===2){ts.forEach(t=>eliminate(t,p,'Double elimination!'));log(`${w.name} dumps two wrestlers at once!`)}else if(q==='success'){ts.forEach(t=>fatigue(t,-20));log(`${w.name} nearly pulls off a double elimination.`)}else{fatigue(p,q==='failure'?-18:-30);log(`The double elimination attempt collapses and ${w.name} is punished.`);if(q==='majorFailure'&&Math.random()<.35)eliminate(p,pick(ts),'Both targets turn on the player.')}}
+ }
+ function attemptPlayerEliminate(t,q,final){if(!t)return;const p=player(),pw=wrestler(p.id),tw=wrestler(t.id),base=.25+(100-t.stamina)/150+(score(pw)-score(tw))/300+(final ? .12 : 0);let chance=clamp(base,0.12,.9);if(q==='majorSuccess')chance+=.28;if(q==='success')chance+=.08;if(q==='failure')chance-=.18;if(q==='majorFailure')chance-=.35;if(Math.random()<chance){eliminate(t,p,`${pw.name} completes the elimination.`)}else if(q==='majorFailure'){fatigue(p,-24);log(`${tw.name} reverses the elimination attempt on ${pw.name}.`);if(Math.random()<clamp((100-p.stamina)/120,.1,.65))eliminate(p,t,'The reversal sends the player over the top rope.')}else{fatigue(t,-12);fatigue(p,-8);log(`${tw.name} survives ${pw.name}'s elimination attempt.`)}}
+ function cpuRound(){
+  const list=shuffle(active().filter(e=>e.id!==BR.playerId));
+  list.forEach(e=>{if(e.eliminated)return;e.hidden=Math.max(0,(e.hidden||0)-1);const targets=active().filter(t=>t.id!==e.id&&!t.hidden);if(!targets.length)return;const t=pick(targets);const aggression=.35+(100-e.stamina)/400;if(Math.random()<aggression&&t.stamina<58){attemptCpuEliminate(e,t,.12)}else{fatigue(t,-(3+Math.random()*9));if(Math.random()<.12)fatigue(e,3)}});
+  const p=player();if(!p.eliminated&&!p.hidden){const attackers=active().filter(e=>e.id!==p.id);const targetChance=.10+(100-p.stamina)/500;if(Math.random()<targetChance&&p.stamina<45)attemptCpuEliminate(pick(attackers),p,.05)}
+ }
+ function attemptCpuEliminate(attacker,target,bonus=0){if(!attacker||!target||attacker.eliminated||target.eliminated)return;const aw=wrestler(attacker.id),tw=wrestler(target.id);let chance=.08+(100-target.stamina)/170+(score(aw)-score(tw))/420+bonus;chance=clamp(chance,.03,.72);if(Math.random()<chance)eliminate(target,attacker,`${aw.name} throws ${tw.name} over the top rope.`);else{fatigue(target,-5);fatigue(attacker,-4);if(Math.random()<.18)log(`${tw.name} hangs on after ${aw.name}'s elimination attempt.`)}}
+ function eliminate(victim,by,reason){if(!victim||victim.eliminated)return;victim.eliminated=true;victim.place=remaining()+1;victim.stamina=0;if(by&&by.id!==victim.id)by.eliminations++;BR.eliminationOrder.push({id:victim.id,by:by?.id||null,place:victim.place,round:BR.round});const text=`${wrestler(victim.id).name}${by?` · eliminated by ${wrestler(by.id).name}`:''}`;log(reason||text);BR.flash={text};setTimeout(()=>{if(BR){BR.flash=null;battleRoyalRender()}},900)}
+ function finishBattleRoyal(){const win=active()[0];if(!win)return;win.place=1;BR.finished=true;const most=[...BR.entrants].sort((a,b)=>b.eliminations-a.eliminations)[0],longest=[...BR.entrants].sort((a,b)=>b.survival-a.survival)[0];histSave({date:new Date().toISOString(),winner:win.id,player:BR.playerId,playerPlace:player().place,playerEliminations:player().eliminations,mostEliminations:most.eliminations,mostEliminationsId:most.id,longestSurvivalId:longest.id,rounds:BR.round,order:BR.eliminationOrder});battleRoyalResults()}
+ window.battleRoyalWatchRound=function(){if(!BR||BR.finished)return;BR.round++;active().forEach(e=>e.survival++);cpuRound();if(remaining()===1)finishBattleRoyal();else battleRoyalRender()};
+ window.battleRoyalSimToWinner=function(){let guard=0;while(BR&&!BR.finished&&remaining()>1&&guard++<250){BR.round++;active().forEach(e=>e.survival++);cpuRound();if(remaining()===1)finishBattleRoyal()}if(!BR.finished&&remaining()===1)finishBattleRoyal();else battleRoyalRender()};
+ window.battleRoyalResults=function(){if(!BR)return battleRoyalHome();const win=active()[0]||BR.entrants.find(e=>e.place===1),p=player(),most=[...BR.entrants].sort((a,b)=>b.eliminations-a.eliminations)[0],longest=[...BR.entrants].sort((a,b)=>b.survival-a.survival)[0];render(`<section class="panel br-results"><div class="tv-kicker">BATTLE ROYAL RESULT</div><h1>${wrestler(win.id).name} WINS</h1><div class="br-winner">${imageWithFallback(wrestler(win.id),'victory','art-full','resultVictory')}<div><small>LAST WRESTLER STANDING</small><b>${wrestler(win.id).name}</b><span>${win.eliminations} eliminations · survived ${win.survival} rounds</span></div></div><div class="br-result-stats"><article><small>YOUR FINISH</small><b>#${p.place}</b><span>${p.eliminations} eliminations</span></article><article><small>MOST ELIMINATIONS</small><b>${wrestler(most.id).name}</b><span>${most.eliminations}</span></article><article><small>LONGEST SURVIVAL</small><b>${wrestler(longest.id).name}</b><span>${longest.survival} rounds</span></article></div><h2>ELIMINATION ORDER</h2><div class="br-order">${[...BR.eliminationOrder].reverse().map(x=>`<span><b>#${x.place}</b>${wrestler(x.id).name}<small>${x.by?`by ${wrestler(x.by).name}`:'—'}</small></span>`).join('')}<span><b>#1</b>${wrestler(win.id).name}<small>WINNER</small></span></div><div class="br-result-actions"><button class="btn live-primary" onclick="battleRoyalStart('${BR.playerId}')">RUN IT BACK</button><button class="btn secondary" onclick="battleRoyalChooseWrestler()">CHOOSE ANOTHER WRESTLER</button><button class="btn secondary" onclick="home()">MAIN MENU</button></div></section>`)};
+ window.battleRoyalHistory=function(){const h=histLoad();render(`<section class="panel br-history">${shellBack()}<div class="tv-kicker">STANDALONE RECORD BOOK</div><h1>BATTLE ROYAL HISTORY</h1>${h.length?`<div class="br-history-list">${h.map((r,i)=>`<article><b>${i+1}. ${wrestler(r.winner)?.name||r.winner}</b><span>Winner · ${r.mostEliminations} most eliminations · ${r.rounds} rounds</span><small>You finished #${r.playerPlace} with ${r.playerEliminations} eliminations</small></article>`).join('')}</div>`:'<p>No completed Battle Royals yet.</p>'}<button class="btn live-primary" onclick="battleRoyalHome()">BACK</button></section>`)};
+ window.battleRoyalConfirmExit=function(){if(confirm('Leave this Battle Royal and lose the current match?')){BR=null;home()}};
+ setTimeout(installMenuButton,0);
+})();

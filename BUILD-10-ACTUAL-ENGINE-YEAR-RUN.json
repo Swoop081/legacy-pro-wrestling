@@ -1,0 +1,2051 @@
+{
+  "final": {
+    "month": 13,
+    "week": 49,
+    "day": 0,
+    "wins": 49,
+    "losses": 45,
+    "momentum": 52,
+    "popularity": 20,
+    "level": 20
+  },
+  "matches": [
+    {
+      "win": true,
+      "player": 206,
+      "opp": 165,
+      "rating": 2.67,
+      "decisions": [
+        "Walk Through the First Shot",
+        "Make the Moment Count",
+        "Call for Final Reckoning"
+      ],
+      "supercard": false,
+      "opponent": "mateo-vega",
+      "month": 1,
+      "week": 1,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 184,
+      "opp": 174,
+      "rating": 3.77,
+      "decisions": [
+        "Refuse to Fold",
+        "Create an Escape",
+        "Find Another Gear",
+        "Call for Final Reckoning"
+      ],
+      "supercard": false,
+      "opponent": "mateo-vega",
+      "month": 1,
+      "week": 1,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 236,
+      "opp": 150,
+      "rating": 2.11,
+      "decisions": [
+        "Own the Opening",
+        "Go for Everything",
+        "End It With Style",
+        "Claim Another Soul",
+        "End It in Darkness"
+      ],
+      "supercard": false,
+      "opponent": "mateo-vega",
+      "month": 1,
+      "week": 2,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 216,
+      "opp": 175,
+      "rating": 2.93,
+      "decisions": [
+        "Let the Lights Flicker",
+        "Refuse to Fold",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "mateo-vega",
+      "month": 1,
+      "week": 2,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 97,
+      "opp": 254,
+      "rating": 1.61,
+      "decisions": [
+        "Refuse to Fold",
+        "Create an Escape",
+        "Commit to the Closing Shot"
+      ],
+      "supercard": false,
+      "opponent": "mateo-vega",
+      "month": 1,
+      "week": 3,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 221,
+      "opp": 186,
+      "rating": 3.82,
+      "decisions": [
+        "Test Their Nerve",
+        "Make the Moment Count",
+        "Dictate the Exchange",
+        "Call for Final Reckoning",
+        "Leave No Doubt"
+      ],
+      "supercard": false,
+      "opponent": "mateo-vega",
+      "month": 1,
+      "week": 3,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 106,
+      "opp": 197,
+      "rating": 1.74,
+      "decisions": [
+        "Let the Lights Flicker",
+        "Return from the Dead",
+        "Attempt Blackout Piledriver"
+      ],
+      "supercard": false,
+      "opponent": "mateo-vega",
+      "month": 1,
+      "week": 4,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 190,
+      "opp": 195,
+      "rating": 4.47,
+      "decisions": [
+        "Rise Again",
+        "Refuse to Fold",
+        "Steal the Finish",
+        "Commit to the Closing Shot",
+        "Leave No Doubt"
+      ],
+      "supercard": false,
+      "opponent": "mateo-vega",
+      "month": 1,
+      "week": 4,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 203,
+      "opp": 181,
+      "rating": 3.63,
+      "decisions": [
+        "Let the Lights Flicker",
+        "Test Their Nerve",
+        "Force the Mistake",
+        "Sit Straight Up",
+        "Commit to the Closing Shot"
+      ],
+      "supercard": true,
+      "opponent": "mateo-vega",
+      "month": 1,
+      "week": 4,
+      "day": 6
+    },
+    {
+      "win": true,
+      "player": 253,
+      "opp": 157,
+      "rating": 2.12,
+      "decisions": [
+        "Walk Through the Storm",
+        "Break Their Momentum",
+        "Deliver the Last Omen",
+        "Claim Another Soul",
+        "Make It Picture Perfect"
+      ],
+      "supercard": false,
+      "opponent": "jack-mercer",
+      "month": 2,
+      "week": 6,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 193,
+      "opp": 146,
+      "rating": 2.71,
+      "decisions": [
+        "Take the First Step",
+        "Refuse to Stay Down",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "jack-mercer",
+      "month": 2,
+      "week": 6,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 165,
+      "opp": 172,
+      "rating": 3.6,
+      "decisions": [
+        "Test Their Nerve",
+        "Sit Straight Up",
+        "Call for Final Reckoning"
+      ],
+      "supercard": false,
+      "opponent": "jack-mercer",
+      "month": 2,
+      "week": 7,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 126,
+      "opp": 228,
+      "rating": 1.88,
+      "decisions": [
+        "Return from the Dead",
+        "Sit Straight Up",
+        "Rise Again",
+        "Make It Picture Perfect"
+      ],
+      "supercard": false,
+      "opponent": "jack-mercer",
+      "month": 2,
+      "week": 7,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 185,
+      "opp": 220,
+      "rating": 3.79,
+      "decisions": [
+        "Risk the Counter",
+        "Silence the Crowd",
+        "Survive the Storm",
+        "End It With Style"
+      ],
+      "supercard": false,
+      "opponent": "jack-mercer",
+      "month": 2,
+      "week": 8,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 194,
+      "opp": 166,
+      "rating": 2.97,
+      "decisions": [
+        "Stand Motionless",
+        "Cut Off the Ring",
+        "Attempt Blackout Piledriver"
+      ],
+      "supercard": false,
+      "opponent": "jack-mercer",
+      "month": 2,
+      "week": 8,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 181,
+      "opp": 202,
+      "rating": 3.21,
+      "decisions": [
+        "Claim the Spotlight",
+        "Turn Up the Pressure",
+        "Darken the Arena",
+        "Call for Final Reckoning"
+      ],
+      "supercard": true,
+      "opponent": "jack-mercer",
+      "month": 2,
+      "week": 8,
+      "day": 6
+    },
+    {
+      "win": true,
+      "player": 254,
+      "opp": 164,
+      "rating": 2.32,
+      "decisions": [
+        "Walk Through the First Shot",
+        "Set the Tempo",
+        "Make the Lights Go Out",
+        "Attempt Blackout Piledriver",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "hollowman",
+      "month": 3,
+      "week": 9,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 204,
+      "opp": 191,
+      "rating": 4.16,
+      "decisions": [
+        "Make Them React",
+        "Own the Opening",
+        "Stalk Without Emotion",
+        "Darken the Arena",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "hollowman",
+      "month": 3,
+      "week": 9,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 150,
+      "opp": 192,
+      "rating": 2.66,
+      "decisions": [
+        "Walk Through the First Shot",
+        "Turn Up the Pressure",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "hollowman",
+      "month": 3,
+      "week": 10,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 125,
+      "opp": 211,
+      "rating": 1.72,
+      "decisions": [
+        "Test Their Nerve",
+        "Refuse to Stay Down",
+        "Steal the Finish"
+      ],
+      "supercard": false,
+      "opponent": "hollowman",
+      "month": 3,
+      "week": 10,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 269,
+      "opp": 173,
+      "rating": 2.33,
+      "decisions": [
+        "Claim the Spotlight",
+        "Dictate the Exchange",
+        "Call for Final Reckoning",
+        "Deliver the Last Omen",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "hollowman",
+      "month": 3,
+      "week": 11,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 198,
+      "opp": 166,
+      "rating": 3.28,
+      "decisions": [
+        "Walk Through the Storm",
+        "Survive the Storm",
+        "Turn Pain into Power",
+        "Make the Lights Go Out",
+        "Claim Another Soul"
+      ],
+      "supercard": false,
+      "opponent": "hollowman",
+      "month": 3,
+      "week": 11,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 155,
+      "opp": 207,
+      "rating": 2.8,
+      "decisions": [
+        "Survive the Storm",
+        "Risk the Counter",
+        "Create an Escape",
+        "Walk Through the Storm",
+        "Leave No Doubt"
+      ],
+      "supercard": false,
+      "opponent": "hollowman",
+      "month": 3,
+      "week": 12,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 160,
+      "opp": 203,
+      "rating": 3,
+      "decisions": [
+        "Claim the Spotlight",
+        "Turn Up the Pressure",
+        "Darken the Arena",
+        "Deliver the Last Omen"
+      ],
+      "supercard": false,
+      "opponent": "hollowman",
+      "month": 3,
+      "week": 12,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 318,
+      "opp": 168,
+      "rating": 2.56,
+      "decisions": [
+        "Own the Opening",
+        "Make Them React",
+        "Call for Final Reckoning",
+        "Steal the Finish",
+        "End It in Darkness"
+      ],
+      "supercard": true,
+      "opponent": "hollowman",
+      "month": 3,
+      "week": 12,
+      "day": 6
+    },
+    {
+      "win": false,
+      "player": 169,
+      "opp": 170,
+      "rating": 3.76,
+      "decisions": [
+        "Take the First Step",
+        "Turn Up the Pressure",
+        "Dictate the Exchange",
+        "Leave No Doubt"
+      ],
+      "supercard": false,
+      "opponent": "max-justice",
+      "month": 4,
+      "week": 13,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 154,
+      "opp": 184,
+      "rating": 2.94,
+      "decisions": [
+        "Stand Motionless",
+        "Stalk Without Emotion",
+        "Claim Another Soul"
+      ],
+      "supercard": false,
+      "opponent": "max-justice",
+      "month": 4,
+      "week": 13,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 172,
+      "opp": 178,
+      "rating": 4.03,
+      "decisions": [
+        "Risk the Counter",
+        "Survive the Storm",
+        "Cut Off the Ring",
+        "Commit to the Closing Shot"
+      ],
+      "supercard": false,
+      "opponent": "max-justice",
+      "month": 4,
+      "week": 14,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 177,
+      "opp": 181,
+      "rating": 3.42,
+      "decisions": [
+        "Invite the Fear",
+        "Turn Up the Pressure",
+        "Make It Picture Perfect"
+      ],
+      "supercard": false,
+      "opponent": "max-justice",
+      "month": 4,
+      "week": 14,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 194,
+      "opp": 171,
+      "rating": 2.89,
+      "decisions": [
+        "Invite the Fear",
+        "Absorb the Punishment",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "max-justice",
+      "month": 4,
+      "week": 15,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 138,
+      "opp": 174,
+      "rating": 2.57,
+      "decisions": [
+        "Risk the Counter",
+        "Walk Through the Storm",
+        "End It With Style"
+      ],
+      "supercard": false,
+      "opponent": "max-justice",
+      "month": 4,
+      "week": 15,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 194,
+      "opp": 183,
+      "rating": 3.85,
+      "decisions": [
+        "Walk Through the First Shot",
+        "Stalk Without Emotion",
+        "Absorb the Punishment",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "max-justice",
+      "month": 4,
+      "week": 16,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 253,
+      "opp": 166,
+      "rating": 2.31,
+      "decisions": [
+        "Walk Through the First Shot",
+        "Make the Lights Go Out",
+        "Make It Picture Perfect",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "max-justice",
+      "month": 4,
+      "week": 16,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 164,
+      "opp": 181,
+      "rating": 3.17,
+      "decisions": [
+        "Walk Through the First Shot",
+        "Stalk Without Emotion",
+        "Commit to the Closing Shot"
+      ],
+      "supercard": true,
+      "opponent": "max-justice",
+      "month": 4,
+      "week": 16,
+      "day": 6
+    },
+    {
+      "win": true,
+      "player": 201,
+      "opp": 188,
+      "rating": 3.9,
+      "decisions": [
+        "Refuse to Fold",
+        "Create an Escape",
+        "Darken the Arena",
+        "Make It Picture Perfect",
+        "End It in Darkness"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 5,
+      "week": 17,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 182,
+      "opp": 185,
+      "rating": 3.88,
+      "decisions": [
+        "Rise from the Darkness",
+        "Turn Up the Pressure",
+        "Stalk Without Emotion",
+        "Turn Pain into Power",
+        "Call for Final Reckoning"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 5,
+      "week": 17,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 141,
+      "opp": 176,
+      "rating": 3.07,
+      "decisions": [
+        "Claim the Spotlight",
+        "Cut Off the Ring",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 5,
+      "week": 18,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 170,
+      "opp": 151,
+      "rating": 3.09,
+      "decisions": [
+        "Set the Tempo",
+        "Silence the Crowd",
+        "Stalk Without Emotion",
+        "Claim Another Soul"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 5,
+      "week": 18,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 86,
+      "opp": 364,
+      "rating": 2.38,
+      "decisions": [
+        "Sit Straight Up",
+        "Risk the Counter",
+        "Create an Escape",
+        "Silence the Crowd",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 5,
+      "week": 19,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 213,
+      "opp": 178,
+      "rating": 3.54,
+      "decisions": [
+        "Own the Opening",
+        "Absorb the Punishment",
+        "Call for Final Reckoning"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 5,
+      "week": 19,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 198,
+      "opp": 216,
+      "rating": 4.18,
+      "decisions": [
+        "Claim the Spotlight",
+        "Take the First Step",
+        "Make It Picture Perfect",
+        "End It in Darkness",
+        "Deliver the Last Omen"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 5,
+      "week": 20,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 203,
+      "opp": 172,
+      "rating": 3.28,
+      "decisions": [
+        "Test Their Nerve",
+        "Refuse to Fold",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 5,
+      "week": 20,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 145,
+      "opp": 191,
+      "rating": 2.73,
+      "decisions": [
+        "Rise Again",
+        "Create an Escape",
+        "Sit Straight Up",
+        "Commit to the Closing Shot"
+      ],
+      "supercard": true,
+      "opponent": "marco-montana",
+      "month": 5,
+      "week": 20,
+      "day": 6
+    },
+    {
+      "win": false,
+      "player": 139,
+      "opp": 194,
+      "rating": 2.5,
+      "decisions": [
+        "Refuse to Fold",
+        "Turn Pain into Power",
+        "Attempt Blackout Piledriver"
+      ],
+      "supercard": false,
+      "opponent": "marcus-king",
+      "month": 6,
+      "week": 21,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 126,
+      "opp": 272,
+      "rating": 2.26,
+      "decisions": [
+        "Sit Straight Up",
+        "Rise Again",
+        "Silence the Crowd",
+        "Return from the Dead",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "marcus-king",
+      "month": 6,
+      "week": 21,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 184,
+      "opp": 177,
+      "rating": 3.84,
+      "decisions": [
+        "Rise from the Darkness",
+        "Cut Off the Ring",
+        "Absorb the Punishment",
+        "End It in Darkness"
+      ],
+      "supercard": false,
+      "opponent": "marcus-king",
+      "month": 6,
+      "week": 22,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 169,
+      "opp": 186,
+      "rating": 3.48,
+      "decisions": [
+        "Set the Tempo",
+        "Absorb the Punishment",
+        "Make It Picture Perfect"
+      ],
+      "supercard": false,
+      "opponent": "marcus-king",
+      "month": 6,
+      "week": 22,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 251,
+      "opp": 151,
+      "rating": 2.32,
+      "decisions": [
+        "Invite the Fear",
+        "Stalk Without Emotion",
+        "End It in Darkness",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "marcus-king",
+      "month": 6,
+      "week": 23,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 170,
+      "opp": 198,
+      "rating": 3.86,
+      "decisions": [
+        "Claim the Spotlight",
+        "Let the Lights Flicker",
+        "Stalk Without Emotion",
+        "Turn Pain into Power",
+        "Call for Final Reckoning"
+      ],
+      "supercard": false,
+      "opponent": "marcus-king",
+      "month": 6,
+      "week": 23,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 227,
+      "opp": 170,
+      "rating": 2.19,
+      "decisions": [
+        "Take the First Step",
+        "Cut Off the Ring",
+        "End It in Darkness",
+        "Claim Another Soul"
+      ],
+      "supercard": false,
+      "opponent": "marcus-king",
+      "month": 6,
+      "week": 24,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 100,
+      "opp": 305,
+      "rating": 2.41,
+      "decisions": [
+        "Silence the Crowd",
+        "Sit Straight Up",
+        "Risk the Counter",
+        "Survive the Storm",
+        "Call for Final Reckoning"
+      ],
+      "supercard": false,
+      "opponent": "marcus-king",
+      "month": 6,
+      "week": 24,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 175,
+      "opp": 163,
+      "rating": 3.34,
+      "decisions": [
+        "Claim the Spotlight",
+        "Absorb the Punishment",
+        "Dictate the Exchange",
+        "Commit to the Closing Shot"
+      ],
+      "supercard": true,
+      "opponent": "marcus-king",
+      "month": 6,
+      "week": 24,
+      "day": 6
+    },
+    {
+      "win": true,
+      "player": 205,
+      "opp": 171,
+      "rating": 2.99,
+      "decisions": [
+        "Walk Through the First Shot",
+        "Dictate the Exchange",
+        "Commit to the Closing Shot"
+      ],
+      "supercard": false,
+      "opponent": "zara-monroe",
+      "month": 7,
+      "week": 25,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 157,
+      "opp": 287,
+      "rating": 2.34,
+      "decisions": [
+        "Sit Straight Up",
+        "Silence the Crowd",
+        "Find Another Gear",
+        "Break Their Momentum",
+        "Commit to the Closing Shot"
+      ],
+      "supercard": false,
+      "opponent": "zara-monroe",
+      "month": 7,
+      "week": 25,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 242,
+      "opp": 188,
+      "rating": 3.06,
+      "decisions": [
+        "Claim the Spotlight",
+        "Change the Rhythm",
+        "Absorb the Punishment",
+        "Call for Final Reckoning",
+        "Steal the Finish"
+      ],
+      "supercard": false,
+      "opponent": "zara-monroe",
+      "month": 7,
+      "week": 26,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 99,
+      "opp": 273,
+      "rating": 1.88,
+      "decisions": [
+        "Set the Tempo",
+        "Refuse to Fold",
+        "Walk Through the Storm",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "zara-monroe",
+      "month": 7,
+      "week": 26,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 174,
+      "opp": 185,
+      "rating": 3.71,
+      "decisions": [
+        "Let the Lights Flicker",
+        "Darken the Arena",
+        "Sit Straight Up",
+        "End It in Darkness"
+      ],
+      "supercard": false,
+      "opponent": "zara-monroe",
+      "month": 7,
+      "week": 27,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 181,
+      "opp": 179,
+      "rating": 3.93,
+      "decisions": [
+        "Return from the Dead",
+        "Break Their Momentum",
+        "Risk the Counter",
+        "Change the Rhythm",
+        "End It With Style"
+      ],
+      "supercard": false,
+      "opponent": "zara-monroe",
+      "month": 7,
+      "week": 27,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 202,
+      "opp": 172,
+      "rating": 3.37,
+      "decisions": [
+        "Make Them React",
+        "Stalk Without Emotion",
+        "Force the Mistake",
+        "Commit to the Closing Shot"
+      ],
+      "supercard": false,
+      "opponent": "zara-monroe",
+      "month": 7,
+      "week": 28,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 219,
+      "opp": 163,
+      "rating": 2.38,
+      "decisions": [
+        "Find Another Gear",
+        "Create an Escape",
+        "Absorb the Punishment",
+        "Darken the Arena",
+        "Leave No Doubt"
+      ],
+      "supercard": false,
+      "opponent": "zara-monroe",
+      "month": 7,
+      "week": 28,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 252,
+      "opp": 169,
+      "rating": 2.47,
+      "decisions": [
+        "Sit Straight Up",
+        "Survive the Storm",
+        "Make the Moment Count",
+        "Deliver the Last Omen",
+        "Leave No Doubt"
+      ],
+      "supercard": true,
+      "opponent": "zara-monroe",
+      "month": 7,
+      "week": 28,
+      "day": 6
+    },
+    {
+      "win": true,
+      "player": 233,
+      "opp": 177,
+      "rating": 2.35,
+      "decisions": [
+        "Invite the Fear",
+        "Stalk Without Emotion",
+        "Leave No Doubt",
+        "Make It Picture Perfect"
+      ],
+      "supercard": false,
+      "opponent": "el-rey-del-cielo",
+      "month": 8,
+      "week": 29,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 221,
+      "opp": 166,
+      "rating": 3.21,
+      "decisions": [
+        "Claim the Spotlight",
+        "Absorb the Punishment",
+        "Make It Picture Perfect",
+        "Call for Final Reckoning",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "el-rey-del-cielo",
+      "month": 8,
+      "week": 29,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 139,
+      "opp": 251,
+      "rating": 2.24,
+      "decisions": [
+        "Take the First Step",
+        "Return from the Dead",
+        "Risk the Counter",
+        "End It in Darkness"
+      ],
+      "supercard": false,
+      "opponent": "el-rey-del-cielo",
+      "month": 8,
+      "week": 30,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 141,
+      "opp": 219,
+      "rating": 2.2,
+      "decisions": [
+        "Sit Straight Up",
+        "Absorb the Punishment",
+        "Stalk Without Emotion",
+        "Steal the Finish"
+      ],
+      "supercard": false,
+      "opponent": "el-rey-del-cielo",
+      "month": 8,
+      "week": 30,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 161,
+      "opp": 164,
+      "rating": 3.5,
+      "decisions": [
+        "Risk the Counter",
+        "Refuse to Fold",
+        "Create an Escape",
+        "Refuse to Stay Down",
+        "End It in Darkness"
+      ],
+      "supercard": false,
+      "opponent": "el-rey-del-cielo",
+      "month": 8,
+      "week": 31,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 202,
+      "opp": 176,
+      "rating": 3.66,
+      "decisions": [
+        "Stand Motionless",
+        "Change the Rhythm",
+        "Attempt Blackout Piledriver",
+        "Call for Final Reckoning"
+      ],
+      "supercard": false,
+      "opponent": "el-rey-del-cielo",
+      "month": 8,
+      "week": 31,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 289,
+      "opp": 164,
+      "rating": 2.19,
+      "decisions": [
+        "Let the Lights Flicker",
+        "Change the Rhythm",
+        "Commit to the Closing Shot",
+        "Steal the Finish"
+      ],
+      "supercard": false,
+      "opponent": "el-rey-del-cielo",
+      "month": 8,
+      "week": 32,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 207,
+      "opp": 171,
+      "rating": 3.04,
+      "decisions": [
+        "Invite the Fear",
+        "Make Them React",
+        "Make It Picture Perfect",
+        "Go for Everything",
+        "End It With Style"
+      ],
+      "supercard": false,
+      "opponent": "el-rey-del-cielo",
+      "month": 8,
+      "week": 32,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 146,
+      "opp": 176,
+      "rating": 3.39,
+      "decisions": [
+        "Refuse to Fold",
+        "Risk the Counter",
+        "Sit Straight Up",
+        "Go for Everything"
+      ],
+      "supercard": true,
+      "opponent": "el-rey-del-cielo",
+      "month": 8,
+      "week": 32,
+      "day": 6
+    },
+    {
+      "win": true,
+      "player": 195,
+      "opp": 188,
+      "rating": 4.16,
+      "decisions": [
+        "Let the Lights Flicker",
+        "Return from the Dead",
+        "Change the Rhythm",
+        "Claim Another Soul",
+        "End It in Darkness"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 9,
+      "week": 33,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 164,
+      "opp": 246,
+      "rating": 2.32,
+      "decisions": [
+        "Return from the Dead",
+        "Walk Through the Storm",
+        "Find Another Gear",
+        "Force the Mistake",
+        "Call for Final Reckoning"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 9,
+      "week": 33,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 148,
+      "opp": 177,
+      "rating": 3.04,
+      "decisions": [
+        "Set the Tempo",
+        "Turn Pain into Power",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 9,
+      "week": 34,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 160,
+      "opp": 165,
+      "rating": 3.74,
+      "decisions": [
+        "Walk Through the First Shot",
+        "Make the Moment Count",
+        "Force the Mistake",
+        "End It in Darkness"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 9,
+      "week": 34,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 252,
+      "opp": 183,
+      "rating": 2.21,
+      "decisions": [
+        "Make Them React",
+        "Invite the Fear",
+        "Go for Everything",
+        "Claim Another Soul",
+        "Steal the Finish"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 9,
+      "week": 35,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 209,
+      "opp": 177,
+      "rating": 3.25,
+      "decisions": [
+        "Rise from the Darkness",
+        "Make the Moment Count",
+        "End It in Darkness",
+        "Deliver the Last Omen"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 9,
+      "week": 35,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 141,
+      "opp": 229,
+      "rating": 2.07,
+      "decisions": [
+        "Silence the Crowd",
+        "Refuse to Fold",
+        "Risk the Counter",
+        "Create an Escape",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 9,
+      "week": 36,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 206,
+      "opp": 204,
+      "rating": 3.74,
+      "decisions": [
+        "Make Them React",
+        "Darken the Arena",
+        "Claim Another Soul",
+        "Leave No Doubt"
+      ],
+      "supercard": false,
+      "opponent": "marco-montana",
+      "month": 9,
+      "week": 36,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 201,
+      "opp": 194,
+      "rating": 3.78,
+      "decisions": [
+        "Let the Lights Flicker",
+        "Turn Up the Pressure",
+        "Stalk Without Emotion",
+        "Leave No Doubt"
+      ],
+      "supercard": true,
+      "opponent": "marco-montana",
+      "month": 9,
+      "week": 36,
+      "day": 6
+    },
+    {
+      "win": true,
+      "player": 207,
+      "opp": 163,
+      "rating": 2.83,
+      "decisions": [
+        "Walk Through the First Shot",
+        "Turn Pain into Power",
+        "Leave No Doubt",
+        "Make It Picture Perfect"
+      ],
+      "supercard": false,
+      "opponent": "titan",
+      "month": 10,
+      "week": 37,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 166,
+      "opp": 182,
+      "rating": 3.24,
+      "decisions": [
+        "Stand Motionless",
+        "Cut Off the Ring",
+        "Deliver the Last Omen"
+      ],
+      "supercard": false,
+      "opponent": "titan",
+      "month": 10,
+      "week": 37,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 184,
+      "opp": 222,
+      "rating": 3.42,
+      "decisions": [
+        "Make Them React",
+        "Invite the Fear",
+        "Turn Up the Pressure",
+        "Call for Final Reckoning",
+        "Deliver the Last Omen"
+      ],
+      "supercard": false,
+      "opponent": "titan",
+      "month": 10,
+      "week": 38,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 141,
+      "opp": 170,
+      "rating": 2.97,
+      "decisions": [
+        "Own the Opening",
+        "Darken the Arena",
+        "End It With Style"
+      ],
+      "supercard": false,
+      "opponent": "titan",
+      "month": 10,
+      "week": 38,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 182,
+      "opp": 169,
+      "rating": 3.3,
+      "decisions": [
+        "Make Them React",
+        "Dictate the Exchange",
+        "Change the Rhythm",
+        "Leave No Doubt"
+      ],
+      "supercard": false,
+      "opponent": "titan",
+      "month": 10,
+      "week": 39,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 137,
+      "opp": 186,
+      "rating": 2.78,
+      "decisions": [
+        "Silence the Crowd",
+        "Stalk Without Emotion",
+        "Create an Escape",
+        "Call for Final Reckoning"
+      ],
+      "supercard": false,
+      "opponent": "titan",
+      "month": 10,
+      "week": 39,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 137,
+      "opp": 221,
+      "rating": 1.76,
+      "decisions": [
+        "Set the Tempo",
+        "Cut Off the Ring",
+        "Force the Mistake",
+        "Deliver the Last Omen"
+      ],
+      "supercard": false,
+      "opponent": "titan",
+      "month": 10,
+      "week": 40,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 214,
+      "opp": 211,
+      "rating": 4.41,
+      "decisions": [
+        "Silence the Crowd",
+        "Sit Straight Up",
+        "Walk Through the Storm",
+        "Find Another Gear",
+        "Steal the Finish"
+      ],
+      "supercard": false,
+      "opponent": "titan",
+      "month": 10,
+      "week": 40,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 103,
+      "opp": 235,
+      "rating": 1.72,
+      "decisions": [
+        "Stand Motionless",
+        "Refuse to Fold",
+        "Attempt Blackout Piledriver"
+      ],
+      "supercard": true,
+      "opponent": "titan",
+      "month": 10,
+      "week": 40,
+      "day": 6
+    },
+    {
+      "win": true,
+      "player": 202,
+      "opp": 199,
+      "rating": 4.48,
+      "decisions": [
+        "Sit Straight Up",
+        "Return from the Dead",
+        "Rise Again",
+        "Refuse to Fold",
+        "Make It Picture Perfect"
+      ],
+      "supercard": false,
+      "opponent": "savannah-sinclair",
+      "month": 11,
+      "week": 41,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 252,
+      "opp": 170,
+      "rating": 2.5,
+      "decisions": [
+        "Sit Straight Up",
+        "Find Another Gear",
+        "End It in Darkness",
+        "Go for Everything",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "savannah-sinclair",
+      "month": 11,
+      "week": 41,
+      "day": 3
+    },
+    {
+      "win": true,
+      "player": 187,
+      "opp": 179,
+      "rating": 3.29,
+      "decisions": [
+        "Make Them React",
+        "Turn Up the Pressure",
+        "Steal the Finish"
+      ],
+      "supercard": false,
+      "opponent": "savannah-sinclair",
+      "month": 11,
+      "week": 42,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 196,
+      "opp": 193,
+      "rating": 3.6,
+      "decisions": [
+        "Return from the Dead",
+        "Stalk Without Emotion",
+        "Cut Off the Ring",
+        "Call for Final Reckoning"
+      ],
+      "supercard": false,
+      "opponent": "savannah-sinclair",
+      "month": 11,
+      "week": 42,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 174,
+      "opp": 193,
+      "rating": 3.71,
+      "decisions": [
+        "Claim the Spotlight",
+        "Refuse to Stay Down",
+        "Sit Straight Up",
+        "Claim Another Soul"
+      ],
+      "supercard": false,
+      "opponent": "savannah-sinclair",
+      "month": 11,
+      "week": 43,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 283,
+      "opp": 172,
+      "rating": 2.35,
+      "decisions": [
+        "Refuse to Fold",
+        "Absorb the Punishment",
+        "Steal the Finish",
+        "Call for Final Reckoning",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "savannah-sinclair",
+      "month": 11,
+      "week": 43,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 129,
+      "opp": 272,
+      "rating": 2.17,
+      "decisions": [
+        "Refuse to Fold",
+        "Stand Motionless",
+        "Return from the Dead",
+        "Break Their Momentum",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "savannah-sinclair",
+      "month": 11,
+      "week": 44,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 224,
+      "opp": 188,
+      "rating": 2.84,
+      "decisions": [
+        "Own the Opening",
+        "Make the Moment Count",
+        "End It in Darkness",
+        "Commit to the Closing Shot"
+      ],
+      "supercard": false,
+      "opponent": "savannah-sinclair",
+      "month": 11,
+      "week": 44,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 142,
+      "opp": 221,
+      "rating": 2.07,
+      "decisions": [
+        "Make Them React",
+        "Darken the Arena",
+        "Cut Off the Ring",
+        "Make the Lights Go Out"
+      ],
+      "supercard": true,
+      "opponent": "savannah-sinclair",
+      "month": 11,
+      "week": 44,
+      "day": 6
+    },
+    {
+      "win": true,
+      "player": 203,
+      "opp": 167,
+      "rating": 2.62,
+      "decisions": [
+        "Set the Tempo",
+        "Darken the Arena",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "everest",
+      "month": 12,
+      "week": 45,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 239,
+      "opp": 176,
+      "rating": 2.41,
+      "decisions": [
+        "Sit Straight Up",
+        "Survive the Storm",
+        "Rise Again",
+        "End It With Style",
+        "Make the Lights Go Out"
+      ],
+      "supercard": false,
+      "opponent": "everest",
+      "month": 12,
+      "week": 45,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 174,
+      "opp": 197,
+      "rating": 4.05,
+      "decisions": [
+        "Claim the Spotlight",
+        "Force the Mistake",
+        "Call for Final Reckoning",
+        "Make the Lights Go Out",
+        "Commit to the Closing Shot"
+      ],
+      "supercard": false,
+      "opponent": "everest",
+      "month": 12,
+      "week": 46,
+      "day": 0
+    },
+    {
+      "win": false,
+      "player": 135,
+      "opp": 194,
+      "rating": 2.04,
+      "decisions": [
+        "Walk Through the Storm",
+        "Absorb the Punishment",
+        "Rise Again",
+        "Claim Another Soul"
+      ],
+      "supercard": false,
+      "opponent": "everest",
+      "month": 12,
+      "week": 46,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 151,
+      "opp": 174,
+      "rating": 3.33,
+      "decisions": [
+        "Invite the Fear",
+        "Stalk Without Emotion",
+        "Attempt Blackout Piledriver"
+      ],
+      "supercard": false,
+      "opponent": "everest",
+      "month": 12,
+      "week": 47,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 225,
+      "opp": 183,
+      "rating": 3.06,
+      "decisions": [
+        "Invite the Fear",
+        "Make Them React",
+        "Absorb the Punishment",
+        "Stalk Without Emotion",
+        "End It in Darkness"
+      ],
+      "supercard": false,
+      "opponent": "everest",
+      "month": 12,
+      "week": 47,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 187,
+      "opp": 192,
+      "rating": 3.84,
+      "decisions": [
+        "Walk Through the First Shot",
+        "Turn Up the Pressure",
+        "Go for Everything"
+      ],
+      "supercard": false,
+      "opponent": "everest",
+      "month": 12,
+      "week": 48,
+      "day": 0
+    },
+    {
+      "win": true,
+      "player": 193,
+      "opp": 158,
+      "rating": 3.16,
+      "decisions": [
+        "Rise from the Darkness",
+        "Force the Mistake",
+        "End It With Style"
+      ],
+      "supercard": false,
+      "opponent": "everest",
+      "month": 12,
+      "week": 48,
+      "day": 3
+    },
+    {
+      "win": false,
+      "player": 179,
+      "opp": 222,
+      "rating": 2.82,
+      "decisions": [
+        "Test Their Nerve",
+        "Dictate the Exchange",
+        "Silence the Crowd",
+        "Claim Another Soul"
+      ],
+      "supercard": true,
+      "opponent": "everest",
+      "month": 12,
+      "week": 48,
+      "day": 6
+    }
+  ],
+  "supercards": {
+    "played": 12,
+    "wins": 5,
+    "losses": 7,
+    "results": [
+      {
+        "win": true,
+        "player": 203,
+        "opp": 181,
+        "rating": 3.63,
+        "decisions": [
+          "Let the Lights Flicker",
+          "Test Their Nerve",
+          "Force the Mistake",
+          "Sit Straight Up",
+          "Commit to the Closing Shot"
+        ],
+        "supercard": true,
+        "opponent": "mateo-vega",
+        "month": 1,
+        "week": 4,
+        "day": 6
+      },
+      {
+        "win": false,
+        "player": 181,
+        "opp": 202,
+        "rating": 3.21,
+        "decisions": [
+          "Claim the Spotlight",
+          "Turn Up the Pressure",
+          "Darken the Arena",
+          "Call for Final Reckoning"
+        ],
+        "supercard": true,
+        "opponent": "jack-mercer",
+        "month": 2,
+        "week": 8,
+        "day": 6
+      },
+      {
+        "win": true,
+        "player": 318,
+        "opp": 168,
+        "rating": 2.56,
+        "decisions": [
+          "Own the Opening",
+          "Make Them React",
+          "Call for Final Reckoning",
+          "Steal the Finish",
+          "End It in Darkness"
+        ],
+        "supercard": true,
+        "opponent": "hollowman",
+        "month": 3,
+        "week": 12,
+        "day": 6
+      },
+      {
+        "win": false,
+        "player": 164,
+        "opp": 181,
+        "rating": 3.17,
+        "decisions": [
+          "Walk Through the First Shot",
+          "Stalk Without Emotion",
+          "Commit to the Closing Shot"
+        ],
+        "supercard": true,
+        "opponent": "max-justice",
+        "month": 4,
+        "week": 16,
+        "day": 6
+      },
+      {
+        "win": false,
+        "player": 145,
+        "opp": 191,
+        "rating": 2.73,
+        "decisions": [
+          "Rise Again",
+          "Create an Escape",
+          "Sit Straight Up",
+          "Commit to the Closing Shot"
+        ],
+        "supercard": true,
+        "opponent": "marco-montana",
+        "month": 5,
+        "week": 20,
+        "day": 6
+      },
+      {
+        "win": true,
+        "player": 175,
+        "opp": 163,
+        "rating": 3.34,
+        "decisions": [
+          "Claim the Spotlight",
+          "Absorb the Punishment",
+          "Dictate the Exchange",
+          "Commit to the Closing Shot"
+        ],
+        "supercard": true,
+        "opponent": "marcus-king",
+        "month": 6,
+        "week": 24,
+        "day": 6
+      },
+      {
+        "win": true,
+        "player": 252,
+        "opp": 169,
+        "rating": 2.47,
+        "decisions": [
+          "Sit Straight Up",
+          "Survive the Storm",
+          "Make the Moment Count",
+          "Deliver the Last Omen",
+          "Leave No Doubt"
+        ],
+        "supercard": true,
+        "opponent": "zara-monroe",
+        "month": 7,
+        "week": 28,
+        "day": 6
+      },
+      {
+        "win": false,
+        "player": 146,
+        "opp": 176,
+        "rating": 3.39,
+        "decisions": [
+          "Refuse to Fold",
+          "Risk the Counter",
+          "Sit Straight Up",
+          "Go for Everything"
+        ],
+        "supercard": true,
+        "opponent": "el-rey-del-cielo",
+        "month": 8,
+        "week": 32,
+        "day": 6
+      },
+      {
+        "win": true,
+        "player": 201,
+        "opp": 194,
+        "rating": 3.78,
+        "decisions": [
+          "Let the Lights Flicker",
+          "Turn Up the Pressure",
+          "Stalk Without Emotion",
+          "Leave No Doubt"
+        ],
+        "supercard": true,
+        "opponent": "marco-montana",
+        "month": 9,
+        "week": 36,
+        "day": 6
+      },
+      {
+        "win": false,
+        "player": 103,
+        "opp": 235,
+        "rating": 1.72,
+        "decisions": [
+          "Stand Motionless",
+          "Refuse to Fold",
+          "Attempt Blackout Piledriver"
+        ],
+        "supercard": true,
+        "opponent": "titan",
+        "month": 10,
+        "week": 40,
+        "day": 6
+      },
+      {
+        "win": false,
+        "player": 142,
+        "opp": 221,
+        "rating": 2.07,
+        "decisions": [
+          "Make Them React",
+          "Darken the Arena",
+          "Cut Off the Ring",
+          "Make the Lights Go Out"
+        ],
+        "supercard": true,
+        "opponent": "savannah-sinclair",
+        "month": 11,
+        "week": 44,
+        "day": 6
+      },
+      {
+        "win": false,
+        "player": 179,
+        "opp": 222,
+        "rating": 2.82,
+        "decisions": [
+          "Test Their Nerve",
+          "Dictate the Exchange",
+          "Silence the Crowd",
+          "Claim Another Soul"
+        ],
+        "supercard": true,
+        "opponent": "everest",
+        "month": 12,
+        "week": 48,
+        "day": 6
+      }
+    ]
+  },
+  "injury": {
+    "diagnoses": 1,
+    "clearances": 1,
+    "repeatDiagnosis": 0,
+    "days": 5
+  },
+  "duplicateDecisionMatches": 0,
+  "prefixLeaks": [],
+  "rating": {
+    "mean": 3.0003773584905673,
+    "min": 1.61,
+    "max": 4.48
+  }
+}

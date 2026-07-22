@@ -1,0 +1,265 @@
+{
+  "audit": {
+    "checks": {
+      "championNotFirstRival": true,
+      "mikeHeader": true,
+      "mikeOutcome": true,
+      "katieOutcome": true,
+      "noSavedLanguage": true,
+      "noCareerPreview": true
+    },
+    "champion": "sterling-sinclair",
+    "firstRival": "mateo-vega"
+  },
+  "final": {
+    "month": 13,
+    "week": 49,
+    "day": 0,
+    "wins": 50,
+    "losses": 45,
+    "stable": [
+      "victor-royale",
+      "everest",
+      "mason-marks",
+      "jack-mercer",
+      "el-rey-del-cielo",
+      "savannah-sinclair",
+      "axel-voss"
+    ],
+    "stableCount": 7,
+    "level": 20,
+    "momentum": 70,
+    "popularity": 100
+  },
+  "matches": {
+    "played": 107,
+    "wins": 56,
+    "losses": 51,
+    "averageRating": 2.729813084112149
+  },
+  "supercards": {
+    "played": 12,
+    "wins": 6,
+    "losses": 6,
+    "results": [
+      {
+        "month": 1,
+        "week": 4,
+        "day": 6,
+        "opponent": "everest",
+        "win": true,
+        "supercard": true,
+        "rating": 2.21,
+        "collected": true,
+        "presenter": null
+      },
+      {
+        "month": 2,
+        "week": 8,
+        "day": 6,
+        "opponent": "mason-marks",
+        "win": true,
+        "supercard": true,
+        "rating": 2.28,
+        "collected": true,
+        "presenter": null
+      },
+      {
+        "month": 3,
+        "week": 12,
+        "day": 6,
+        "opponent": "ryder-phoenix",
+        "win": false,
+        "supercard": true,
+        "rating": 1.85,
+        "collected": false,
+        "presenter": null
+      },
+      {
+        "month": 4,
+        "week": 16,
+        "day": 6,
+        "opponent": "jack-mercer",
+        "win": true,
+        "supercard": true,
+        "rating": 2.86,
+        "collected": true,
+        "presenter": null
+      },
+      {
+        "month": 5,
+        "week": 20,
+        "day": 6,
+        "opponent": "sterling-sinclair",
+        "win": false,
+        "supercard": true,
+        "rating": 2.86,
+        "collected": false,
+        "presenter": null
+      },
+      {
+        "month": 6,
+        "week": 24,
+        "day": 6,
+        "opponent": "el-rey-del-cielo",
+        "win": true,
+        "supercard": true,
+        "rating": 3,
+        "collected": true,
+        "presenter": null
+      },
+      {
+        "month": 7,
+        "week": 28,
+        "day": 6,
+        "opponent": "marco-montana",
+        "win": false,
+        "supercard": true,
+        "rating": 2.08,
+        "collected": false,
+        "presenter": null
+      },
+      {
+        "month": 8,
+        "week": 32,
+        "day": 6,
+        "opponent": "elias-crowe",
+        "win": false,
+        "supercard": true,
+        "rating": 3.79,
+        "collected": false,
+        "presenter": null
+      },
+      {
+        "month": 9,
+        "week": 36,
+        "day": 6,
+        "opponent": "savannah-sinclair",
+        "win": true,
+        "supercard": true,
+        "rating": 3.25,
+        "collected": true,
+        "presenter": null
+      },
+      {
+        "month": 10,
+        "week": 40,
+        "day": 6,
+        "opponent": "bianca-balboa",
+        "win": false,
+        "supercard": true,
+        "rating": 2.15,
+        "collected": false,
+        "presenter": null
+      },
+      {
+        "month": 11,
+        "week": 44,
+        "day": 6,
+        "opponent": "axel-voss",
+        "win": true,
+        "supercard": true,
+        "rating": 2.89,
+        "collected": true,
+        "presenter": null
+      },
+      {
+        "month": 12,
+        "week": 48,
+        "day": 6,
+        "opponent": "rex-hunter",
+        "win": false,
+        "supercard": true,
+        "rating": 3.52,
+        "collected": false,
+        "presenter": null
+      }
+    ]
+  },
+  "feuds": [
+    {
+      "month": 1,
+      "opponent": "everest",
+      "championship": false
+    },
+    {
+      "month": 2,
+      "opponent": "mason-marks",
+      "championship": false
+    },
+    {
+      "month": 3,
+      "opponent": "ryder-phoenix",
+      "championship": false
+    },
+    {
+      "month": 4,
+      "opponent": "jack-mercer",
+      "championship": false
+    },
+    {
+      "month": 5,
+      "opponent": "sterling-sinclair",
+      "championship": false
+    },
+    {
+      "month": 6,
+      "opponent": "el-rey-del-cielo",
+      "championship": false
+    },
+    {
+      "month": 7,
+      "opponent": "marco-montana",
+      "championship": false
+    },
+    {
+      "month": 8,
+      "opponent": "elias-crowe",
+      "championship": false
+    },
+    {
+      "month": 9,
+      "opponent": "savannah-sinclair",
+      "championship": false
+    },
+    {
+      "month": 10,
+      "opponent": "bianca-balboa",
+      "championship": false
+    },
+    {
+      "month": 11,
+      "opponent": "axel-voss",
+      "championship": false
+    },
+    {
+      "month": 12,
+      "opponent": "rex-hunter",
+      "championship": false
+    },
+    {
+      "month": 13,
+      "opponent": "damian-black",
+      "championship": false
+    }
+  ],
+  "npcUsage": {
+    "katie-morgan": 46,
+    "coach-hank-dawson": 169,
+    "ava-cross": 88,
+    "leon-ward": 17,
+    "derek-pierce": 1,
+    "madison-price": 19,
+    "veronica-vale": 19,
+    "dr-lena-hart": 11,
+    "noah-grant": 10,
+    "marcus-steele": 7,
+    "olivia-chase": 16
+  },
+  "injury": {
+    "active": false,
+    "lastCleared": "Bruised ribs",
+    "cooldownUntil": 285
+  },
+  "screenIssues": []
+}
