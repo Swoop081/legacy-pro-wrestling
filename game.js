@@ -2565,3 +2565,148 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
 
  const oldHome=gauntletLiveHome;gauntletLiveHome=function(){const r=oldHome();const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent='VERSION 8.3.7 BUILD 4';const tag=document.querySelector('.build-tag');if(tag)tag.textContent='VERSION 8.3.7 BUILD 4';return r};
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.3.7 BUILD 5 — GAMEPLAY & REGRESSION CONSOLIDATION
+   ============================================================================= */
+(function(){
+ const BUILD='5';
+ const archetypePrefixes=new Set([
+  'Rebel','Royal','Heroic','Primal','Olympian','Street','Rockstar','Playboy','Veteran','Legendary','Heartbreaker',
+  'Kingmaker','Iceman','Sentinel','Hollywood','Lunatic','Workhorse','Warlord','Showman','Strategist','Enforcer',
+  'Powerhouse','Aerialist','Purist','Assassin','Hardcore','Megastar','Con Artist','Brawler'
+ ]);
+ const stripDecisionPrefix=(name)=>{
+  let n=String(name||'').replace(/[“”"]/g,'').trim();
+  let parts=n.split(/\s+/);
+  while(parts.length>1&&archetypePrefixes.has(parts[0]))parts.shift();
+  return parts.join(' ').replace(/\s{2,}/g,' ').trim();
+ };
+ const priorCleaner=lpwCleanDecisionName;
+ lpwCleanDecisionName=function(name){return stripDecisionPrefix(priorCleaner(name||''))};
+
+ /* Equal-opportunity AI psychology. Every player choice now creates a real AI response. */
+ const oldStoryChoice=storyChoice;
+ storyChoice=function(token){
+  oldStoryChoice(token);
+  if(!S?.liveMode||!M?.decisionOutcome||M.ended)return;
+  const player=S.team[M.activeP],opp=S.opp[M.activeO];
+  const playerTier=M.decisionOutcome.key;
+  const oppQuality=((opp.overall||75)+(opp.technique||75)+(opp.resilience||75))/3;
+  const playerQuality=((player.overall||75)+(player.technique||75)+(player.resilience||75))/3;
+  let chance=.48+(oppQuality-playerQuality)/180;
+  if(playerTier==='failure')chance+=.15;if(playerTier==='major-failure')chance+=.25;
+  if(playerTier==='major-success')chance-=.12;if(playerTier==='success')chance-=.06;
+  const roll=Math.random();
+  let tier=roll<chance*.22?'major-success':roll<chance*.72?'success':roll<chance+.14?'mixed':roll<.94?'failure':'major-failure';
+  const impact={
+   'major-success':{score:18,control:20,crowd:14,mom:20},success:{score:12,control:13,crowd:9,mom:13},
+   mixed:{score:5,control:4,crowd:2,mom:4},failure:{score:-5,control:-7,crowd:-3,mom:-7},
+   'major-failure':{score:-10,control:-13,crowd:-7,mom:-13}
+  }[tier];
+  if(impact.score>0)addMatchScore('opp',impact.score,'decision');else addMatchScore('player',Math.round(Math.abs(impact.score)*.45),'decision');
+  shiftControl(-impact.control,`${opp.name} answered with a ${tier.replace('-',' ')}.`);
+  heatCrowd(impact.crowd,impact.crowd>=0?'opp':'player');
+  M.oppMom=clamp((M.oppMom||0)+Math.max(0,impact.mom)+Math.max(0,impact.control),0,100);
+  if(impact.control>0)M.playerMom=clamp((M.playerMom||0)-Math.round(impact.control*.75),0,100);
+  M.decisionOpp=(M.decisionOpp||0)+Math.max(0,impact.score);
+  M.performanceOpp=(M.performanceOpp||0)+Math.max(0,Math.round(impact.control*.35));
+  M.aiDecisionHistory=M.aiDecisionHistory||[];
+  M.aiDecisionHistory.push({outcome:tier,score:impact.score,control:impact.control,momentum:impact.mom});
+  if(tier==='major-success'||tier==='success')addBroadcast('counter',`${opp.name} strings together a strong response and takes control of the exchange.`,{highlight:true,weight:2.1});
+  else if(tier==='mixed')addBroadcast('commentary',commentatorLine(COMMENTATORS.colour,`${opp.name} answers enough to keep the contest unsettled.`));
+  renderMatch();
+ };
+
+ /* Final-balance pass: AI strength, form and decisions can now win matches. */
+ const oldResolveFinish=resolveFinish;
+ resolveFinish=function(){
+  if(S?.liveMode&&M&&!M.ended){
+   const c=liveLoad(),player=S.team[0],opp=S.opp[0];
+   const pStrength=((player.overall||75)+(player.technique||75)+(player.resilience||75)+(player.power||75))/4;
+   const oStrength=((opp.overall||75)+(opp.technique||75)+(opp.resilience||75)+(opp.power||75))/4;
+   const aiCalls=(M.aiDecisionHistory||[]).length;
+   const aiPositive=(M.aiDecisionHistory||[]).filter(x=>x.outcome==='success'||x.outcome==='major-success').length;
+   const playerPositive=(M.decisionHistory||[]).filter(x=>/SUCCESS/.test(x.outcome)).length;
+   const playerFailures=(M.decisionHistory||[]).filter(x=>/FAILURE/.test(x.outcome)).length;
+   const strengthEdge=Math.round((oStrength-pStrength)*1.1);
+   const volatility=Math.round(rnd(-18,24));
+   M.performancePlayer=Math.round((M.performancePlayer||0)*.78);
+   M.decisionPlayer=Math.round((M.decisionPlayer||0)*.72);
+   M.performanceOpp=Math.max(M.performanceOpp||0,Math.round(28+(oStrength-70)*.8+aiPositive*6+playerFailures*5+volatility));
+   M.decisionOpp=Math.max(M.decisionOpp||0,Math.round(30+aiCalls*5+aiPositive*8+strengthEdge+Math.max(0,volatility)));
+   M.crowdOpp=Math.max(M.crowdOpp||0,Math.round(18+aiPositive*7+Math.max(0,strengthEdge)));
+   if(playerFailures>M.decisionHistory.length/2){M.performanceOpp+=12;M.decisionOpp+=15}
+   if(playerPositive===M.decisionHistory.length&&M.decisionHistory.length>=4){M.decisionPlayer+=10}
+   /* First career match remains onboarding-friendly, but only narrowly protected. */
+   if(c&&c.history?.length===0){M.performancePlayer+=12;M.decisionPlayer+=10}
+  }
+  return oldResolveFinish();
+ };
+
+ /* Make 5-star ratings rare and tied to genuine competitive quality. */
+ const oldShowSummary=showSummary;
+ showSummary=function(win){
+  if(S?.liveMode&&M){
+   const originalHighlights=M.highlights;
+   const gap=Math.abs((M.finalPlayer||0)-(M.finalOpp||0));
+   if(gap>65)M.highlights=(M.highlights||[]).slice(-3);
+   else if(gap>35)M.highlights=(M.highlights||[]).slice(-4);
+   oldShowSummary(win);
+   const competitive=Math.max(0,1-gap/90);
+   const raw=Number(M.completedRating||3);
+   let adjusted=1.8+(raw-1.8)*.58+competitive*.65;
+   if(gap>55)adjusted-=.45;if(gap<12)adjusted+=.2;
+   M.completedRating=Number(clamp(adjusted,1.3,4.85).toFixed(2));
+   /* Update visible rating generated by the original renderer. */
+   const ratingCard=[...document.querySelectorAll('.result-accolades article')].find(x=>/MATCH RATING/.test(x.textContent));
+   if(ratingCard){const d=matchRatingData(M.completedRating);const s=ratingCard.querySelector('.result-stars'),b=ratingCard.querySelector('strong');if(s)s.textContent=d.stars;if(b)b.textContent=`${M.completedRating.toFixed(1)} · ${d.label}`}
+   M.highlights=originalHighlights;
+  }else oldShowSummary(win);
+ };
+
+ /* Level-up release gate: never allow the hub to silently reveal a new point. */
+ const oldCalendar=gauntletLiveCalendar;
+ gauntletLiveCalendar=function(){
+  const c=liveLoad();
+  if(c){const p=liveProgress(c.active,c);p.lastCelebratedLevel=p.lastCelebratedLevel||1;if(p.level>p.lastCelebratedLevel){const gained=p.level-p.lastCelebratedLevel;p.lastCelebratedLevel=p.level;liveSave(c);return gauntletLiveLevelCelebration(c.active,{levels:gained,pointsEarned:gained,milestonesEarned:0},LIVE_DAYS[c.day].toUpperCase(),'calendar')}}
+  return oldCalendar();
+ };
+
+ /* Always append a real bottom action to long match reports. */
+ const oldSummaryForButton=showSummary;
+ showSummary=function(win){const r=oldSummaryForButton(win);setTimeout(()=>{const report=document.querySelector('.presentation-summary');if(!report)return;let bottom=report.querySelector('.lpw837-result-actions-bottom');if(!bottom){bottom=document.createElement('div');bottom.className='actions lpw837-result-actions-bottom';report.appendChild(bottom)}if(!bottom.querySelector('button'))bottom.innerHTML=`<button class="btn" onclick="${win?'postMatchFlow()':'handleLoss()'}">${win?'CONTINUE BROADCAST':'CONTINUE'}</button>`},0);return r};
+
+ /* Universal event outcome for legacy television segments. */
+ gauntletLiveResolveSegment=function(seg,choice){
+  const c=liveLoad(),f=liveFeud(c),before={momentum:c.momentum,popularity:c.popularity,feud:f?.intensity||0};
+  if(choice==='fight'){c.momentum=liveClamp(c.momentum+6,0,100);if(f)f.intensity=liveClamp(f.intensity+10,0,100)}else c.popularity=liveClamp(c.popularity+6,0,100);
+  liveAwardXp(c,c.active,45,'Television segment');liveAdvanceDay(c);liveSave(c);
+  const after={momentum:c.momentum,popularity:c.popularity,feud:f?.intensity||0};
+  lpw836Outcome(choice==='fight'?'CONFRONTATION ESCALATED':'CONTROL MAINTAINED','katie-morgan',before,after,choice==='fight'?'The confrontation becomes one of the night’s most discussed moments.':'Your restraint keeps the broadcast under control.','The choice has been saved and can influence the rivalry and future coverage.');
+ };
+
+ /* Injury continuity and recovery clearance. */
+ const careerDayIndex=c=>((c.month-1)*28+(c.week-1)*7+c.day);
+ gauntletLiveClearInjury=function(type){
+  const c=liveLoad(),detail=c.world.injuryDetail||{name:'Bruised ribs',severity:'Minor',recovery:'3–5 days'};
+  const before={momentum:c.momentum,'injury status':'Active'};
+  c.world.injury={...detail,active:true,risk:type==='push'?'High':'Reduced',until:careerDayIndex(c)+(type==='push'?5:4)};
+  c.momentum=liveClamp(c.momentum+(type==='push'?5:-3),0,100);
+  liveAwardXp(c,c.active,20,'Medical decision');liveAdvanceDay(c);liveSave(c);
+  lpw836Outcome(type==='push'?'COMPETING AGAINST ADVICE':'RECOVERY PLAN ACCEPTED','dr-lena-hart',before,{momentum:c.momentum,'injury status':type==='push'?'Active · High risk':'Recovering'},type==='push'?'You have chosen to remain available despite the injury.':'Rest and treatment reduce the chance of aggravation.',type==='push'?'Physical activity remains restricted and the injury may affect future booking.':'You will not be booked in a match until medical clearance.');
+ };
+ const oldBeginDay=gauntletLiveBeginDay;
+ gauntletLiveBeginDay=function(){
+  const c=liveLoad();if(!c)return gauntletLiveHome();const injury=c.world?.injury;
+  if(injury?.active&&careerDayIndex(c)>=injury.until){c.world.lastInjuryCleared=careerDayIndex(c);c.world.injury=null;c.world.injuryCooldownUntil=careerDayIndex(c)+56;liveSave(c);return render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">MEDICAL CLEARANCE</div><h1>CLEARED TO COMPETE</h1><div class="lpw-consequence-host">${npcImage('dr-lena-hart','portrait')}<span><small>CHIEF MEDICAL OFFICER</small><b>Dr. Lena Hart</b></span></div><div class="lpw-world-reaction"><small>RECOVERY COMPLETE</small><p>Your ${injury.name||'injury'} has healed and all physical restrictions have been removed.</p></div><div class="lpw-ripple"><b>INJURY PROTECTION</b><span>You will not receive another random injury for the next two in-game months.</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`)}
+  if(injury?.active){
+   if(c.day===0||c.day===3||liveIsSupercard(c))return render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">MEDICAL RESTRICTION</div><h1>NON-WRESTLING APPEARANCE</h1><div class="lpw-consequence-host">${npcImage('katie-morgan','portrait')}<span><small>BACKSTAGE INTERVIEWER</small><b>Katie Morgan</b></span></div><p>You are still recovering from ${injury.name||'an injury'}, so tonight’s match has been replaced by an interview segment.</p><div class="live-choice-grid"><button onclick="lpw836ApplyOutcome('katie-morgan','RECOVERY UPDATE',{popularity:4},'Your honest update earns support from the audience.','Medical restrictions remain active until clearance.')"><b>ADDRESS THE INJURY</b><span>Popularity +4</span></button><button onclick="lpw836ApplyOutcome('katie-morgan','MESSAGE TO YOUR RIVAL',{feud:5},'You warn your rival that the injury has not changed your intentions.','The rivalry stays active while you recover.')"><b>SEND A WARNING</b><span>Feud +5</span></button></div></section>`);
+   if(c.day===2)return render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">RECOVERY DAY</div><h1>PHYSICAL TRAINING RESTRICTED</h1><div class="lpw-consequence-host">${npcImage('dr-lena-hart','portrait')}<span><small>CHIEF MEDICAL OFFICER</small><b>Dr. Lena Hart</b></span></div><p>Coach Hank has cancelled physical drills. Choose a non-physical development activity.</p><div class="live-choice-grid"><button onclick="gauntletLiveCompleteChoice(0,[['Film study','Technique +1','technique',1]])"><b>FILM STUDY</b><span>Technique +1</span></button><button onclick="gauntletLiveCompleteChoice(0,[['Media interview','Popularity +6','popularity',6]])"><b>MEDIA INTERVIEW</b><span>Popularity +6</span></button></div></section>`);
+  }
+  return oldBeginDay();
+ };
+
+ /* Current build label. */
+ const oldHome=gauntletLiveHome;gauntletLiveHome=function(){const r=oldHome();const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent=`VERSION 8.3.7 BUILD ${BUILD}`;const tag=document.querySelector('.build-tag');if(tag)tag.textContent=`VERSION 8.3.7 BUILD ${BUILD}`;return r};
+})();

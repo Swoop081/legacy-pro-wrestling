@@ -1952,3 +1952,22 @@ body.career-view .presentation-summary .winner-celebration{
  .lpw837b4-event .live-choice-grid button b{font-size:1rem!important}.lpw837b4-event .live-choice-grid button span,.lpw837b4-event .live-choice-grid button em{font-size:.78rem!important}
  .lpw837b4-champion-fix>img,.lpw837b4-champion-fix .art-full{max-height:36vh!important;margin-bottom:30px!important}
 }
+
+/* 8.3.7 Build 5 regression fixes */
+.presentation-summary .winning-team-art,
+.presentation-summary .winning-team-art img,
+.presentation-summary .winner-celebration .hero-portrait,
+.presentation-summary .winner-celebration .hero-portrait img{
+ border:0!important;outline:0!important;box-shadow:none!important;
+}
+.presentation-summary .winning-team-art{background:transparent!important;padding:0!important}
+.lpw837-result-actions-bottom{display:flex!important;justify-content:center!important;margin:28px auto max(36px,env(safe-area-inset-bottom))!important;padding:0 16px!important}
+.lpw837-result-actions-bottom .btn{min-width:250px}
+.lpw-consequence-screen .live-choice-grid,.lpw837b4-event .live-choice-grid{margin-bottom:max(24px,env(safe-area-inset-bottom))}
+@media(max-width:560px){
+ .lpw837b4-event,.lpw-npc-standard{padding-top:24px!important}
+ .lpw837b4-event h1,.lpw-npc-standard h1{font-size:clamp(30px,9vw,46px)!important;margin:10px 0 16px!important}
+ .lpw837b4-event .live-npc-scene,.lpw-npc-standard .live-npc-scene{min-height:0!important;padding:16px!important;gap:14px!important}
+ .lpw837b4-event .live-npc-scene img,.lpw-npc-standard .live-npc-scene img{width:96px!important;height:112px!important;object-fit:contain!important}
+ .lpw837b4-event .live-choice-grid button,.lpw-npc-standard .live-choice-grid button{padding:18px 20px!important;min-height:0!important}
+}
