@@ -1,8 +1,8 @@
 {
-  "version": "8.6.13",
+  "version": "8.6.14",
   "build": "sienna-featured-wrestler-standardisation",
   "date": "2026-07-23",
-  "notes": "Uses dedicated alpha-bound home-feature artwork for every wrestler so visible subject height and baseline match Sienna regardless of transparent padding. Other screens are unchanged.",
+  "notes": "Normalises every Featured Wrestler to Sienna using a central head-and-torso reference instead of full alpha bounds, then aligns all artwork to the same lower crop baseline.",
   "updated": "2026-07-23",
-  "label": "LEGACY Pro Wrestling 8.6.13 \u2014 Alpha-Bound Featured Wrestler Normalisation"
+  "label": "LEGACY Pro Wrestling 8.6.14 \u2014 Torso-Reference Featured Wrestler Normalisation"
 }
