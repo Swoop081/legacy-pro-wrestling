@@ -546,6 +546,12 @@ function storyChoice(token){
  if(!M||!M.waiting||M.decisionOutcome)return;
  const choice=M.currentDecision?.options?.find(x=>x.token===token);if(!choice)return;
  const p=S.team[M.activeP],o=S.opp[M.activeO],id=choice.action;
+ // Capture the exact values rendered on the match screen before applying the decision.
+ // The result tiles must report the visible scoreboard change, including the small
+ // Match Score contribution created by Crowd, rather than only the raw decision points.
+ const beforeProjectedPlayer=projectedScore('player');
+ const beforeControl=Math.round(M.playerControl);
+ const beforeCrowd=Math.round(M.crowd);
  let chance=decisionChance(p,o,id);
  const tier=psychologyTier(chance,Math.random()),base=psychologyImpact(id);
  let score=Math.round(base.score*tier.mult),control=Math.round(base.control*tier.mult),crowd=Math.round(base.crowd*tier.mult);
@@ -560,8 +566,9 @@ function storyChoice(token){
  addMatchScore('player',score,'decision');
  if(score<0)addMatchScore('opp',Math.max(2,Math.round(Math.abs(score)*.45)));
  shiftControl(control,`${choice.name} produced a ${tier.label.toLowerCase()}.`);
+ // heatCrowd already applies both positive and negative movement to M.crowd.
+ // The previous extra negative adjustment caused failed choices to subtract Crowd twice.
  heatCrowd(crowd,crowd>=0?'player':'opp');
- if(crowd<0)M.crowd=clamp(M.crowd+crowd,0,100);
  const momentumDelta={
   'major-success':18,'success':11,'mixed':3,'failure':-10,'major-failure':-18
  }[tier.key]||0;
@@ -576,8 +583,11 @@ function storyChoice(token){
  if(M.decisionStreak<=-2)calls[1]=`The match is slipping away from ${p.name}; the next decision has become critical.`;
  addBroadcast(tier.mult>=0?'choice':'counter',calls[0],{highlight:true,weight:Math.abs(tier.mult)+1});
  addBroadcast('commentary',commentatorLine(COMMENTATORS.colour,calls[1]));
- M.decisionOutcome={...tier,score,control,crowd,summary:calls[0],choice:choice.name};
- M.decisionHistory.push({choice:choice.name,outcome:tier.label,score,control,crowd,momentum:momentumDelta});
+ const visibleScore=projectedScore('player')-beforeProjectedPlayer;
+ const visibleControl=Math.round(M.playerControl)-beforeControl;
+ const visibleCrowd=Math.round(M.crowd)-beforeCrowd;
+ M.decisionOutcome={...tier,score:visibleScore,control:visibleControl,crowd:visibleCrowd,rawScore:score,rawControl:control,rawCrowd:crowd,summary:calls[0],choice:choice.name};
+ M.decisionHistory.push({choice:choice.name,outcome:tier.label,score:visibleScore,control:visibleControl,crowd:visibleCrowd,rawScore:score,rawControl:control,rawCrowd:crowd,momentum:momentumDelta});
  M.decisionsMade++;renderMatch();
  clearStoryTimer();
 }
@@ -4313,4 +4323,13 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const observer=new MutationObserver(()=>document.querySelectorAll('.jett-outcome-rewards b[data-target]').forEach(animateNumber));
  observer.observe(document.documentElement,{childList:true,subtree:true});
  window.LPW_JETT_INTERACTION_POLISH_VERSION=BUILD;
+})();
+
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.6.5 — DECISION SCOREBOARD INTEGRITY AUDIT
+   ============================================================================= */
+(function(){
+ window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.5';
+ document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.5');
 })();
