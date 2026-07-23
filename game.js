@@ -1361,7 +1361,7 @@ const LPW_DECISION_GUIDANCE=true;
 function lpwRiskLabel(chance){return chance>=.68?{key:'favourable',label:'FAVOURABLE'}:chance>=.52?{key:'balanced',label:'BALANCED'}:{key:'risky',label:'RISKY'}}
 function lpwAttrNames(action){return (ACTION_META[action]?.attrs||[]).map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join(' + ')}
 function lpwGuidance(action){return ({risk:'Huge swing if it lands; failure can hand control away.',control:'Reliable way to steady the match and protect your position.',pressure:'Builds control without committing everything to one moment.',comeback:'Can reverse a crisis quickly; failure may deepen the danger.',survive:'Safer counter that stabilises the match for a smaller reward.',finisher:'Match-ending potential with the highest consequences if countered.',tag:'Uses teamwork and fresh energy to change the match.'})[action]||'Changes the next exchange.'}
-/* 8.5.8 Decision Card Framework — enabled only for Jett Valentine. */
+/* 8.5.9 Decision Card Framework — enabled only for Jett Valentine. */
 const JETT_DECISION_CARDS={
  opening:[
   {name:'Steal the Spotlight',slug:'steal-the-spotlight',action:'risk'},

@@ -2006,34 +2006,33 @@ body.career-view .presentation-summary .winner-celebration{
 /* 8.5.5 champion record */
 .lpw855-champion-record{display:block;margin-top:.35rem;color:#d9d9df;font-style:normal;font-size:.9rem;font-weight:700;letter-spacing:.08em}
 
-/* 8.5.8 — Jett decision cards: three-card single-screen mobile layout. */
+/* 8.5.9 — Jett decision cards: complete 3:2 artwork, centred with side breathing room. */
 .jett-decision-presentation{max-width:780px!important;max-height:calc(100dvh - 18px);overflow:hidden;padding:14px 14px 16px!important}
 .jett-decision-grid{display:grid;grid-template-columns:1fr;gap:9px;margin:10px auto 0;max-width:720px}
-.jett-decision-card{position:relative;display:block;width:100%;overflow:hidden;aspect-ratio:3.15/1;padding:0;border:2px solid #a8792a;border-radius:12px;background:#08080a;color:#fff;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.38);isolation:isolate;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.jett-decision-card{position:relative;display:block;width:min(88%,620px,calc((100dvh - 170px)/2));margin-inline:auto;overflow:hidden;aspect-ratio:3/2;padding:0;border:2px solid #a8792a;border-radius:12px;background:#08080a;color:#fff;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.38);isolation:isolate;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
 .jett-decision-card:hover,.jett-decision-card:focus-visible{transform:translateY(-2px);border-color:#f2cf69;box-shadow:0 12px 24px rgba(0,0,0,.52),0 0 0 2px rgba(242,207,105,.18)}
 .jett-card-art,.jett-card-art img{position:absolute;inset:0;display:block;width:100%;height:100%}
-.jett-card-art img{object-fit:cover;object-position:center}
+.jett-card-art img{object-fit:contain;object-position:center}
 .jett-card-shade{position:absolute;z-index:1;right:0;bottom:0;width:min(62%,430px);height:54%;border-radius:60% 0 0 0;background:radial-gradient(ellipse at 86% 82%,rgba(0,0,0,.88) 0%,rgba(0,0,0,.68) 34%,rgba(0,0,0,.28) 61%,transparent 80%);pointer-events:none}
 .jett-card-copy{position:absolute;z-index:2;right:0;bottom:0;width:min(60%,410px);padding:12px 16px 11px;text-align:right;text-shadow:0 2px 5px #000}
 .jett-card-copy small{display:block;color:#f3cf64;font-size:.66rem;font-weight:900;letter-spacing:.15em;margin-bottom:3px}
 .jett-card-copy b{display:block;font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;font-size:clamp(1.08rem,3.3vw,1.65rem);font-style:italic;letter-spacing:.025em;line-height:1;text-transform:uppercase}
 @media(max-width:760px){
- .jett-decision-presentation{padding:10px 10px 11px!important;max-height:calc(100dvh - 8px)}
+ .jett-decision-presentation{padding:8px 8px 9px!important;max-height:calc(100dvh - 6px)}
  .jett-decision-presentation .your-call-label{margin-top:-26px!important;padding:4px 24px!important;font-size:1rem!important}
- .jett-decision-presentation h2{font-size:1.22rem!important;line-height:1.04!important;margin:.22rem 0!important}
- .jett-decision-presentation>p{font-size:.72rem!important;line-height:1.15!important;margin:.22rem auto .42rem!important}
- .jett-decision-grid{gap:6px;margin-top:6px}
- .jett-decision-card{aspect-ratio:3.35/1;border-radius:9px;border-width:1px;box-shadow:0 5px 12px rgba(0,0,0,.36)}
- .jett-card-art img{object-position:center 44%}
+ .jett-decision-presentation h2{font-size:1.16rem!important;line-height:1.04!important;margin:.18rem 0!important}
+ .jett-decision-presentation>p{font-size:.7rem!important;line-height:1.12!important;margin:.16rem auto .32rem!important}
+ .jett-decision-grid{gap:5px;margin-top:5px}
+ .jett-decision-card{width:min(88%,calc((100dvh - 145px)/2));aspect-ratio:3/2;border-radius:9px;border-width:1px;box-shadow:0 5px 12px rgba(0,0,0,.36)}
+ .jett-card-art img{object-fit:contain;object-position:center}
  .jett-card-shade{width:64%;height:58%;background:radial-gradient(ellipse at 88% 84%,rgba(0,0,0,.9) 0%,rgba(0,0,0,.66) 35%,rgba(0,0,0,.24) 61%,transparent 79%)}
  .jett-card-copy{width:62%;padding:8px 10px 7px}
  .jett-card-copy small{font-size:.46rem;letter-spacing:.1em;margin-bottom:2px}
  .jett-card-copy b{font-size:clamp(.86rem,4.5vw,1.15rem)}
 }
 @media(max-width:380px){
- .jett-decision-presentation h2{font-size:1.08rem!important}
- .jett-decision-presentation>p{font-size:.66rem!important}
- .jett-decision-card{aspect-ratio:3.55/1}
- .jett-card-copy b{font-size:.84rem}
+ .jett-decision-presentation h2{font-size:1.04rem!important}
+ .jett-decision-presentation>p{font-size:.64rem!important}
+ .jett-decision-card{width:min(86%,calc((100dvh - 138px)/2));aspect-ratio:3/2}
+ .jett-card-copy b{font-size:.82rem}
 }
-
