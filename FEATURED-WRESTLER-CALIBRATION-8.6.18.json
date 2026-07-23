@@ -1,0 +1,306 @@
+{
+  "version": "8.6.18",
+  "method": "Hybrid calibration: original 20 restored from verified 8.6.15 Sienna-height assets; post-original roster retained from 8.6.17 head-anchored assets.",
+  "original_20": [
+    {
+      "slug": "jack-mercer",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        261,
+        106,
+        1700,
+        2005
+      ],
+      "visible_width": 1439,
+      "visible_height": 1899
+    },
+    {
+      "slug": "victor-royale",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        537,
+        108,
+        1423,
+        2004
+      ],
+      "visible_width": 886,
+      "visible_height": 1896
+    },
+    {
+      "slug": "jett-valentine",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        544,
+        105,
+        1416,
+        2004
+      ],
+      "visible_width": 872,
+      "visible_height": 1899
+    },
+    {
+      "slug": "the-revenant",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        385,
+        106,
+        1575,
+        2005
+      ],
+      "visible_width": 1190,
+      "visible_height": 1899
+    },
+    {
+      "slug": "nightwatch",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        594,
+        107,
+        1367,
+        2003
+      ],
+      "visible_width": 773,
+      "visible_height": 1896
+    },
+    {
+      "slug": "hollywood-titan",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        522,
+        106,
+        1440,
+        2004
+      ],
+      "visible_width": 918,
+      "visible_height": 1898
+    },
+    {
+      "slug": "mason-marks",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        505,
+        107,
+        1456,
+        2004
+      ],
+      "visible_width": 951,
+      "visible_height": 1897
+    },
+    {
+      "slug": "hollowman",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        500,
+        105,
+        1461,
+        2004
+      ],
+      "visible_width": 961,
+      "visible_height": 1899
+    },
+    {
+      "slug": "damian-black",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        571,
+        106,
+        1391,
+        2003
+      ],
+      "visible_width": 820,
+      "visible_height": 1897
+    },
+    {
+      "slug": "elias-crowe",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        311,
+        105,
+        1648,
+        2004
+      ],
+      "visible_width": 1337,
+      "visible_height": 1899
+    },
+    {
+      "slug": "el-rey-del-cielo",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        584,
+        106,
+        1377,
+        2005
+      ],
+      "visible_width": 793,
+      "visible_height": 1899
+    },
+    {
+      "slug": "max-justice",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        451,
+        106,
+        1508,
+        2002
+      ],
+      "visible_width": 1057,
+      "visible_height": 1896
+    },
+    {
+      "slug": "primal",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        345,
+        106,
+        1618,
+        2004
+      ],
+      "visible_width": 1273,
+      "visible_height": 1898
+    },
+    {
+      "slug": "lucas-bennett",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        419,
+        106,
+        1544,
+        2004
+      ],
+      "visible_width": 1125,
+      "visible_height": 1898
+    },
+    {
+      "slug": "marcus-king",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        467,
+        106,
+        1492,
+        2005
+      ],
+      "visible_width": 1025,
+      "visible_height": 1899
+    },
+    {
+      "slug": "mateo-vega",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        476,
+        105,
+        1484,
+        2004
+      ],
+      "visible_width": 1008,
+      "visible_height": 1899
+    },
+    {
+      "slug": "ryder-phoenix",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        620,
+        106,
+        1341,
+        2005
+      ],
+      "visible_width": 721,
+      "visible_height": 1899
+    },
+    {
+      "slug": "dave-maddox",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        525,
+        106,
+        1437,
+        2003
+      ],
+      "visible_width": 912,
+      "visible_height": 1897
+    },
+    {
+      "slug": "sterling-sinclair",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        113,
+        106,
+        1849,
+        2005
+      ],
+      "visible_width": 1736,
+      "visible_height": 1899
+    },
+    {
+      "slug": "logan-steele",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "alpha_bbox": [
+        342,
+        105,
+        1619,
+        2003
+      ],
+      "visible_width": 1277,
+      "visible_height": 1898
+    }
+  ]
+}
