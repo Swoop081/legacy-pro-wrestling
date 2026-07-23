@@ -124,7 +124,7 @@ function imageWithFallback(w,type,extraClass='',screen='default'){
  const sources=screenAsset?[screenAsset,...wrestlerImageCandidates(w,type).filter(src=>src!==screenAsset)]:wrestlerImageCandidates(w,type);
  const t=imageTransform(config,type,resolvedScreen);
  const custom=config?' framework-custom':'';
- const originalHomeFeature=(resolvedScreen==='homeFeature' && WRESTLERS.indexOf(w)>=0 && WRESTLERS.indexOf(w)<20)?' original-roster-home-feature':'';
+ const originalHomeFeature='';
  const anchor=t.anchor||'feet';
  const st=`--custom-scale:${t.scale??1};--custom-x:${t.x??0}px;--custom-y:${t.y??0}px;`;
  return `<img class="wrestler-art wrestler-${w.id}${custom}${originalHomeFeature} ${extraClass}" style="${st}" data-art-type="${type}" data-image-screen="${resolvedScreen}" data-image-anchor="${anchor}" src="${sources[0]}" data-sources="${sources.join('|')}" data-source-index="0" alt="${w.name}" onerror="advanceImageFallback(this)">`;
@@ -4333,15 +4333,15 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================================= */
 (function(){
- window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.19';
- document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.19');
+ window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.20';
+ document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.20');
 })();
 
 
 /* ============================================================
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================ */
-window.LPW_BRAND_VERSION='8.6.19';
+window.LPW_BRAND_VERSION='8.6.20';
 function lpwBrandLogo(size='header',extra=''){
  const file=size==='main'?'lpw-logo-main-menu-1200.webp':size==='compact'?'lpw-logo-compact-400.webp':'lpw-logo-header-800.webp';
  return `<img class="lpw-brand-logo lpw-brand-logo-${size} ${extra}" src="assets/branding/${file}" alt="LEGACY Pro Wrestling">`;

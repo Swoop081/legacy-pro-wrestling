@@ -1,0 +1,20 @@
+{
+  "version": "8.6.20",
+  "scope": "Home Screen Featured Wrestler",
+  "fix": "Removed the original-roster-only CSS rendering class and rebuilt wrestlers 1-20 home-feature assets with the same cropped promotional framing used by later roster additions.",
+  "original_roster": {
+    "count": 20,
+    "source": "existing dedicated home-feature artwork",
+    "crop_scale": 1.38,
+    "horizontal_anchor": "canvas centre / head-centred source composition",
+    "vertical_crop": "top preserved; lower legs intentionally cropped",
+    "runtime_transform": "none"
+  },
+  "later_roster": "unchanged",
+  "verification": [
+    "all 20 assets are 2048x2048 WebP",
+    "all 20 retain alpha transparency",
+    "contact sheet reviewed for head visibility, centring and lower-body crop",
+    "no original-roster-home-feature runtime class remains active"
+  ]
+}
