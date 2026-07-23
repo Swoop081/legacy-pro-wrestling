@@ -1,7 +1,7 @@
 {
-  "version": "8.6.1",
-  "build": "Collections Bio and Unlock Audit",
+  "version": "8.6.4",
+  "build": "Jett Decision Interaction Polish",
   "date": "2026-07-23",
-  "notes": "Audits all wrestler bios to remove Gauntlet wording, raises and crops collection portraits at the belly button, and replaces Jett unlock requirements with distinct trackable conditions.",
+  "notes": "Adds selected-card transition feedback, first-use NEW ribbons, outcome colour coding, animated count-up rewards, selected-card resolution animation and wrestling-focused result status copy.",
   "updated": "2026-07-23"
 }

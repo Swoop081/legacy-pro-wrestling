@@ -4104,7 +4104,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
 
 /* LEGACY Pro Wrestling 8.6.2 — Collections Bio & Unlock Audit */
 (function(){
- const BUILD='8.6.3';
+ const BUILD='8.6.4';
  const UNLOCK_KEY='lpw_unlockables_v1';
  const PENDING_KEY='lpw_pending_unlocks_v1';
  const JETT_CARDS=[
@@ -4248,4 +4248,69 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
   </div>`;
  };
  window.LPW_JETT_DECISION_POOL_VERSION=BUILD;
+})();
+
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.6.4 — JETT DECISION INTERACTION POLISH
+   ============================================================================= */
+(function(){
+ const BUILD='8.6.4';
+ const SEEN_KEY='lpw_jett_seen_decision_cards_v1';
+ const outcomeCopy={
+  'major-success':{status:'MOMENTUM SHIFTS',extra:'The arena comes alive as Jett turns the choice into a defining swing.'},
+  'success':{status:'ADVANTAGE GAINED',extra:'Jett keeps the pressure on and forces the match further into his rhythm.'},
+  'mixed':{status:'THE MATCH CONTINUES',extra:'The gamble creates movement, but neither competitor has full control yet.'},
+  'mixed-result':{status:'THE MATCH CONTINUES',extra:'The gamble creates movement, but neither competitor has full control yet.'},
+  'failure':{status:'OPPONENT CAPITALISES',extra:'The opening disappears, and Jett must recover before the damage grows.'},
+  'major-failure':{status:'DANGER DEEPENS',extra:'The decision backfires badly and hands the opponent a major opportunity.'}
+ };
+ function seenCards(){try{return new Set(JSON.parse(localStorage.getItem(SEEN_KEY)||'[]'))}catch(e){return new Set()}}
+ function markSeen(slug){const seen=seenCards();seen.add(slug);localStorage.setItem(SEEN_KEY,JSON.stringify([...seen]))}
+ const priorCardHTML=jettDecisionCardHTML;
+ jettDecisionCardHTML=function(option,index){
+  const label=String(option.name||'Decision').replace(/"/g,'&quot;');
+  const isNew=!seenCards().has(option.slug);
+  return `<button type="button" class="jett-decision-card${isNew?' is-new':''}" onclick="jettChooseDecision('choice-${index}',this)" aria-label="Choose ${label}"><span class="jett-card-art"><img src="${option.image}" alt="${label}" loading="eager"></span><span class="jett-card-shade"></span>${isNew?'<em class="jett-card-new">NEW</em>':''}<span class="jett-card-copy"><small>JETT VALENTINE</small><b>${option.name}</b></span></button>`;
+ };
+ window.jettChooseDecision=function(token,button){
+  if(!button||button.dataset.choosing==='1')return;
+  const option=M?.currentDecision?.options?.find(item=>item.token===token);
+  if(!option)return storyChoice(token);
+  button.dataset.choosing='1';
+  markSeen(option.slug);
+  const grid=button.closest('.jett-decision-grid');
+  if(grid){grid.classList.add('is-resolving');[...grid.querySelectorAll('.jett-decision-card')].forEach(card=>card.classList.toggle('is-selected',card===button))}
+  window.setTimeout(()=>storyChoice(token),420);
+ };
+ const priorDecisionHTML=decisionHTML;
+ decisionHTML=function(){
+  const outcome=M?.decisionOutcome;
+  const selected=M?.jettSelectedDecision;
+  const active=!!(S&&M&&Array.isArray(S.team)&&S.team[M.activeP]?.id==='jett-valentine');
+  if(!outcome||!selected?.image||!active)return priorDecisionHTML();
+  const key=outcome.key||'mixed';
+  const copy=outcomeCopy[key]||outcomeCopy.mixed;
+  const target=value=>Number.isFinite(Number(value))?Number(value):0;
+  return `<div class="story-decision psychology-v2-foundation decision-outcome jett-decision-outcome outcome-${key}">
+   <div class="your-call-label">YOUR CALL</div>
+   <h2>${outcome.label}</h2>
+   <p>${outcome.summary} ${copy.extra}</p>
+   <div class="jett-resolution-card"><img src="${selected.image}" alt="${selected.choice}" loading="eager"><span><small>JETT VALENTINE</small><b>${selected.choice}</b></span></div>
+   <div class="outcome-deltas jett-outcome-rewards"><span><b data-target="${target(outcome.score)}">0</b><small>MATCH SCORE</small></span><span><b data-target="${target(outcome.control)}">0</b><small>CONTROL</small></span><span><b data-target="${target(outcome.crowd)}">0</b><small>CROWD</small></span></div>
+   <div class="outcome-progress">${copy.status}</div>
+   <button type="button" class="btn outcome-continue" onclick="continueDecisionOutcome()">CONTINUE MATCH</button>
+  </div>`;
+ };
+ function animateNumber(node){
+  if(node.dataset.counted==='1')return;
+  node.dataset.counted='1';
+  const target=Number(node.dataset.target||0),duration=620,start=performance.now();
+  const sign=value=>value>0?`+${value}`:`${value}`;
+  function frame(now){const p=Math.min(1,(now-start)/duration);const eased=1-Math.pow(1-p,3);node.textContent=sign(Math.round(target*eased));if(p<1)requestAnimationFrame(frame)}
+  requestAnimationFrame(frame);
+ }
+ const observer=new MutationObserver(()=>document.querySelectorAll('.jett-outcome-rewards b[data-target]').forEach(animateNumber));
+ observer.observe(document.documentElement,{childList:true,subtree:true});
+ window.LPW_JETT_INTERACTION_POLISH_VERSION=BUILD;
 })();

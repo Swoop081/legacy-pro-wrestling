@@ -2077,3 +2077,23 @@ body:not(.gauntlet-mode) header .header-meta{justify-content:flex-end}
  .jett-decision-outcome>p{margin:.15rem auto .45rem!important;font-size:.75rem!important}
  .jett-decision-outcome .outcome-deltas{margin-top:7px!important}
 }
+
+
+/* LEGACY 8.6.4 — Jett selection, outcome and reward polish */
+.jett-decision-grid.is-resolving .jett-decision-card{pointer-events:none;transition:opacity .28s ease,transform .36s cubic-bezier(.18,.86,.22,1.14),filter .28s ease}
+.jett-decision-grid.is-resolving .jett-decision-card:not(.is-selected){opacity:.22;filter:grayscale(.45) brightness(.55);transform:scale(.97)}
+.jett-decision-grid.is-resolving .jett-decision-card.is-selected{z-index:5;transform:translateY(-7px) scale(1.045);border-color:#ffe083;box-shadow:0 18px 38px rgba(0,0,0,.68),0 0 22px rgba(255,207,72,.34)}
+.jett-card-new{position:absolute;z-index:5;left:10px;top:9px;padding:4px 9px;border:1px solid rgba(255,225,130,.88);background:rgba(22,11,2,.88);color:#ffd966;font:italic 12px/1 Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;letter-spacing:.14em;transform:skew(-7deg);box-shadow:0 3px 10px rgba(0,0,0,.45)}
+.jett-resolution-card{animation:lpwSelectedCardResolve .54s cubic-bezier(.18,.85,.22,1.08) both}
+@keyframes lpwSelectedCardResolve{0%{opacity:0;transform:translateY(24px) scale(.9)}65%{opacity:1;transform:translateY(-3px) scale(1.025)}100%{opacity:1;transform:none}}
+.jett-outcome-rewards span{animation-duration:.58s!important}
+.jett-outcome-rewards b{font-variant-numeric:tabular-nums;min-width:2.4ch;display:inline-block}
+.jett-decision-outcome .outcome-progress{letter-spacing:.14em}
+.jett-decision-outcome.outcome-major-success h2{color:#69e696;text-shadow:0 0 14px rgba(79,224,134,.28)}
+.jett-decision-outcome.outcome-success h2{color:#70c8ff;text-shadow:0 0 14px rgba(70,179,255,.25)}
+.jett-decision-outcome.outcome-mixed h2,.jett-decision-outcome.outcome-mixed-result h2{color:#ffd15b}
+.jett-decision-outcome.outcome-failure h2{color:#ffad62;text-shadow:0 0 14px rgba(255,145,62,.24)}
+.jett-decision-outcome.outcome-major-failure h2{color:#ff6464;text-shadow:0 0 14px rgba(255,70,70,.3)}
+.jett-decision-outcome.outcome-major-success .jett-resolution-card,.jett-decision-outcome.outcome-success .jett-resolution-card{border-color:#d6b94e}
+.jett-decision-outcome.outcome-failure .jett-resolution-card,.jett-decision-outcome.outcome-major-failure .jett-resolution-card{border-color:#8f4b36}
+@media(max-width:760px){.jett-card-new{left:7px;top:6px;padding:3px 7px;font-size:9px}.jett-decision-grid.is-resolving .jett-decision-card.is-selected{transform:translateY(-4px) scale(1.025)}}
