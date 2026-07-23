@@ -4329,15 +4329,15 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================================= */
 (function(){
- window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.10';
- document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.10');
+ window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.11';
+ document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.11');
 })();
 
 
 /* ============================================================
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================ */
-window.LPW_BRAND_VERSION='8.6.10';
+window.LPW_BRAND_VERSION='8.6.11';
 function lpwBrandLogo(size='header',extra=''){
  const file=size==='main'?'lpw-logo-main-menu-1200.webp':size==='compact'?'lpw-logo-compact-400.webp':'lpw-logo-header-800.webp';
  return `<img class="lpw-brand-logo lpw-brand-logo-${size} ${extra}" src="assets/branding/${file}" alt="LEGACY Pro Wrestling">`;
@@ -4346,7 +4346,7 @@ const _lpw866Render=render;
 render=function(html){
  const result=_lpw866Render(html);
  const main=document.querySelector('#app .lpw-home');
- if(main){const redundant=main.querySelector('.lpw-main-brand');if(redundant)redundant.remove();}
+ if(main){main.querySelectorAll('.lpw-main-brand,.hub-copy > .lpw-brand-logo,.hub-copy > img[src*="lpw-logo"]').forEach(node=>node.remove());}
  const careerTarget=document.querySelector('#app .lpw-career-home,#app .live-calendar-screen,#app .live-show-intro,#app .live-match-card,#app .live-world-screen,#app .live-career-card-screen,#app .live-stable-screen,#app .lpw8-rankings,#app .lpw8-championships');
  if(careerTarget&&!careerTarget.querySelector('.lpw-career-brand'))careerTarget.insertAdjacentHTML('afterbegin',lpwBrandLogo('compact','lpw-career-brand'));
  return result;

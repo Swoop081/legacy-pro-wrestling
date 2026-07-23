@@ -2327,3 +2327,72 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
     padding-top:6px!important;
   }
 }
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.6.11 — VERIFIED MAIN MENU HERO FIX
+   ============================================================================= */
+.lpw-home .featured-superstar{
+  min-height:520px!important;
+  height:520px!important;
+}
+.lpw-home .lpw-feature-logo{
+  top:10px!important;
+  left:12px!important;
+  width:170px!important;
+  max-width:34vw!important;
+}
+.lpw-home .live-chip{
+  top:10px!important;
+  right:12px!important;
+}
+.lpw-home .featured-superstar > .wrestler-art.framework-custom[data-image-screen="homeFeature"],
+.lpw-home .featured-superstar > .wrestler-art[data-image-screen="homeFeature"]{
+  position:absolute!important;
+  inset:54px 0 0!important;
+  width:100%!important;
+  height:calc(100% - 54px)!important;
+  max-width:none!important;
+  padding:0!important;
+  object-fit:contain!important;
+  object-position:center top!important;
+  transform:translate(var(--custom-x,0px),var(--custom-y,0px)) scale(var(--custom-scale,1.55))!important;
+  transform-origin:center top!important;
+}
+.lpw-home .featured-lower-third{
+  inset:auto 12px 16px 12px!important;
+}
+.lpw-home .hub-copy{
+  padding:0 12px 16px!important;
+}
+.lpw-home .hub-menu{
+  padding-top:8px!important;
+}
+.lpw-home .hub-copy > img,
+.lpw-home .hub-copy .lpw-brand-logo,
+.lpw-home .lpw-main-brand{
+  display:none!important;
+}
+@media(max-width:600px){
+  .lpw-home .featured-superstar{
+    min-height:500px!important;
+    height:500px!important;
+  }
+  .lpw-home .lpw-feature-logo{
+    width:158px!important;
+    max-width:36vw!important;
+  }
+  .lpw-home .featured-superstar > .wrestler-art.framework-custom[data-image-screen="homeFeature"],
+  .lpw-home .featured-superstar > .wrestler-art[data-image-screen="homeFeature"]{
+    inset:50px 0 0!important;
+    height:calc(100% - 50px)!important;
+  }
+  .lpw-home .featured-lower-third{
+    inset:auto 10px 12px 10px!important;
+  }
+  .lpw-home .hub-copy{
+    padding:0 10px 14px!important;
+  }
+  .lpw-home .hub-menu{
+    padding-top:6px!important;
+  }
+}
