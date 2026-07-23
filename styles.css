@@ -2396,3 +2396,28 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
     padding-top:6px!important;
   }
 }
+
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.6.13 — PIXEL-BOUND FEATURED WRESTLER NORMALISATION
+   Every dedicated home-feature image shares Sienna's alpha-height and baseline.
+   ============================================================================= */
+.lpw-home .featured-superstar > .wrestler-art[data-image-screen="homeFeature"]{
+  position:absolute!important;
+  inset:50px 0 0!important;
+  width:100%!important;
+  height:calc(100% - 50px)!important;
+  max-width:none!important;
+  max-height:none!important;
+  padding:0!important;
+  object-fit:contain!important;
+  object-position:center top!important;
+  transform:translate(0,0) scale(1.55)!important;
+  transform-origin:center top!important;
+}
+@media(max-width:600px){
+  .lpw-home .featured-superstar > .wrestler-art[data-image-screen="homeFeature"]{
+    inset:50px 0 0!important;
+    height:calc(100% - 50px)!important;
+  }
+}

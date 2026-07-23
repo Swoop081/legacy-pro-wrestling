@@ -119,7 +119,10 @@ function imageTransform(config,type='full',screen='default'){
 }
 function imageWithFallback(w,type,extraClass='',screen='default'){
  const resolvedScreen=screen==='default'?(type==='portrait'?'matchPortrait':type==='victory'?'victory':'card'):screen;
- const sources=wrestlerImageCandidates(w,type),config=characterImageConfig(w),t=imageTransform(config,type,resolvedScreen);
+ const config=characterImageConfig(w);
+ const screenAsset=config?.assets?.[resolvedScreen];
+ const sources=screenAsset?[screenAsset,...wrestlerImageCandidates(w,type).filter(src=>src!==screenAsset)]:wrestlerImageCandidates(w,type);
+ const t=imageTransform(config,type,resolvedScreen);
  const custom=config?' framework-custom':'';
  const anchor=t.anchor||'feet';
  const st=`--custom-scale:${t.scale??1};--custom-x:${t.x??0}px;--custom-y:${t.y??0}px;`;
@@ -4329,15 +4332,15 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================================= */
 (function(){
- window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.12';
- document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.12');
+ window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.13';
+ document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.13');
 })();
 
 
 /* ============================================================
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================ */
-window.LPW_BRAND_VERSION='8.6.12';
+window.LPW_BRAND_VERSION='8.6.13';
 function lpwBrandLogo(size='header',extra=''){
  const file=size==='main'?'lpw-logo-main-menu-1200.webp':size==='compact'?'lpw-logo-compact-400.webp':'lpw-logo-header-800.webp';
  return `<img class="lpw-brand-logo lpw-brand-logo-${size} ${extra}" src="assets/branding/${file}" alt="LEGACY Pro Wrestling">`;

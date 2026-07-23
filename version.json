@@ -1,8 +1,8 @@
 {
-  "version": "8.6.12",
+  "version": "8.6.13",
   "build": "sienna-featured-wrestler-standardisation",
   "date": "2026-07-23",
-  "notes": "Applies Sienna's exact homeFeature scale and X/Y positioning to every wrestler on the main-menu Featured Wrestler panel. All other image-screen presets remain unchanged.",
+  "notes": "Uses dedicated alpha-bound home-feature artwork for every wrestler so visible subject height and baseline match Sienna regardless of transparent padding. Other screens are unchanged.",
   "updated": "2026-07-23",
-  "label": "LEGACY Pro Wrestling 8.6.12 — Sienna Featured Wrestler Standardisation"
+  "label": "LEGACY Pro Wrestling 8.6.13 \u2014 Alpha-Bound Featured Wrestler Normalisation"
 }

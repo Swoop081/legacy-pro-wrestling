@@ -386,3 +386,19 @@ Object.assign(window.TTG_IMAGE_MANAGER,{
     config.screens.homeFeature={...siennaPreset};
   });
 })(window.TTG_IMAGE_MANAGER);
+
+
+/* LEGACY Pro Wrestling 8.6.13 — alpha-bound Featured Wrestler normalization
+   Dedicated home-feature assets are generated from each full render's visible
+   alpha bounds and placed into the exact same visible-height/baseline frame as
+   Sienna. This avoids transparent-padding differences changing apparent size. */
+(function useNormalisedHomeFeatureAssets(manager){
+  if(!manager)return;
+  Object.entries(manager).forEach(([id,config])=>{
+    if(!config||typeof config!=='object')return;
+    config.assets=config.assets||{};
+    config.screens=config.screens||{};
+    config.assets.homeFeature=`assets/wrestlers/${id}/home-feature.webp`;
+    config.screens.homeFeature={scale:1.55,x:0,y:0,anchor:'head'};
+  });
+})(window.TTG_IMAGE_MANAGER);
