@@ -2525,3 +2525,21 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
 .lpw902-champion-interview .live-onboarding-progress{justify-content:center;margin:14px 0}
 .lpw902-champion-interview>.btn.live-primary{display:block;margin:0 auto}
 @media(max-width:700px){.lpw902-interview-stage{min-height:235px;grid-template-columns:1fr 1fr;gap:4px}.lpw902-interview-stage article{min-height:225px}.lpw902-interview-stage img{height:185px;max-height:185px}.lpw902-interview-stage b{font-size:.88rem}.lpw902-interview-stage small{font-size:clamp(.49rem,2.25vw,.62rem);letter-spacing:.025em}.lpw902-interview-stage .lpw837-world-belt{display:none}.lpw902-dialogue-card{min-height:160px;padding:13px}.lpw902-dialogue-card p{font-size:1rem}}
+
+/* LEGACY Pro Wrestling 9.0.4 */
+.lpw904-show-bumper{position:fixed;inset:0;z-index:10050;background:radial-gradient(circle at center,#181818 0,#070707 58%,#000 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;animation:lpw904Bumper 1.15s ease both}
+.lpw904-show-logo{width:min(92vw,760px);display:flex;align-items:center;justify-content:center;transform:scale(.86);animation:lpw904Logo 1.15s ease both}
+.lpw904-show-logo .lpw-show-logo,.lpw904-show-logo img{width:100%!important;max-width:760px!important;height:auto!important;margin:0!important}
+.lpw904-supercard-title{font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;font-size:clamp(3.4rem,13vw,8rem);line-height:.88;text-align:center;color:#fff;text-shadow:0 0 22px rgba(255,255,255,.2),0 5px 0 #8b0000;letter-spacing:.02em}
+@keyframes lpw904Bumper{0%{opacity:0}14%,82%{opacity:1}100%{opacity:0}}
+@keyframes lpw904Logo{0%{transform:scale(.78);opacity:0}20%{opacity:1}100%{transform:scale(1.03);opacity:1}}
+.lpw904-control-owner{grid-column:1/-1;text-align:center;font-size:.78rem;font-weight:900;letter-spacing:.09em;color:#f4cf46;margin:0 0 6px;text-transform:uppercase}
+.match-control{flex-wrap:wrap}.match-control .lpw904-control-owner{width:100%}
+.lpw904-momentum{margin:18px 0;padding:16px;border:1px solid rgba(244,207,70,.28);background:rgba(0,0,0,.32);border-radius:14px}
+.lpw904-momentum>.tv-kicker{text-align:center;margin-bottom:12px}
+.lpw904-momentum-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lpw904-momentum-grid article{background:rgba(255,255,255,.035);padding:12px;border-radius:10px;position:relative}
+.lpw904-momentum-grid h3{font-size:.88rem;margin:0 0 8px;text-align:center}
+.lpw904-momentum-grid ul{list-style:none;padding:0;margin:0}.lpw904-momentum-grid li{display:flex;justify-content:space-between;gap:8px;font-size:.72rem;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.lpw904-momentum-grid article>strong{display:block;text-align:center;font-size:1.55rem;margin-top:10px;color:#f4cf46}.lpw904-momentum .positive{color:#7fe18c}.lpw904-momentum .negative{color:#ff7777}.lpw904-momentum>p{text-align:center;font-size:.7rem;opacity:.7;margin:12px 0 0}
+@media(max-width:560px){.lpw904-momentum-grid{gap:8px}.lpw904-momentum-grid article{padding:9px}.lpw904-momentum-grid h3{font-size:.72rem}.lpw904-momentum-grid li{font-size:.62rem}.lpw904-show-logo{width:94vw}}

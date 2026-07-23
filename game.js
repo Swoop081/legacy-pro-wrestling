@@ -4546,3 +4546,133 @@ render=function(html){
 })();
 
 ;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 9.0.3');
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.4 — SHOW OPENERS, MATCH PSYCHOLOGY & CAREER MOMENTUM
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.4';
+ const clamp904=(n,min,max)=>Math.max(min,Math.min(max,n));
+
+ function consecutiveResults(history=[]){
+  if(!history.length)return {type:'none',count:0};
+  const first=!!history[0].win;let count=0;
+  for(const row of history){if(!!row.win!==first)break;count++}
+  return {type:first?'win':'loss',count};
+ }
+ function streakValue(type,count){
+  if(count<2)return 0;
+  const value=count>=5?6:count>=3?4:2;
+  return type==='win'?value:-value;
+ }
+ function injuryPenalty(injury){
+  if(!injury?.active)return 0;
+  const sev=String(injury.severity||'Minor').toLowerCase();
+  return sev.includes('major')?-10:sev.includes('moderate')?-6:-3;
+ }
+ function formValue(c,id){return Number(c?.world?.wrestlerForm?.[id]||0)}
+ function momentumBreakdown(c,player,opp){
+  const p=[],o=[];const streak=consecutiveResults(c.history||[]),sv=streakValue(streak.type,streak.count);
+  if(sv)p.push({label:`${streak.count}-match ${streak.type==='win'?'winning':'losing'} streak`,value:sv});
+  const base=Math.round((Number(c.momentum||50)-50)/10);
+  if(base)p.push({label:base>0?'Current confidence':'Recent confidence dip',value:clamp904(base,-5,5)});
+  const inj=injuryPenalty(c.world?.injury);if(inj)p.push({label:`${c.world.injury.severity||'Minor'} injury`,value:inj});
+  if(Number(c.popularity||0)>=80)p.push({label:'Strong crowd support',value:2});
+  const feud=liveFeud(c);if(feud&&Number(feud.intensity||0)>=60)p.push({label:'Heated rivalry',value:2});
+  if(c.world?.manager)p.push({label:'Manager support',value:2});
+  const bonus=Number(c.world?.nextMatchBonus||0);if(bonus)p.push({label:'Recent preparation',value:clamp904(Math.round(bonus/2),1,4)});
+  const pf=formValue(c,player.id);if(pf)p.push({label:pf>0?'Roster form':'Roster form slump',value:clamp904(pf,-6,6)});
+  const of=formValue(c,opp.id);if(of)o.push({label:of>0?'Opponent winning form':'Opponent losing form',value:clamp904(of,-6,6)});
+  const championId=c.world?.champion||c.world?.worldChampion||c.champion;if(championId===opp.id)o.push({label:'Reigning World Champion',value:3});
+  const total=list=>clamp904(list.reduce((s,x)=>s+x.value,0),-20,20);
+  return {player:p,opponent:o,playerTotal:total(p),opponentTotal:total(o)};
+ }
+ function momentumRows(rows){return rows.length?rows.map(x=>`<li><span>${x.label}</span><b class="${x.value<0?'negative':'positive'}">${x.value>0?'+':''}${x.value}</b></li>`).join(''):'<li><span>No major advantage</span><b>0</b></li>'}
+ function injectMomentumCard(){
+  const c=liveLoad(),pending=c?.pending;if(!c||!pending)return;
+  const player=liveFounder(c.active),opp=liveFounder(pending.opponent);if(!player||!opp)return;
+  const b=momentumBreakdown(c,player,opp);c.world=c.world||{};c.world.pendingMomentum=b;liveSave(c);
+  const card=document.querySelector('.live-match-card');if(!card||card.querySelector('.lpw904-momentum'))return;
+  const button=[...card.querySelectorAll('button')].find(x=>/BEGIN MATCH BROADCAST/i.test(x.textContent));
+  const html=`<section class="lpw904-momentum"><div class="tv-kicker">MATCH MOMENTUM</div><div class="lpw904-momentum-grid"><article><h3>${player.name}</h3><ul>${momentumRows(b.player)}</ul><strong>${b.playerTotal>0?'+':''}${b.playerTotal}</strong></article><article><h3>${opp.name}</h3><ul>${momentumRows(b.opponent)}</ul><strong>${b.opponentTotal>0?'+':''}${b.opponentTotal}</strong></article></div><p>Momentum reflects recent form and circumstances. Match Score remains the most important measure.</p></section>`;
+  if(button)button.insertAdjacentHTML('beforebegin',html);else card.insertAdjacentHTML('beforeend',html);
+ }
+ const matchCardBase=gauntletLiveMatchCard65;
+ gauntletLiveMatchCard65=function(){const r=matchCardBase.apply(this,arguments);setTimeout(injectMomentumCard,0);return r};
+
+ const launchBase=gauntletLiveLaunchBroadcast65;
+ gauntletLiveLaunchBroadcast65=function(){
+  const c=liveLoad(),p=c?.pending,player=c&&liveFounder(c.active),opp=p&&liveFounder(p.opponent);
+  if(c&&player&&opp){c.world=c.world||{};c.world.pendingMomentum=momentumBreakdown(c,player,opp);liveSave(c)}
+  return launchBase.apply(this,arguments);
+ };
+ const matchBase=match;
+ match=function(){
+  const r=matchBase.apply(this,arguments);
+  if(S?.liveMode&&M){
+   const c=liveLoad(),b=c?.world?.pendingMomentum;
+   if(b){const edge=clamp904((b.playerTotal||0)-(b.opponentTotal||0),-20,20);M.careerMomentumEdge=edge;M.playerControl=clamp904(M.playerControl+edge*.45,38,62);M.psychologyMomentum=clamp904((M.psychologyMomentum||0)+edge*1.5,-24,24);renderMatch()}
+  }
+  return r;
+ };
+
+ /* Control behaves as a live wrestling exchange rather than a sticky player health bar. */
+ shiftControl=function(amount,reason){
+  const before=Number(M.playerControl||50);
+  let swing=Number(amount||0);
+  swing*=swing<0?1.55:.88;
+  if(before>65&&swing<0)swing*=1.18;
+  if(before<35&&swing>0)swing*=1.18;
+  const gravity=(50-before)*.075;
+  M.playerControl=clamp904(before+swing+gravity,8,92);
+  if(Math.abs(M.playerControl-before)>=7)M.turningPoint=reason||M.turningPoint;
+ };
+
+ const renderBase=renderMatch;
+ renderMatch=function(){
+  const r=renderBase.apply(this,arguments);
+  if(!M)return r;
+  const control=Number(M.playerControl||50),player=S.team[M.activeP],opp=S.opp[M.activeO];
+  const strip=document.querySelector('.match-control');
+  if(strip){
+   strip.querySelector('.lpw904-control-owner')?.remove();
+   const balanced=Math.abs(control-50)<=3;
+   const leader=control>50?player:opp;
+   strip.insertAdjacentHTML('afterbegin',`<div class="lpw904-control-owner">${balanced?'MATCH EVENLY BALANCED':`${leader.name.toUpperCase()} IN CONTROL`}</div>`);
+  }
+  const chip=document.querySelector('.story-chip');
+  if(chip&&/BACK.?AND.?FORTH WAR/i.test(chip.textContent)){
+   const margin=Math.abs(control-50);
+   if(margin>28)chip.textContent='ONE-SIDED SURGE';else if(margin>15)chip.textContent='MOMENTUM SHIFT';else chip.textContent='BACK-AND-FORTH WAR';
+  }
+  return r;
+ };
+
+ /* A show-only title bumper appears after Start the Show. Static remains exclusive to Career onboarding. */
+ function showBumper(c,next){
+  const isSC=liveIsSupercard(c),show=isSC?liveCurrentSupercard(c):liveShowName(c);
+  const logo=isSC?`<div class="lpw904-supercard-title">${String(show||'SUPERCARD').toUpperCase()}</div>`:lpwShowLogo(show);
+  render(`<section class="lpw904-show-bumper"><div class="lpw904-show-logo">${logo}</div></section>`);
+  setTimeout(next,1150);
+ }
+ const runShowBase=gauntletLiveRunShowSegment;
+ gauntletLiveRunShowSegment=function(){
+  const isStart=!!document.querySelector('.live-show-intro,.lpw-show-open');
+  if(!isStart)return runShowBase.apply(this,arguments);
+  const c=liveLoad();return showBumper(c,()=>runShowBase());
+ };
+
+ /* Maintain simple opponent form so streaks carry forward between Career matches. */
+ const completeBase=liveCompleteBroadcast;
+ liveCompleteBroadcast=function(win){
+  const before=liveLoad(),playerId=before?.active,oppId=before?.pending?.opponent;
+  const result=completeBase.apply(this,arguments);
+  const c=liveLoad();if(c&&playerId&&oppId){c.world=c.world||{};c.world.wrestlerForm=c.world.wrestlerForm||{};
+   const step=(id,delta)=>c.world.wrestlerForm[id]=clamp904(Number(c.world.wrestlerForm[id]||0)+delta,-6,6);
+   step(playerId,win?2:-2);step(oppId,win?-2:2);c.world.pendingMomentum=null;liveSave(c)}
+  return result;
+ };
+
+ const homeBase=gauntletLiveHome;
+ gauntletLiveHome=function(){const r=homeBase.apply(this,arguments);document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent=`VERSION ${BUILD}`);return r};
+})();
