@@ -4104,7 +4104,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
 
 /* LEGACY Pro Wrestling 8.6.2 — Collections Bio & Unlock Audit */
 (function(){
- const BUILD='8.6.2';
+ const BUILD='8.6.3';
  const UNLOCK_KEY='lpw_unlockables_v1';
  const PENDING_KEY='lpw_pending_unlocks_v1';
  const JETT_CARDS=[
@@ -4190,7 +4190,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 8.6.2 — JETT EXCLUSIVE DECISION POOL + CARD RESOLUTION
+   LEGACY PRO WRESTLING 8.6.3 — JETT CARD RESOLUTION RENDER FIX
    ============================================================================= */
 (function(){
  const BUILD='8.6.2';
@@ -4220,18 +4220,22 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const previousStoryChoice=storyChoice;
  storyChoice=function(token){
   const selected=jettActive()?M.currentDecision?.options?.find(option=>option.token===token):null;
-  const result=previousStoryChoice(token);
-  if(selected&&M?.decisionOutcome){
-   M.decisionOutcome.choice=selected.name;
-   M.decisionOutcome.image=selected.image;
-   M.decisionOutcome.slug=selected.slug;
+  // Store the selected illustrated card before the legacy handler renders the result screen.
+  // The legacy handler calls renderMatch() synchronously, so attaching the artwork afterwards
+  // is too late for the first render.
+  if(selected&&M){
+   M.jettSelectedDecision={choice:selected.name,image:selected.image,slug:selected.slug};
   }
-  return result;
+  return previousStoryChoice(token);
  };
  const previousDecisionHTML=decisionHTML;
  decisionHTML=function(){
   const outcome=M?.decisionOutcome;
-  if(!outcome?.image||!jettActive())return previousDecisionHTML();
+  const selected=M?.jettSelectedDecision;
+  if(!outcome||!selected?.image||!jettActive())return previousDecisionHTML();
+  outcome.choice=selected.choice;
+  outcome.image=selected.image;
+  outcome.slug=selected.slug;
   const sign=value=>value>0?`+${value}`:`${value}`;
   return `<div class="story-decision psychology-v2-foundation decision-outcome jett-decision-outcome outcome-${outcome.key}">
    <div class="your-call-label">YOUR CALL</div>

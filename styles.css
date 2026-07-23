@@ -2064,9 +2064,11 @@ body:not(.gauntlet-mode) header .header-meta{justify-content:flex-end}
 .jett-resolution-card span{position:absolute;z-index:2;right:14px;bottom:11px;width:62%;text-align:right;text-shadow:0 2px 5px #000}
 .jett-resolution-card small{display:block;color:#f3cf64;font-size:.62rem;font-weight:900;letter-spacing:.14em;margin-bottom:3px}
 .jett-resolution-card b{display:block;font:italic clamp(1rem,3.5vw,1.5rem)/1 Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;text-transform:uppercase}
-.jett-outcome-rewards span{animation:lpwRewardPop .32s ease-out both}
-.jett-outcome-rewards span:nth-child(2){animation-delay:.08s}.jett-outcome-rewards span:nth-child(3){animation-delay:.16s}
-@keyframes lpwRewardPop{from{opacity:0;transform:translateY(8px) scale(.94)}to{opacity:1;transform:none}}
+.jett-outcome-rewards span{opacity:0;animation:lpwRewardPop .52s cubic-bezier(.18,.9,.25,1.25) forwards}
+.jett-outcome-rewards span:nth-child(1){animation-delay:.12s}.jett-outcome-rewards span:nth-child(2){animation-delay:.32s}.jett-outcome-rewards span:nth-child(3){animation-delay:.52s}
+.jett-outcome-rewards span b{animation:lpwRewardGlow .7s ease-out both;animation-delay:inherit}
+@keyframes lpwRewardPop{0%{opacity:0;transform:translateY(18px) scale(.72)}65%{opacity:1;transform:translateY(-3px) scale(1.06)}100%{opacity:1;transform:none}}
+@keyframes lpwRewardGlow{0%{text-shadow:0 0 0 rgba(255,208,75,0)}55%{text-shadow:0 0 18px rgba(255,208,75,.9)}100%{text-shadow:0 0 0 rgba(255,208,75,0)}}
 @media(max-width:760px){
  .story-decision.psychology-v2-foundation>.your-call-label{margin-top:-1.95rem!important}
  .jett-decision-outcome{padding:12px 9px 12px!important}
