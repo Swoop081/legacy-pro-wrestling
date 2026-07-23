@@ -4551,7 +4551,7 @@ render=function(html){
    LEGACY PRO WRESTLING 9.0.4 — SHOW OPENERS, MATCH PSYCHOLOGY & CAREER MOMENTUM
    ============================================================================= */
 (function(){
- const BUILD='9.0.4';
+ const BUILD='9.0.5';
  const clamp904=(n,min,max)=>Math.max(min,Math.min(max,n));
 
  function consecutiveResults(history=[]){
@@ -4598,7 +4598,8 @@ render=function(html){
   if(button)button.insertAdjacentHTML('beforebegin',html);else card.insertAdjacentHTML('beforeend',html);
  }
  const matchCardBase=gauntletLiveMatchCard65;
- gauntletLiveMatchCard65=function(){const r=matchCardBase.apply(this,arguments);setTimeout(injectMomentumCard,0);return r};
+ gauntletLiveMatchCard65=function(){const r=matchCardBase.apply(this,arguments);injectMomentumCard();return r};
+ window.gauntletLiveMatchCard65=gauntletLiveMatchCard65;
 
  const launchBase=gauntletLiveLaunchBroadcast65;
  gauntletLiveLaunchBroadcast65=function(){
@@ -4606,6 +4607,7 @@ render=function(html){
   if(c&&player&&opp){c.world=c.world||{};c.world.pendingMomentum=momentumBreakdown(c,player,opp);liveSave(c)}
   return launchBase.apply(this,arguments);
  };
+ window.gauntletLiveLaunchBroadcast65=gauntletLiveLaunchBroadcast65;
  const matchBase=match;
  match=function(){
   const r=matchBase.apply(this,arguments);
@@ -4615,6 +4617,7 @@ render=function(html){
   }
   return r;
  };
+ window.match=match;
 
  /* Control behaves as a live wrestling exchange rather than a sticky player health bar. */
  shiftControl=function(amount,reason){
@@ -4627,6 +4630,7 @@ render=function(html){
   M.playerControl=clamp904(before+swing+gravity,8,92);
   if(Math.abs(M.playerControl-before)>=7)M.turningPoint=reason||M.turningPoint;
  };
+ window.shiftControl=shiftControl;
 
  const renderBase=renderMatch;
  renderMatch=function(){
@@ -4638,7 +4642,10 @@ render=function(html){
    strip.querySelector('.lpw904-control-owner')?.remove();
    const balanced=Math.abs(control-50)<=3;
    const leader=control>50?player:opp;
-   strip.insertAdjacentHTML('afterbegin',`<div class="lpw904-control-owner">${balanced?'MATCH EVENLY BALANCED':`${leader.name.toUpperCase()} IN CONTROL`}</div>`);
+   const trailer=control>50?opp:player;
+   const labels=strip.querySelectorAll('.team-label');
+   if(labels[0])labels[0].textContent=balanced?'MATCH EVENLY BALANCED':`${leader.name.toUpperCase()} IN CONTROL`;
+   if(labels[1])labels[1].textContent=balanced?'':trailer.name.toUpperCase();
   }
   const chip=document.querySelector('.story-chip');
   if(chip&&/BACK.?AND.?FORTH WAR/i.test(chip.textContent)){
@@ -4647,6 +4654,7 @@ render=function(html){
   }
   return r;
  };
+ window.renderMatch=renderMatch;
 
  /* A show-only title bumper appears after Start the Show. Static remains exclusive to Career onboarding. */
  function showBumper(c,next){
@@ -4661,6 +4669,7 @@ render=function(html){
   if(!isStart)return runShowBase.apply(this,arguments);
   const c=liveLoad();return showBumper(c,()=>runShowBase());
  };
+ window.gauntletLiveRunShowSegment=gauntletLiveRunShowSegment;
 
  /* Maintain simple opponent form so streaks carry forward between Career matches. */
  const completeBase=liveCompleteBroadcast;
@@ -4672,7 +4681,11 @@ render=function(html){
    step(playerId,win?2:-2);step(oppId,win?-2:2);c.world.pendingMomentum=null;liveSave(c)}
   return result;
  };
+ window.liveCompleteBroadcast=liveCompleteBroadcast;
 
  const homeBase=gauntletLiveHome;
  gauntletLiveHome=function(){const r=homeBase.apply(this,arguments);document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent=`VERSION ${BUILD}`);return r};
+ window.gauntletLiveHome=gauntletLiveHome;
+ document.querySelectorAll('.build-tag').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+ window.LPW_GAMEPLAY_BUILD=BUILD;
 })();

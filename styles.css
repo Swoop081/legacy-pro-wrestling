@@ -2526,7 +2526,7 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
 .lpw902-champion-interview>.btn.live-primary{display:block;margin:0 auto}
 @media(max-width:700px){.lpw902-interview-stage{min-height:235px;grid-template-columns:1fr 1fr;gap:4px}.lpw902-interview-stage article{min-height:225px}.lpw902-interview-stage img{height:185px;max-height:185px}.lpw902-interview-stage b{font-size:.88rem}.lpw902-interview-stage small{font-size:clamp(.49rem,2.25vw,.62rem);letter-spacing:.025em}.lpw902-interview-stage .lpw837-world-belt{display:none}.lpw902-dialogue-card{min-height:160px;padding:13px}.lpw902-dialogue-card p{font-size:1rem}}
 
-/* LEGACY Pro Wrestling 9.0.4 */
+/* LEGACY Pro Wrestling 9.0.5 */
 .lpw904-show-bumper{position:fixed;inset:0;z-index:10050;background:radial-gradient(circle at center,#181818 0,#070707 58%,#000 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;animation:lpw904Bumper 1.15s ease both}
 .lpw904-show-logo{width:min(92vw,760px);display:flex;align-items:center;justify-content:center;transform:scale(.86);animation:lpw904Logo 1.15s ease both}
 .lpw904-show-logo .lpw-show-logo,.lpw904-show-logo img{width:100%!important;max-width:760px!important;height:auto!important;margin:0!important}
@@ -2543,3 +2543,7 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
 .lpw904-momentum-grid ul{list-style:none;padding:0;margin:0}.lpw904-momentum-grid li{display:flex;justify-content:space-between;gap:8px;font-size:.72rem;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)}
 .lpw904-momentum-grid article>strong{display:block;text-align:center;font-size:1.55rem;margin-top:10px;color:#f4cf46}.lpw904-momentum .positive{color:#7fe18c}.lpw904-momentum .negative{color:#ff7777}.lpw904-momentum>p{text-align:center;font-size:.7rem;opacity:.7;margin:12px 0 0}
 @media(max-width:560px){.lpw904-momentum-grid{gap:8px}.lpw904-momentum-grid article{padding:9px}.lpw904-momentum-grid h3{font-size:.72rem}.lpw904-momentum-grid li{font-size:.62rem}.lpw904-show-logo{width:94vw}}
+
+/* 9.0.5 verified control-owner presentation */
+.match-control .team-label:first-child{color:#f4cf46!important;font-weight:900!important;text-align:center!important}
+.match-control .team-label.right{opacity:.72!important;text-align:center!important}
