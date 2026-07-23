@@ -2399,7 +2399,7 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
 
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 8.6.15 — PIXEL-BOUND FEATURED WRESTLER NORMALISATION
+   LEGACY PRO WRESTLING 8.6.14 — PIXEL-BOUND FEATURED WRESTLER NORMALISATION
    Every dedicated home-feature image shares Sienna's alpha-height and baseline.
    ============================================================================= */
 .lpw-home .featured-superstar > .wrestler-art[data-image-screen="homeFeature"]{
@@ -2422,35 +2422,19 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
   }
 }
 
-/* LEGACY PRO WRESTLING 8.6.15 — TORSO-REFERENCE FEATURED WRESTLER NORMALISATION
+/* LEGACY PRO WRESTLING 8.6.14 — TORSO-REFERENCE FEATURED WRESTLER NORMALISATION
    Dedicated home-feature assets are scaled by central head/torso proportions and
    aligned to Sienna's baseline. CSS remains uniform for every wrestler. */
 
+
 /* =============================================================================
-   LEGACY PRO WRESTLING 8.6.15 — VERIFIED FEATURED WRESTLER CANVAS STANDARD
-   Dedicated home-feature assets have identical 2048x2048 canvases and identical
-   visible alpha bounds (top 108px, bottom 2002px). Do not apply per-wrestler
-   transforms on the home screen; render every canvas one-for-one.
+   LEGACY PRO WRESTLING 8.6.16 — VERIFIED FULL-BODY FEATURE NORMALISATION
+   All dedicated home-feature canvases use Sienna's alpha height, baseline and
+   horizontal centre. No additional CSS scale is applied.
    ============================================================================= */
-.lpw-home .featured-superstar > .wrestler-art.framework-custom[data-image-screen="homeFeature"],
 .lpw-home .featured-superstar > .wrestler-art[data-image-screen="homeFeature"]{
-  position:absolute!important;
-  inset:50px 0 0!important;
-  width:100%!important;
-  height:calc(100% - 50px)!important;
-  max-width:none!important;
-  max-height:none!important;
-  padding:0!important;
-  object-fit:contain!important;
-  object-position:center bottom!important;
-  transform:none!important;
-  transform-origin:center bottom!important;
-}
-@media(max-width:600px){
-  .lpw-home .featured-superstar > .wrestler-art.framework-custom[data-image-screen="homeFeature"],
-  .lpw-home .featured-superstar > .wrestler-art[data-image-screen="homeFeature"]{
-    inset:50px 0 0!important;
-    height:calc(100% - 50px)!important;
-    transform:none!important;
-  }
+  position:absolute!important; inset:50px 0 0!important; width:100%!important;
+  height:calc(100% - 50px)!important; max-width:none!important; max-height:none!important;
+  padding:0!important; object-fit:contain!important; object-position:center bottom!important;
+  transform:none!important; transform-origin:center bottom!important;
 }

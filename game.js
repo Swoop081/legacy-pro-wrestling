@@ -153,7 +153,7 @@ const BIOS={
 'jack-mercer':'A rebellious brawler who thrives under pressure, Jack Mercer fights with equal parts toughness, instinct and defiance.','victor-royale':'A calculating ring general who treats every contest like a kingdom to be conquered.','jett-valentine':'Charisma, speed and swagger make Jett Valentine one of the most magnetic stars in the Gauntlet.','revenant':'A silent supernatural force who absorbs punishment and advances with unnatural calm.','nightwatch':'A patient, watchful enforcer who waits for the exact moment to deliver Midnight Mass.','titan':'A blockbuster personality with main-event power, Titan believes every camera belongs to him.','mason-marks':'The Canadian Icon turns technical wrestling into an exact science.','hollowman':'A masked urban legend whose relentless advance turns every arena into a horror story.','damian-black':'A silent assassin who wastes no motion and never misses an opening.','elias-crowe':'The Lunatic embraces danger, pain and disorder with a smile that unsettles everyone around him.','el-rey-del-cielo':'A heroic luchador whose speed and aerial brilliance make the impossible look effortless.','max-justice':'An inspirational hero who meets every challenge with courage and overwhelming strength.','primal':'An untamed powerhouse who grows more dangerous as the fight becomes more physical.','lucas-bennett':'The Olympian combines discipline, athleticism and championship-level precision.','marcus-king':'A battle-tested street veteran who earned his reputation through toughness and grit.','mateo-vega':'The Con Artist wins with aerial skill, misdirection and one more trick than his opponent expects.','ryder-phoenix':'A fearless Rockstar who transforms every entrance and every comeback into a headline moment.','sterling-sinclair':'The Playboy brings effortless luxury, athleticism and supreme self-confidence to every contest.','dave-maddox':'The Workhorse earns every victory through stamina, reliability and the decisive Maddox Cutter.','logan-steele':'The Living Legend carries decades of experience and the respect of an entire generation.'};
 function resetClassicState(){clearStoryTimer();M=null;S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null,exhibition:false,quickType:null,quickPlayer:null,quickSelections:[],venue:null,attendance:null,previewCaptain:null,manager:null,nextMatchBonus:0,eventHistory:[],interviewCount:0};}
 function shellBack(){return `<button class="shell-back" onclick="home()">← MAIN MENU</button>`}
-function featuredSuperstar(){return one(WRESTLERS)}
+function featuredSuperstar(){const forced=new URLSearchParams(location.search).get('featured');return WRESTLERS.find(w=>w.id===forced)||one(WRESTLERS)}
 function home(){
  setActiveGameMode('home');
  clearStoryTimer();M=null;overlay.innerHTML='';
@@ -4332,15 +4332,15 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================================= */
 (function(){
- window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.15';
- document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.15');
+ window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.16';
+ document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.16');
 })();
 
 
 /* ============================================================
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================ */
-window.LPW_BRAND_VERSION='8.6.15';
+window.LPW_BRAND_VERSION='8.6.16';
 function lpwBrandLogo(size='header',extra=''){
  const file=size==='main'?'lpw-logo-main-menu-1200.webp':size==='compact'?'lpw-logo-compact-400.webp':'lpw-logo-header-800.webp';
  return `<img class="lpw-brand-logo lpw-brand-logo-${size} ${extra}" src="assets/branding/${file}" alt="LEGACY Pro Wrestling">`;

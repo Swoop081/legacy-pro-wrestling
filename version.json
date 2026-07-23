@@ -1,8 +1,8 @@
 {
-  "version": "8.6.15",
-  "build": "sienna-featured-wrestler-standardisation",
+  "version": "8.6.16",
+  "build": "brand-url-and-project-cleanup",
   "date": "2026-07-23",
-  "notes": "Normalises every Featured Wrestler to Sienna using a central head-and-torso reference instead of full alpha bounds, then aligns all artwork to the same lower crop baseline.",
+  "notes": "Adds the official full LPW logo as the iOS/PWA app icon, changes the GitHub Pages app identity to legacy-pro-wrestling, and removes non-runtime historical/QA files and duplicate PNG source assets.",
   "updated": "2026-07-23",
-  "label": "LEGACY Pro Wrestling 8.6.15 \u2014 Verified Featured Wrestler Canvas Standardisation"
+  "label": "LEGACY Pro Wrestling 8.6.16 \u2014 App Icon, URL & Project Cleanup"
 }

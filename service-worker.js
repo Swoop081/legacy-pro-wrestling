@@ -1,7 +1,7 @@
 /* LEGACY Pro Wrestling Service Worker 8.3.7 Build 9 */
-const APP_VERSION = '8.6.15-torso-reference-feature-standard';
+const APP_VERSION = '8.6.16-brand-url-cleanup';
 const CACHE_NAME = `lpw-${APP_VERSION}`;
-const CRITICAL_FILES = ['index.html','game.js','onboarding-wording-fix.js','data.js','styles.css','version.json','service-worker.js','update-manager.js','assets/config/imageManager.js'];
+const CRITICAL_FILES = ['index.html','game.js','data.js','styles.css','version.json','manifest.webmanifest','service-worker.js','update-manager.js','assets/config/imageManager.js'];
 
 self.addEventListener('install', event => { self.skipWaiting(); });
 self.addEventListener('activate', event => {

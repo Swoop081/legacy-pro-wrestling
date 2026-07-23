@@ -1,4 +1,4 @@
-/* Tag Team Gauntlet — Character Image Manager 3.0 — Screen Presets
+/* LEGACY Pro Wrestling — Character Image Manager 3.0 — Screen Presets
    Each upgraded wrestler has independent transforms for full, portrait and victory art.
    IDs match data.js. Internal legacy IDs can be retained while folders use display-friendly names. */
 window.TTG_IMAGE_MANAGER = {
@@ -400,5 +400,17 @@ Object.assign(window.TTG_IMAGE_MANAGER,{
     config.screens=config.screens||{};
     config.assets.homeFeature=`assets/wrestlers/${id}/home-feature.webp`;
     config.screens.homeFeature={scale:1.55,x:0,y:0,anchor:'head'};
+  });
+})(window.TTG_IMAGE_MANAGER);
+
+
+/* LEGACY Pro Wrestling 8.6.16 — verified full-body home-feature assets */
+(function useVerifiedHomeFeatureAssets(manager){
+  if(!manager)return;
+  Object.entries(manager).forEach(([id,config])=>{
+    if(!config||typeof config!=="object")return;
+    config.assets=config.assets||{}; config.screens=config.screens||{};
+    config.assets.homeFeature=`assets/wrestlers/${id}/home-feature.webp`;
+    config.screens.homeFeature={scale:1,x:0,y:0,anchor:'feet'};
   });
 })(window.TTG_IMAGE_MANAGER);

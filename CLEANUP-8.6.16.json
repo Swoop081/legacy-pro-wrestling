@@ -1,0 +1,33 @@
+{
+  "build": "8.6.16",
+  "removed_file_count": 146,
+  "removed_bytes": 21977335,
+  "removed_megabytes": 20.96,
+  "categories": [
+    "historical version/test notes",
+    "simulation and QA scripts/reports",
+    "backup JavaScript",
+    "unused image-check tooling",
+    "duplicate PNG wrestler assets with WebP equivalents"
+  ],
+  "kept_runtime_files": [
+    ".nojekyll",
+    "README.md",
+    "data.js",
+    "favicon.ico",
+    "game.js",
+    "index.html",
+    "manifest.webmanifest",
+    "service-worker.js",
+    "styles.css",
+    "update-manager.js",
+    "version.json"
+  ],
+  "new_app_icons": [
+    "assets/icons/apple-touch-icon.png",
+    "assets/icons/icon-192.png",
+    "assets/icons/icon-512.png",
+    "assets/icons/favicon-32.png",
+    "favicon.ico"
+  ]
+}
