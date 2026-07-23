@@ -3304,10 +3304,12 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
   for(let i=0;i<shuffled.length;i+=2){const a=shuffled[i],b=shuffled[i+1];if(!b)break;const ar=c.rankings.find(r=>r.id===a),br=c.rankings.find(r=>r.id===b);const chance=.5+((ar?.points||50)-(br?.points||50))/180;const awin=Math.random()<Math.max(.25,Math.min(.75,chance));applyResult(c,a,awin,b);applyResult(c,b,!awin,a);}
   ids.forEach(id=>{const x=ensureCareer(c,id);x.monthsAI++;if(Math.random()<.22){const opp=one(ids.filter(z=>z!==id));x.rival=opp}x.status=x.streak>=3?'Rising':x.streak<=-3?'Slumping':'Active'});
  }
+ function tournamentMonth(c){return Number(c?.world?.tournamentMonth||3)}
+ function isTournamentMonth(c){return Number(c?.month)===tournamentMonth(c)}
  function tournamentSlots(){return [{w:1,d:0,r:'QF',n:1},{w:1,d:3,r:'QF',n:2},{w:2,d:0,r:'QF',n:3},{w:2,d:3,r:'QF',n:4},{w:3,d:0,r:'SF',n:1},{w:3,d:3,r:'SF',n:2},{w:4,d:0,r:'F',n:1},{w:4,d:3,r:'CONTRACT',n:1}]}
- function tournamentSlot(c){if(c.month!==3)return null;return tournamentSlots().find(s=>s.w===liveMonthWeek(c)&&s.d===c.day)||null}
+ function tournamentSlot(c){if(!isTournamentMonth(c))return null;return tournamentSlots().find(s=>s.w===liveMonthWeek(c)&&s.d===c.day)||null}
  function seedTournament(c){
-  if(c.month!==3)return null;if(c.world.tournament?.year===Math.ceil(c.month/12))return c.world.tournament;
+  if(!isTournamentMonth(c))return null;if(c.world.tournament?.year===Math.ceil(c.month/12))return c.world.tournament;
   const champ=c.championships.world,ranked=lpw8Rankings(c).map(x=>x.id).filter(id=>id!==champ),field=[c.active,...ranked.filter(id=>id!==c.active).slice(0,7)];
   c.world.tournament={year:Math.ceil(c.month/12),name:'#1 Contender Tournament',field,round:'Quarter-finals',matches:[
    {round:'QF',a:field[0],b:field[7],winner:null},{round:'QF',a:field[3],b:field[4],winner:null},{round:'QF',a:field[1],b:field[6],winner:null},{round:'QF',a:field[2],b:field[5],winner:null}
@@ -3327,12 +3329,12 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  lpw8RankingScreen=function(){const c=ensure84(liveLoad()),rows=lpw8Rankings(c),champ=liveFounder(c.championships.world);liveSave(c);render(`<section class="panel lpw8-rankings lpw837-rankings-b2">${shellBack()}<div class="tv-kicker">WORLD CHAMPIONSHIP PICTURE</div><h1>POWER RANKINGS</h1><p class="sub">One roster. One ranking. One World Championship.</p><div class="lpw8-title-strip"><article class="lpw837-champion-tile"><div class="lpw837-champion-portraits">${imageWithFallback(champ,'portrait','art-portrait','matchPortrait')}</div><span><small>LPW WORLD CHAMPION</small><b>${champ?.name||'VACANT'}</b></span></article></div><div class="lpw8-ranking-list">${rows.map((r,i)=>{const w=liveFounder(r.id),x=ensureCareer(c,r.id);return `<article><strong>${i+1}</strong>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><b>${w.name}</b><small>${x.status}${''}</small></span><em>${r.points} PTS<br>${x.wins}-${x.losses}</em></article>`}).join('')}</div><button class="btn live-primary" onclick="gauntletLiveHome()">RETURN TO CAREER</button></section>`)};
 
  /* Tournament month presentation and booking. */
- const begin0=gauntletLiveBeginDay;gauntletLiveBeginDay=function(skip=false){const c=liveLoad();if(c?.month===3){const t=seedTournament(c);if(!t.announced){t.announced=true;liveSave(c);return render(`<section class="panel live-world-screen lpw84-tournament-news"><div class="tv-kicker">BREAKING NEWS · VERONICA VALE</div><h1>THE ROAD TO THE WORLD CHAMPIONSHIP</h1><div class="live-npc-scene large">${npcImage('veronica-vale','portrait')}<div><small>GENERAL MANAGER</small><h2>Veronica Vale</h2><p>Eight wrestlers will compete throughout March. The winner challenges the LPW World Champion at the SuperCard.</p></div></div><div class="lpw84-bracket-field">${t.field.map((id,i)=>`<span><b>${i+1}</b>${liveFounder(id).name}</span>`).join('')}</div><button class="btn live-primary" onclick="gauntletLiveBeginDay(true)">CONTINUE TO TODAY'S SHOW</button></section>`)}
+ const begin0=gauntletLiveBeginDay;gauntletLiveBeginDay=function(skip=false){const c=liveLoad();if(c&&isTournamentMonth(c)){const t=seedTournament(c);if(!t.announced){t.announced=true;liveSave(c);return render(`<section class="panel live-world-screen lpw84-tournament-news"><div class="tv-kicker">BREAKING NEWS · VERONICA VALE</div><h1>THE ROAD TO THE WORLD CHAMPIONSHIP</h1><div class="live-npc-scene large">${npcImage('veronica-vale','portrait')}<div><small>GENERAL MANAGER</small><h2>Veronica Vale</h2><p>Eight wrestlers will compete throughout the tournament month. The winner challenges the LPW World Champion at the SuperCard.</p></div></div><div class="lpw84-bracket-field">${t.field.map((id,i)=>`<span><b>${i+1}</b>${liveFounder(id).name}</span>`).join('')}</div><button class="btn live-primary" onclick="gauntletLiveBeginDay(true)">CONTINUE TO TODAY'S SHOW</button></section>`)}
    const s=tournamentSlot(c);if(s&&s.r==='CONTRACT')return lpw84ContractSigning();
   }return begin0(skip)};
- const label0=liveDayLabel;liveDayLabel=function(c,i){if(c.month===3){const temp={...c,day:i},lab=tournamentLabel(temp);if(lab)return lab;if(i===6&&liveMonthWeek(c)===4)return 'WORLD CHAMPIONSHIP SUPERCARD'}return label0(c,i)};
- const desc0=liveDayDescription;liveDayDescription=function(c){const lab=tournamentLabel(c);if(lab)return lab.includes('CONTRACT')?'The tournament winner and World Champion sign the contract for the March SuperCard.':`${lab} continues the month-long race for a World Championship opportunity.`;if(c.month===3&&liveIsSupercard(c))return 'The tournament winner challenges the LPW World Champion in the March main event.';return desc0(c)};
- const run0=gauntletLiveRunShowSegment;gauntletLiveRunShowSegment=function(){const c=liveLoad(),s=tournamentSlot(c);if(c?.month===3&&s&&s.r!=='CONTRACT')return lpw84TournamentBooking(s);return run0()};
+ const label0=liveDayLabel;liveDayLabel=function(c,i){if(isTournamentMonth(c)){const temp={...c,day:i},lab=tournamentLabel(temp);if(lab)return lab;if(i===6&&liveMonthWeek(c)===4)return 'WORLD CHAMPIONSHIP SUPERCARD'}return label0(c,i)};
+ const desc0=liveDayDescription;liveDayDescription=function(c){const lab=tournamentLabel(c);if(lab)return lab.includes('CONTRACT')?'The tournament winner and World Champion sign the contract for the tournament-month SuperCard.':`${lab} continues the month-long race for a World Championship opportunity.`;if(isTournamentMonth(c)&&liveIsSupercard(c))return 'The tournament winner challenges the LPW World Champion in the tournament-month main event.';return desc0(c)};
+ const run0=gauntletLiveRunShowSegment;gauntletLiveRunShowSegment=function(){const c=liveLoad(),s=tournamentSlot(c);if(c&&isTournamentMonth(c)&&s&&s.r!=='CONTRACT')return lpw84TournamentBooking(s);return run0()};
  window.lpw84TournamentBooking=function(s){const c=liveLoad(),t=seedTournament(c),m=getTournamentMatch(c,s);if(!m)return render(`<section class="panel live-world-screen"><h1>TOURNAMENT UPDATE</h1><p>The bracket is being finalised.</p><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`);if(![m.a,m.b].includes(c.active)){resolveAIMatch(c,m);liveAdvanceDay(c);liveSave(c);const win=liveFounder(m.winner),lose=liveFounder(m.winner===m.a?m.b:m.a);return render(`<section class="panel live-day-complete"><div class="tv-kicker">${tournamentLabel(c)}</div><h1>${win.name} ADVANCES</h1><div class="live-versus"><div>${imageWithFallback(win,'victory','art-full','resultVictory')}<b>${win.name}</b></div><strong>DEFEATED</strong><div>${imageWithFallback(lose,'full','art-full','resultVictory')}<b>${lose.name}</b></div></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`)}const opp=m.a===c.active?m.b:m.a;c.pending={opponent:opp,isSupercard:false,tournament:true,tournamentRound:m.round,tournamentMatchIndex:t.matches.indexOf(m)};liveSave(c);return gauntletLiveMatchCard65()};
  window.lpw84ContractSigning=function(){const c=liveLoad(),t=seedTournament(c);if(!t.winner){const f=getTournamentMatch(c,{r:'F',n:1});resolveAIMatch(c,f);t.winner=f.winner}const winner=liveFounder(t.winner),champ=liveFounder(c.championships.world);render(`<section class="panel live-world-screen lpw84-contract"><div class="tv-kicker">THURSDAY NIGHT THROWDOWN</div><h1>WORLD CHAMPIONSHIP CONTRACT SIGNING</h1><div class="live-versus"><div>${imageWithFallback(winner,'portrait','art-portrait','matchPortrait')}<b>${winner.name}</b><small>TOURNAMENT WINNER</small></div><strong>VS</strong><div>${imageWithFallback(champ,'portrait','art-portrait','matchPortrait')}<b>${champ.name}</b><small>WORLD CHAMPION</small></div></div><div class="live-npc-scene compact">${npcImage('veronica-vale','portrait')}<div><small>GENERAL MANAGER</small><b>Veronica Vale</b><p>The contract is signed. The World Championship match is official.</p></div></div><button class="btn live-primary" onclick="lpw84FinishContract()">CONTINUE</button></section>`)};
  window.lpw84FinishContract=function(){const c=liveLoad();liveAdvanceDay(c);liveSave(c);gauntletLiveCalendar()};
@@ -3342,13 +3344,13 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
 
  /* End-of-month only character selection; everyone else lives a simulated month. */
  gauntletLiveMonthRosterChoice=function(){const c=ensure84(liveLoad());syncActive(c);simulateInactiveMonth(c);liveSave(c);const rows=lpw8Rankings(c);render(`<section class="panel live-founder-screen lpw84-living-careers"><div class="tv-kicker">MONTH COMPLETE · LIVING CAREERS</div><h1>WHOSE STORY WILL THE CAMERAS FOLLOW?</h1><p class="sub">This choice is locked for the entire next month. Every other wrestler continues under CPU control.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=liveFounder(id),x=ensureCareer(c,id),rank=rows.findIndex(r=>r.id===id)+1,streak=x.streak>0?`W${x.streak}`:x.streak<0?`L${Math.abs(x.streak)}`:'—';return `<button class="live-founder-card lpw84-career-card" onclick="gauntletLiveStartNextMonth('${id}')">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'ACTIVE WRESTLER':'AVAILABLE CAREER'}</small><b>${w.name}</b><em>#${rank} · ${x.wins}-${x.losses} · ${streak}</em><i>${x.status}${x.rival?` · Rival: ${liveFounder(x.rival)?.name}`:''}</i></span></button>`}).join('')}</div></section>`)};
- gauntletLiveStartNextMonth=function(id){const c=ensure84(liveLoad());if(!c.stable.includes(id))return gauntletLiveMonthRosterChoice();setActive(c,id);c.world.katieThisWeek=0;c.monthSwitchLocked=true;const opp=livePickDifferent(c,c.stable);liveStartFeud(c,opp.id,'A new monthly rivalry begins.');liveGenerateMonthlyPlan(c);if(c.month===3)seedTournament(c);liveSave(c);gauntletLiveCalendar()};
+ gauntletLiveStartNextMonth=function(id){const c=ensure84(liveLoad());if(!c.stable.includes(id))return gauntletLiveMonthRosterChoice();setActive(c,id);c.world.katieThisWeek=0;c.monthSwitchLocked=true;const opp=livePickDifferent(c,c.stable);liveStartFeud(c,opp.id,'A new monthly rivalry begins.');liveGenerateMonthlyPlan(c);if(isTournamentMonth(c))seedTournament(c);liveSave(c);gauntletLiveCalendar()};
 
  /* Calendar and stable use wrestler-owned records instead of one shared record. */
  const cal0=gauntletLiveCalendar;gauntletLiveCalendar=function(){const c=liveLoad();if(c)syncActive(c);const r=cal0();setTimeout(()=>{const c2=liveLoad(),x=c2&&ensureCareer(c2,c2.active),hero=document.querySelector('.live-career-hero span');if(hero&&x)hero.textContent=`${x.wins}-${x.losses} record · Rank #${rankOf(c2,c2.active)} · ${c2.stable.length} roster members`;const small=document.querySelector('.live-career-hero small');if(small)small.textContent=c2.month===1?'LPW DEBUT':rankOf(c2,c2.active)===1?'#1 CONTENDER':c2.active===c2.championships.world?'WORLD CHAMPION':''},0);return r};
  gauntletLiveStable=function(){const c=ensure84(liveLoad()),rows=lpw8Rankings(c);render(`<section class="panel live-stable-screen">${shellBack()}<div class="tv-kicker">LIVING CAREERS</div><h1>YOUR ROSTER</h1><p class="sub">Wrestlers can only be selected after the monthly SuperCard.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=liveFounder(id),x=ensureCareer(c,id),rank=rows.findIndex(r=>r.id===id)+1;return `<article class="live-founder-card lpw84-career-card">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'ACTIVE WRESTLER':'CPU CONTROLLED'}</small><b>${w.name}</b><em>Rank #${rank} · ${x.wins}-${x.losses}</em><i>${x.status}</i></span></article>`}).join('')}</div><button class="btn live-primary" onclick="gauntletLiveCalendar()">RETURN TO CALENDAR</button></section>`)};
 
- const home0=gauntletLiveHome;gauntletLiveHome=function(){const r=home0();document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent='VERSION 8.4');const p=document.querySelector('.live-cycle span');if(p)p.textContent='Living Careers, one World Championship and the annual March #1 Contender Tournament.';return r};
+ const home0=gauntletLiveHome;gauntletLiveHome=function(){const r=home0();document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent='VERSION 8.4');const p=document.querySelector('.live-cycle span');if(p)p.textContent='Living Careers, one World Championship and the annual annual #1 Contender Tournament.';return r};
 })();
 
 /* 8.4 March SuperCard championship resolution. */
@@ -3356,10 +3358,10 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const begin84=gauntletLiveBeginDay;
  gauntletLiveBeginDay=function(skip=false){
   const c=liveLoad();
-  if(c?.month===3&&liveIsSupercard(c)){
+  if(c&&Number(c.month)===Number(c.world?.tournamentMonth||3)&&liveIsSupercard(c)){
    const t=c.world?.tournament,champId=c.championships?.world;
    if(t?.winner===c.active){c.pending={opponent:champId,isSupercard:true,worldTitle:true,tournamentTitleShot:true,supercardName:liveCurrentSupercard(c)};liveSave(c);return gauntletLiveShowIntro()}
-   if(t?.winner&&t.titleResolved!==true){const challenger=liveFounder(t.winner),champ=liveFounder(champId),cr=c.rankings.find(r=>r.id===champId),rr=c.rankings.find(r=>r.id===t.winner),newChamp=Math.random()<Math.max(.3,Math.min(.65,.46+((rr?.points||50)-(cr?.points||50))/220));const winner=newChamp?challenger:champ,loser=newChamp?champ:challenger;t.titleResolved=true;t.titleWinner=winner.id;if(newChamp)c.championships.world=challenger.id;const apply=(id,win,opp)=>{const x=c.livingCareers[id],row=c.rankings.find(r=>r.id===id);x.wins+=win?1:0;x.losses+=win?0:1;x.streak=win?Math.max(1,x.streak+1):Math.min(-1,x.streak-1);if(row){row.wins=x.wins;row.losses=x.losses;row.points=Math.max(0,row.points+(win?8:-4))}};apply(winner.id,true,loser.id);apply(loser.id,false,winner.id);liveAdvanceDay(c);liveSave(c);return render(`<section class="panel live-supercard-result"><div class="tv-kicker">${liveCurrentSupercard(c).toUpperCase()} · WORLD CHAMPIONSHIP</div><h1>${winner.name} ${newChamp?'WINS THE WORLD CHAMPIONSHIP':'RETAINS THE WORLD CHAMPIONSHIP'}</h1><div class="supercard-result-art">${imageWithFallback(winner,'victory','art-full','resultVictory')}${imageWithFallback(loser,'full','art-full','resultVictory')}</div><p>${challenger.name} earned this opportunity by winning the March #1 Contender Tournament. The title match has now reshaped the Power Rankings.</p><button class="btn live-primary" onclick="gauntletLiveMonthRosterChoice()">CONTINUE TO MONTH-END SELECTION</button></section>`)}
+   if(t?.winner&&t.titleResolved!==true){const challenger=liveFounder(t.winner),champ=liveFounder(champId),cr=c.rankings.find(r=>r.id===champId),rr=c.rankings.find(r=>r.id===t.winner),newChamp=Math.random()<Math.max(.3,Math.min(.65,.46+((rr?.points||50)-(cr?.points||50))/220));const winner=newChamp?challenger:champ,loser=newChamp?champ:challenger;t.titleResolved=true;t.titleWinner=winner.id;if(newChamp)c.championships.world=challenger.id;const apply=(id,win,opp)=>{const x=c.livingCareers[id],row=c.rankings.find(r=>r.id===id);x.wins+=win?1:0;x.losses+=win?0:1;x.streak=win?Math.max(1,x.streak+1):Math.min(-1,x.streak-1);if(row){row.wins=x.wins;row.losses=x.losses;row.points=Math.max(0,row.points+(win?8:-4))}};apply(winner.id,true,loser.id);apply(loser.id,false,winner.id);liveAdvanceDay(c);liveSave(c);return render(`<section class="panel live-supercard-result"><div class="tv-kicker">${liveCurrentSupercard(c).toUpperCase()} · WORLD CHAMPIONSHIP</div><h1>${winner.name} ${newChamp?'WINS THE WORLD CHAMPIONSHIP':'RETAINS THE WORLD CHAMPIONSHIP'}</h1><div class="supercard-result-art">${imageWithFallback(winner,'victory','art-full','resultVictory')}${imageWithFallback(loser,'full','art-full','resultVictory')}</div><p>${challenger.name} earned this opportunity by winning the annual #1 Contender Tournament. The title match has now reshaped the Power Rankings.</p><button class="btn live-primary" onclick="gauntletLiveMonthRosterChoice()">CONTINUE TO MONTH-END SELECTION</button></section>`)}
   }
   return begin84(skip)
  };
@@ -3949,4 +3951,108 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const r0=render;render=function(html){const out=r0(String(html||'').replace(/\s*·?\s*CAMERA FOCUS/gi,'').replace(/CURRENT CAMERA FOCUS/gi,'ACTIVE WRESTLER'));setTimeout(cleanDom,0);return out};
  ['gauntletLiveCalendar','lpw8RankingScreen','lpw84Dashboard','gauntletLiveStable','gauntletLiveWorldRecap'].forEach(name=>{const prior=window[name];if(typeof prior!=='function')return;window[name]=function(){const c=liveLoad();if(c)liveSave(rebuild(c));const out=prior.apply(this,arguments);setTimeout(cleanDom,0);return out}});
  window.LPW_SINGLE_MATCH_ACCOUNTING_VERSION=BUILD;
+})();
+
+
+/* ============================================================
+   LEGACY PRO WRESTLING 8.5.5 — CHAMPIONSHIP PATH HOTFIX
+   Protects the World Champion from random simulation, displays
+   the champion record, schedules the #1 contender title feud for
+   the following month, and defers the March tournament to April
+   when a player championship programme takes priority.
+   ============================================================ */
+(function(){
+ const BUILD='8.5.5';
+ const career=(c,id)=>{c.livingCareers=c.livingCareers||{};return c.livingCareers[id]||(c.livingCareers[id]={id,wins:0,losses:0,streak:0,lastResult:null,momentum:50,popularity:20,status:'Active',history:[]})};
+ const row=(c,id)=>Array.isArray(c?.rankings)?c.rankings.find(r=>r.id===id):null;
+ const contenderRows=c=>[...(c?.rankings||[])].filter(r=>r.id!==c?.championships?.world).sort((a,b)=>(Number(b.points)||0)-(Number(a.points)||0)||String(a.id).localeCompare(String(b.id)));
+ const contenderRank=(c,id)=>{const i=contenderRows(c).findIndex(r=>r.id===id);return i<0?Math.max(1,contenderRows(c).length):i+1};
+ const titleFeudActive=c=>!!(c?.world?.titleFeud&&c.world.titleFeud.month===Number(c.month)&&c.world.titleFeud.challenger===c.active&&c.world.titleFeud.champion===c.championships?.world);
+ function stripRandomChampionResults(c){
+  if(!c?.championships?.world)return c;
+  const id=c.championships.world,x=career(c,id);
+  x.history=(Array.isArray(x.history)?x.history:[]).filter(h=>!['WORLD_SIM','AI'].includes(String(h?.source||'').toUpperCase()));
+  const legitimate=x.history.filter(h=>h?.win===true||h?.win===false);
+  if(legitimate.length){x.wins=legitimate.filter(h=>h.win===true).length;x.losses=legitimate.filter(h=>h.win===false).length;const r=row(c,id);if(r){r.wins=x.wins;r.losses=x.losses}}
+  return c;
+ }
+ function snapshotChampion(c){const id=c?.championships?.world,x=id?career(c,id):null,r=id?row(c,id):null;return id?{id,wins:x.wins,losses:x.losses,streak:x.streak,lastResult:x.lastResult,history:JSON.parse(JSON.stringify(x.history||[])),points:r?.points,rowWins:r?.wins,rowLosses:r?.losses}:null}
+ function restoreChampion(c,s){if(!c||!s)return;const x=career(c,s.id),r=row(c,s.id);x.wins=s.wins;x.losses=s.losses;x.streak=s.streak;x.lastResult=s.lastResult;x.history=s.history;if(r){r.points=s.points;r.wins=s.rowWins;r.losses=s.rowLosses}}
+
+ /* The champion is never available to ordinary random opponent or world-story pools. */
+ const pool0=liveOtherPool;
+ liveOtherPool=function(c,exclude=[]){const blocked=[...(Array.isArray(exclude)?exclude:[exclude])];if(c?.championships?.world)blocked.push(c.championships.world);return pool0(c,[...new Set(blocked)])};
+
+ /* Repair old random champion entries when saves are read or written. */
+ const load0=liveLoad;liveLoad=function(){const c=load0();if(c)stripRandomChampionResults(c);return c};
+ const save0=liveSave;liveSave=function(c){if(c)stripRandomChampionResults(c);return save0(c)};
+
+ /* Protect the champion from the older month-end inactive-roster simulator. */
+ const monthChoice0=gauntletLiveMonthRosterChoice;
+ gauntletLiveMonthRosterChoice=function(){
+  const before=liveLoad(),snap=snapshotChampion(before);
+  if(before&&before.active!==before.championships?.world&&contenderRank(before,before.active)===1){
+   before.world=before.world||{};
+   before.world.titleFeudNextMonth={month:Number(before.month),challenger:before.active,champion:before.championships.world};
+   if(Number(before.month)===3)before.world.tournamentMonth=4;
+   liveSave(before);
+  }
+  const out=monthChoice0.apply(this,arguments);
+  const after=liveLoad();if(after&&snap){restoreChampion(after,snap);stripRandomChampionResults(after);liveSave(after)}
+  return out;
+ };
+
+ /* After the monthly wrestler selection, replace the ordinary feud with the champion when earned. */
+ const startMonth0=gauntletLiveStartNextMonth;
+ gauntletLiveStartNextMonth=function(id){
+  const out=startMonth0.apply(this,arguments),c=liveLoad(),q=c?.world?.titleFeudNextMonth;
+  if(c&&q&&q.month===Number(c.month)&&q.challenger===id&&q.champion===c.championships?.world){
+   c.world.titleFeud={month:Number(c.month),challenger:id,champion:q.champion,earnedRank:1};
+   c.world.titleFeudNextMonth=null;
+   c.world.feud={opponent:q.champion,intensity:35,playerWins:0,rivalWins:0,chapter:1,reason:`${liveFounder(id).name} finished the previous month as the #1 contender and now challenges ${liveFounder(q.champion).name} for the LPW World Championship.`};
+   liveGenerateMonthlyPlan(c);
+   c.world.monthPlan=(c.world.monthPlan||[]).map(item=>{const ids=[...(item?.opponents||[]),item?.partner].filter(Boolean);return ids.includes(q.champion)?{type:'segment',segment:'championship-confrontation',week:item.week,day:item.day}:item});
+   liveSave(c);gauntletLiveCalendar();
+  }
+  return out;
+ };
+
+ /* The title feud culminates only at the SuperCard; no random champion match is possible. */
+ const begin0=gauntletLiveBeginDay;
+ gauntletLiveBeginDay=function(skip=false){
+  const c=liveLoad();
+  if(c&&titleFeudActive(c)&&liveIsSupercard(c)){
+   c.pending={opponent:c.championships.world,isSupercard:true,worldTitle:true,numberOneContenderTitleShot:true,supercardName:liveCurrentSupercard(c)};
+   c.world.tournament=c.world.tournament||{titleResolved:false};
+   liveSave(c);return gauntletLiveShowIntro();
+  }
+  return begin0(skip);
+ };
+
+ /* Resolve the championship only in the protected title match. */
+ const complete0=liveCompleteBroadcast;
+ liveCompleteBroadcast=function(win){
+  const before=liveLoad(),p=before?.pending?{...before.pending}:null,oldChamp=before?.championships?.world;
+  if(before&&p?.worldTitle)before.world.tournament=before.world.tournament||{titleResolved:false};
+  const out=complete0(win),c=liveLoad();
+  if(c&&p?.worldTitle){
+   if(win)c.championships.world=c.active;
+   else c.championships.world=oldChamp;
+   c.world.titleFeud=null;c.world.titleFeudNextMonth=null;
+   if(c.world.tournament){c.world.tournament.titleResolved=true;c.world.tournament.titleWinner=win?c.active:oldChamp}
+   liveSave(c);
+  }
+  return out;
+ };
+
+ /* Add the champion's real record to the championship tile. */
+ const rankScreen0=lpw8RankingScreen;
+ lpw8RankingScreen=function(){
+  const out=rankScreen0.apply(this,arguments);
+  setTimeout(()=>{
+   const c=liveLoad(),champId=c?.championships?.world,x=champId?career(c,champId):null,tile=document.querySelector('.lpw837-champion-tile span');
+   if(tile&&x&&!tile.querySelector('.lpw855-champion-record'))tile.insertAdjacentHTML('beforeend',`<em class="lpw855-champion-record">${Number(x.wins)||0}-${Number(x.losses)||0} RECORD</em>`);
+  },0);return out;
+ };
+ window.LPW_CHAMPIONSHIP_PATH_VERSION=BUILD;
 })();
