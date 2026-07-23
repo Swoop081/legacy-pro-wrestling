@@ -124,9 +124,10 @@ function imageWithFallback(w,type,extraClass='',screen='default'){
  const sources=screenAsset?[screenAsset,...wrestlerImageCandidates(w,type).filter(src=>src!==screenAsset)]:wrestlerImageCandidates(w,type);
  const t=imageTransform(config,type,resolvedScreen);
  const custom=config?' framework-custom':'';
+ const originalHomeFeature=(resolvedScreen==='homeFeature' && WRESTLERS.indexOf(w)>=0 && WRESTLERS.indexOf(w)<20)?' original-roster-home-feature':'';
  const anchor=t.anchor||'feet';
  const st=`--custom-scale:${t.scale??1};--custom-x:${t.x??0}px;--custom-y:${t.y??0}px;`;
- return `<img class="wrestler-art wrestler-${w.id}${custom} ${extraClass}" style="${st}" data-art-type="${type}" data-image-screen="${resolvedScreen}" data-image-anchor="${anchor}" src="${sources[0]}" data-sources="${sources.join('|')}" data-source-index="0" alt="${w.name}" onerror="advanceImageFallback(this)">`;
+ return `<img class="wrestler-art wrestler-${w.id}${custom}${originalHomeFeature} ${extraClass}" style="${st}" data-art-type="${type}" data-image-screen="${resolvedScreen}" data-image-anchor="${anchor}" src="${sources[0]}" data-sources="${sources.join('|')}" data-source-index="0" alt="${w.name}" onerror="advanceImageFallback(this)">`;
 }
 function wrestlerPng(w){return wrestlerImage(w,'full')}
 function heroPortrait(w,side='',artType='auto',screenOverride=''){const resolvedType=artType==='auto'?(characterImageConfig(w)?'portrait':'full'):artType;const screen=screenOverride||(resolvedType==='victory'?'victory':'preMatch');return `<article class="hero-portrait ${side} image-framework ${characterImageConfig(w)?'has-render':'legacy-render'}">${imageWithFallback(w,resolvedType,`art-${resolvedType}`,screen)}<div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
@@ -4332,15 +4333,15 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================================= */
 (function(){
- window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.18';
- document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.18');
+ window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.19';
+ document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.19');
 })();
 
 
 /* ============================================================
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================ */
-window.LPW_BRAND_VERSION='8.6.18';
+window.LPW_BRAND_VERSION='8.6.19';
 function lpwBrandLogo(size='header',extra=''){
  const file=size==='main'?'lpw-logo-main-menu-1200.webp':size==='compact'?'lpw-logo-compact-400.webp':'lpw-logo-header-800.webp';
  return `<img class="lpw-brand-logo lpw-brand-logo-${size} ${extra}" src="assets/branding/${file}" alt="LEGACY Pro Wrestling">`;

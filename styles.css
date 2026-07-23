@@ -2452,3 +2452,15 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
   translate:none!important;
   scale:none!important;
 }
+
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.6.19 — ORIGINAL ROSTER FEATURE SCALE CORRECTION
+   Wrestlers 1–20 use the existing calibrated home assets but are enlarged only
+   on the main-menu Featured Wrestler panel. Characters 21+ remain untouched.
+   ============================================================================= */
+.lpw-home .featured-superstar > .wrestler-art.original-roster-home-feature[data-image-screen="homeFeature"]{
+  transform:scale(1.18)!important;
+  transform-origin:center bottom!important;
+  object-position:center bottom!important;
+}
