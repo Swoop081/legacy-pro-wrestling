@@ -4102,9 +4102,9 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  window.LPW_CHAMPIONSHIP_PATH_VERSION=BUILD;
 })();
 
-/* LEGACY Pro Wrestling 8.6.1 — Collections Bio & Unlock Audit */
+/* LEGACY Pro Wrestling 8.6.2 — Collections Bio & Unlock Audit */
 (function(){
- const BUILD='8.6.1';
+ const BUILD='8.6.2';
  const UNLOCK_KEY='lpw_unlockables_v1';
  const PENDING_KEY='lpw_pending_unlocks_v1';
  const JETT_CARDS=[
@@ -4187,4 +4187,61 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const careerHome=gauntletLiveHome;gauntletLiveHome=function(){setActiveGameMode('career');const r=careerHome();setTimeout(()=>{const menu=document.querySelector('.live-mode-actions,.live-home-actions,.hub-menu');if(menu&&!menu.querySelector('.lpw-collection-link'))menu.insertAdjacentHTML('beforeend','<button class="btn secondary lpw-collection-link" onclick="collection()">COLLECTION</button>')},0);return r};
  document.querySelectorAll('.build-tag').forEach(x=>x.textContent='VERSION '+BUILD);
  window.LPW_COLLECTIONS_VERSION=BUILD;
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.6.2 — JETT EXCLUSIVE DECISION POOL + CARD RESOLUTION
+   ============================================================================= */
+(function(){
+ const BUILD='8.6.2';
+ const VALID_JETT_DECISIONS=new Set([
+  'Break Their Heart','Heartbreaker','Heart of Gold','One Last Encore','Tune Up the Band',
+  'Showstopper','Picture Perfect','Feed Off the Attention','Raise the Tempo','Never Misses',
+  'Flash of Brilliance','Steal the Spotlight','Believe the Hype','High Risk','Stolen Moment'
+ ]);
+ function jettActive(){return !!(S&&M&&Array.isArray(S.team)&&S.team[M.activeP]?.id==='jett-valentine')}
+ function jettOption(card){return {
+  ...card,desc:'',exclusive:true,
+  attr:Math.round(attributeValue(S.team[M.activeP],card.action)),
+  image:`assets/decisions/jett-valentine/${card.slug}.webp`
+ }}
+ const previousGetDecision=getDecision;
+ getDecision=function(){
+  if(!jettActive())return previousGetDecision();
+  const wrestler=S.team[M.activeP],phase=decisionPhase();
+  const situation=one(DECISION_SITUATIONS[phase]);
+  const phaseCards=JETT_DECISION_CARDS[phase];
+  if(!Array.isArray(phaseCards)||phaseCards.length<3)throw new Error(`Jett decision phase "${phase}" is missing its assigned card pool.`);
+  const pool=phaseCards.map(jettOption);
+  const options=freshOptions(pool,3).map((option,index)=>({...option,token:`choice-${index}`}));
+  if(options.some(option=>!VALID_JETT_DECISIONS.has(option.name)))throw new Error('Unassigned decision entered Jett Valentine decision pool.');
+  return {phase,title:situation[0],text:situation[1](wrestler.name),options};
+ };
+ const previousStoryChoice=storyChoice;
+ storyChoice=function(token){
+  const selected=jettActive()?M.currentDecision?.options?.find(option=>option.token===token):null;
+  const result=previousStoryChoice(token);
+  if(selected&&M?.decisionOutcome){
+   M.decisionOutcome.choice=selected.name;
+   M.decisionOutcome.image=selected.image;
+   M.decisionOutcome.slug=selected.slug;
+  }
+  return result;
+ };
+ const previousDecisionHTML=decisionHTML;
+ decisionHTML=function(){
+  const outcome=M?.decisionOutcome;
+  if(!outcome?.image||!jettActive())return previousDecisionHTML();
+  const sign=value=>value>0?`+${value}`:`${value}`;
+  return `<div class="story-decision psychology-v2-foundation decision-outcome jett-decision-outcome outcome-${outcome.key}">
+   <div class="your-call-label">YOUR CALL</div>
+   <h2>${outcome.label}</h2>
+   <p>${outcome.summary}</p>
+   <div class="jett-resolution-card"><img src="${outcome.image}" alt="${outcome.choice}" loading="eager"><span><small>JETT VALENTINE</small><b>${outcome.choice}</b></span></div>
+   <div class="outcome-deltas jett-outcome-rewards"><span><b>${sign(outcome.score)}</b><small>MATCH SCORE</small></span><span><b>${sign(outcome.control)}</b><small>CONTROL</small></span><span><b>${sign(outcome.crowd)}</b><small>CROWD</small></span></div>
+   <div class="outcome-progress">RESULT APPLIED</div>
+   <button type="button" class="btn outcome-continue" onclick="continueDecisionOutcome()">CONTINUE MATCH</button>
+  </div>`;
+ };
+ window.LPW_JETT_DECISION_POOL_VERSION=BUILD;
 })();
