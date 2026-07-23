@@ -4102,26 +4102,26 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  window.LPW_CHAMPIONSHIP_PATH_VERSION=BUILD;
 })();
 
-/* LEGACY Pro Wrestling 8.6.0 — Collections & Unlockables */
+/* LEGACY Pro Wrestling 8.6.1 — Collections Bio & Unlock Audit */
 (function(){
- const BUILD='8.6.0';
+ const BUILD='8.6.1';
  const UNLOCK_KEY='lpw_unlockables_v1';
  const PENDING_KEY='lpw_pending_unlocks_v1';
  const JETT_CARDS=[
   ['break-their-heart','Break Their Heart','Win your first match as Jett Valentine.'],
   ['heart-of-gold','Heart of Gold','Complete 2 matches as Jett Valentine.'],
-  ['one-last-encore','One Last Encore','Win a match after completing at least 3 matches as Jett Valentine.'],
-  ['tune-up-the-band','Tune Up the Band','Complete 3 matches as Jett Valentine.'],
+  ['one-last-encore','One Last Encore','Build a 2-match winning streak as Jett Valentine.'],
+  ['tune-up-the-band','Tune Up the Band','Win a Singles match as Jett Valentine.'],
   ['showstopper','Showstopper','Win 3 matches as Jett Valentine.'],
   ['picture-perfect','Picture Perfect','Earn a match rating of 3 stars or higher as Jett Valentine.'],
-  ['feed-off-the-attention','Feed Off the Attention','Complete 5 matches as Jett Valentine.'],
-  ['raise-the-tempo','Raise the Tempo','Win 5 matches as Jett Valentine.'],
-  ['flash-of-brilliance','Flash of Brilliance','Win 2 consecutive matches as Jett Valentine.'],
-  ['steal-the-spotlight','Steal the Spotlight','Complete 8 matches as Jett Valentine.'],
-  ['high-risk','High Risk','Earn a match rating of 4 stars or higher as Jett Valentine.'],
-  ['never-misses','Never Misses','Win a match rated as a decisive finish as Jett Valentine.'],
-  ['stolen-moment','Stolen Moment','Win 7 matches as Jett Valentine.'],
-  ['believe-the-hype','Believe the Hype','Win 10 matches as Jett Valentine.'],
+  ['feed-off-the-attention','Feed Off the Attention','Win a Tag Team match as Jett Valentine.'],
+  ['raise-the-tempo','Raise the Tempo','Complete 5 matches as Jett Valentine.'],
+  ['flash-of-brilliance','Flash of Brilliance','Earn a match rating of 4 stars or higher as Jett Valentine.'],
+  ['steal-the-spotlight','Steal the Spotlight','Defeat 4 different opponents as Jett Valentine.'],
+  ['high-risk','High Risk','Win 6 matches as Jett Valentine.'],
+  ['never-misses','Never Misses','Build a 3-match winning streak as Jett Valentine.'],
+  ['stolen-moment','Stolen Moment','Complete 10 matches as Jett Valentine.'],
+  ['believe-the-hype','Believe the Hype','Win 12 matches as Jett Valentine.'],
   ['heartbreaker','Heartbreaker','Complete 20 matches as Jett Valentine.']
  ];
  const LOCATIONS={
@@ -4134,22 +4134,49 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  function profileData(w){
   const size=SIZES[w.id]||[w.power>=90?'6\'4\"':w.speed>=90?'5\'10\"':'6\'1\"',w.power>=90?'275 lb':w.speed>=90?'205 lb':'235 lb'];
   const style=(typeof profileFor==='function'?profileFor(w).archetype:'Professional Wrestler');
-  const base=BIOS[w.id]||`${w.name} has earned a place on the LPW roster through a distinctive mix of skill, determination and personality.`;
-  return {height:size[0],weight:size[1],from:LOCATIONS[w.id]||'United States',style,bio:`${base} ${w.name} approaches every contest with a clear identity, using ${w.signature} to turn the smallest opening into a defining moment. Away from the spotlight, the same ambition that brought ${w.name} to LPW continues to drive the pursuit of bigger matches and lasting championship success.`};
+  const raw=(BIOS[w.id]||'').replace(/Tag Team Gauntlet|the Gauntlet|Gauntlet/gi,'LPW').replace(/Founding Twenty|founding wrestler/gi,'LPW roster member').trim();
+  const opener=raw||`${w.name} has established a distinct identity within the LPW roster.`;
+  const bio=`${opener} ${w.name} approaches every contest with a style built around ${style.toLowerCase()}, combining personality and ring awareness with the ability to create a decisive opening. ${w.signature} remains the move opponents fear most, while the pursuit of bigger matches and championship success continues to shape every appearance in LPW.`;
+  return {height:size[0],weight:size[1],from:LOCATIONS[w.id]||'United States',style,bio};
  }
  function unlocked(){try{return JSON.parse(localStorage.getItem(UNLOCK_KEY)||'{}')}catch(e){return {}}}
  function saveUnlocked(x){try{localStorage.setItem(UNLOCK_KEY,JSON.stringify(x))}catch(e){}}
  function pending(){try{return JSON.parse(sessionStorage.getItem(PENDING_KEY)||'[]')}catch(e){return []}}
  function savePending(x){try{sessionStorage.setItem(PENDING_KEY,JSON.stringify(x))}catch(e){}}
- function jettStats(){const s=loadStats(),j=s.wrestlers?.['jett-valentine']||{matches:0,wins:0,losses:0};return {matches:j.matches||0,wins:j.wins||0,streak:s.currentStreak||0,rating:s.highestRated?.rating||0,last:s.lastMatch};}
+ function jettProgress(){try{return JSON.parse(localStorage.getItem('lpw_jett_unlock_progress_v2')||'{"singlesWins":0,"tagWins":0,"opponents":[],"bestStreak":0}')}catch(e){return {singlesWins:0,tagWins:0,opponents:[],bestStreak:0}}}
+ function saveJettProgress(p){try{localStorage.setItem('lpw_jett_unlock_progress_v2',JSON.stringify(p))}catch(e){}}
+ function jettStats(){const s=loadStats(),j=s.wrestlers?.['jett-valentine']||{matches:0,wins:0,losses:0};const p=jettProgress();return {matches:j.matches||0,wins:j.wins||0,rating:s.highestRated?.rating||0,singlesWins:p.singlesWins||0,tagWins:p.tagWins||0,opponents:(p.opponents||[]).length,bestStreak:Math.max(p.bestStreak||0,s.bestWinStreak||0)};}
  function requirementMet(id,st){switch(id){
-  case'break-their-heart':return st.wins>=1;case'heart-of-gold':return st.matches>=2;case'one-last-encore':return st.matches>=3&&st.wins>=1;case'tune-up-the-band':return st.matches>=3;case'showstopper':return st.wins>=3;case'picture-perfect':return st.rating>=3;case'feed-off-the-attention':return st.matches>=5;case'raise-the-tempo':return st.wins>=5;case'flash-of-brilliance':return st.streak>=2;case'steal-the-spotlight':return st.matches>=8;case'high-risk':return st.rating>=4;case'never-misses':return st.wins>=1&&st.last?.winner?.includes('Jett Valentine');case'stolen-moment':return st.wins>=7;case'believe-the-hype':return st.wins>=10;case'heartbreaker':return st.matches>=20;default:return false}}
+  case'break-their-heart':return st.wins>=1;
+  case'heart-of-gold':return st.matches>=2;
+  case'one-last-encore':return st.bestStreak>=2;
+  case'tune-up-the-band':return st.singlesWins>=1;
+  case'showstopper':return st.wins>=3;
+  case'picture-perfect':return st.rating>=3;
+  case'feed-off-the-attention':return st.tagWins>=1;
+  case'raise-the-tempo':return st.matches>=5;
+  case'flash-of-brilliance':return st.rating>=4;
+  case'steal-the-spotlight':return st.opponents>=4;
+  case'high-risk':return st.wins>=6;
+  case'never-misses':return st.bestStreak>=3;
+  case'stolen-moment':return st.matches>=10;
+  case'believe-the-hype':return st.wins>=12;
+  case'heartbreaker':return st.matches>=20;
+  default:return false}}
+ function trackJettUnlockProgress(win){
+  if(!M||!S||!Array.isArray(S.team)||!S.team.some(w=>w.id==='jett-valentine'))return;
+  const p=jettProgress(),singles=isSinglesMatch();
+  if(win){if(singles)p.singlesWins=(p.singlesWins||0)+1;else p.tagWins=(p.tagWins||0)+1}
+  p.bestStreak=Math.max(p.bestStreak||0,loadStats().currentStreak||0);
+  p.opponents=[...new Set([...(p.opponents||[]),...((S.opp||[]).map(w=>w.id).filter(Boolean))])];
+  saveJettProgress(p);
+ }
  function auditUnlocks(){const u=unlocked(),st=jettStats(),newOnes=[];JETT_CARDS.forEach(c=>{const key='jett-valentine.'+c[0];if(!u[key]&&requirementMet(c[0],st)){u[key]={unlockedAt:new Date().toISOString()};newOnes.push(c[0])}});if(newOnes.length){saveUnlocked(u);savePending([...pending(),...newOnes])}return newOnes}
  window.lpwShowUnlockCelebration=function(returnAction='collectionProfile(\'jett-valentine\',\'unlockables\')'){
   const q=pending();if(!q.length){eval(returnAction);return}const id=q.shift();savePending(q);const c=JETT_CARDS.find(x=>x[0]===id);
   render(`<section class="panel unlock-celebration"><div class="unlock-rays"></div><div class="tv-kicker">NEW UNLOCKABLE</div><h1>${c[1]}</h1><div class="unlock-celebration-card foil-card"><img src="assets/decisions/jett-valentine/${id}.webp" alt="${c[1]}"><i></i></div><p>${c[2]}</p><div class="live-result-actions"><button class="btn live-primary" onclick="collectionProfile('jett-valentine','unlockables')">VIEW IN COLLECTION</button><button class="btn secondary" onclick="${q.length?`lpwShowUnlockCelebration(\`${returnAction}\`)`:returnAction}">CONTINUE</button></div></section>`)
  };
- const originalRecord=recordCompletedMatch;recordCompletedMatch=function(win,rating){originalRecord(win,rating);auditUnlocks()};
+ const originalRecord=recordCompletedMatch;recordCompletedMatch=function(win,rating){originalRecord(win,rating);trackJettUnlockProgress(win);auditUnlocks()};
  const originalRender=render;render=function(x){originalRender(x);setTimeout(()=>{
   if(!pending().length)return;const result=document.querySelector('.match-result,.live-day-complete');if(!result||result.dataset.unlockHooked)return;result.dataset.unlockHooked='1';const btn=[...result.querySelectorAll('button')].find(b=>/CONTINUE|NEXT|CALENDAR|REWARD/i.test(b.textContent));if(btn){const action=btn.getAttribute('onclick')||'home()';btn.setAttribute('onclick',`lpwShowUnlockCelebration(\`${action.replace(/`/g,'')}\`)`)}
  },0)};
