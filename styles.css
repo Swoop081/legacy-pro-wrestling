@@ -2950,3 +2950,13 @@ body>.lpw904-show-bumper.lpw916-show-bumper .lpw-show-logo span,
  .lpw918-show-bumper{padding:20px!important}
  .lpw918-transition-logo{width:80vw!important;max-width:calc(100vw - 56px)!important;min-height:116px!important;padding:12px 18px 10px!important}
 }
+
+/* 9.1.9 — the transition overlay contains a computed-style clone of the
+   visible intro logo, so its proportions and typography are identical. */
+.lpw919-show-bumper{
+ position:fixed!important;inset:0!important;z-index:100000!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:100vw!important;height:100dvh!important;margin:0!important;padding:0!important;
+ box-sizing:border-box!important;background:#050505!important;overflow:hidden!important;
+}
+.lpw919-show-bumper>.lpw919-exact-transition-logo{flex:0 0 auto!important}

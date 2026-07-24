@@ -7069,3 +7069,64 @@ render=function(html){
  window.LPW_GAMEPLAY_BUILD=BUILD;
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.1.9 — EXACT INTRO-TO-TRANSITION LOGO CLONE
+   The transition copies the visible intro logo's computed presentation exactly.
+   ============================================================================= */
+(function(){
+ const BUILD='9.1.9';
+ const priorRun=window.gauntletLiveRunShowSegment;
+
+ function copyImportantStyle(source,target,properties){
+  const cs=getComputedStyle(source);
+  properties.forEach(prop=>target.style.setProperty(prop,cs.getPropertyValue(prop),'important'));
+ }
+
+ function buildExactLogo(source){
+  const clone=source.cloneNode(true);
+  clone.classList.add('lpw919-exact-transition-logo');
+  const rect=source.getBoundingClientRect();
+  const logoProps=['display','position','box-sizing','width','height','min-width','max-width','min-height','max-height','padding-top','padding-right','padding-bottom','padding-left','margin-top','margin-right','margin-bottom','margin-left','border-top-width','border-right-width','border-bottom-width','border-left-width','border-top-style','border-right-style','border-bottom-style','border-left-style','border-top-color','border-right-color','border-bottom-color','border-left-color','background-color','background-image','background-position','background-size','background-repeat','box-shadow','color','text-shadow','transform','transform-origin','overflow','grid-template-columns','grid-template-rows','align-items','align-content','justify-items','justify-content'];
+  copyImportantStyle(source,clone,logoProps);
+  clone.style.setProperty('width',`${rect.width}px`,'important');
+  clone.style.setProperty('height',`${rect.height}px`,'important');
+  clone.style.setProperty('min-width',`${rect.width}px`,'important');
+  clone.style.setProperty('max-width',`${rect.width}px`,'important');
+  clone.style.setProperty('margin','0','important');
+
+  const srcChildren=[...source.children],dstChildren=[...clone.children];
+  srcChildren.forEach((src,i)=>{
+   const dst=dstChildren[i]; if(!dst)return;
+   copyImportantStyle(src,dst,['display','box-sizing','font-family','font-size','font-style','font-weight','font-stretch','line-height','letter-spacing','word-spacing','white-space','text-align','text-transform','color','text-shadow','transform','transform-origin','margin-top','margin-right','margin-bottom','margin-left','padding-top','padding-right','padding-bottom','padding-left','width','height','min-width','max-width','overflow']);
+  });
+  return clone;
+ }
+ window.lpw919BuildExactTransitionLogo=buildExactLogo;
+
+ if(typeof priorRun==='function'){
+  window.gauntletLiveRunShowSegment=function(){
+   const intro=document.querySelector('.live-show-intro,.lpw-show-open');
+   if(!intro)return priorRun.apply(this,arguments);
+   const approved=intro.querySelector('.lpw-show-logo,.lpw-ple-title,.lpw904-supercard-title');
+   if(!approved)return priorRun.apply(this,arguments);
+
+   const overlay=document.createElement('section');
+   overlay.className='lpw919-show-bumper';
+   overlay.setAttribute('aria-hidden','true');
+   overlay.appendChild(buildExactLogo(approved));
+   document.body.appendChild(overlay);
+
+   // Remove the intro before handing off so all older bumper wrappers are bypassed.
+   intro.remove();
+   const args=arguments;
+   setTimeout(()=>{
+    overlay.remove();
+    priorRun.apply(this,args);
+   },1150);
+  };
+ }
+ window.TTG_APP_VERSION=BUILD;
+ window.LPW_GAMEPLAY_BUILD=BUILD;
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
+})();
