@@ -2898,3 +2898,27 @@ body>.lpw904-show-bumper.lpw916-show-bumper .lpw-show-logo span,
  .lpw916-career-nav{min-height:48px!important;padding:8px 4px!important;font-size:.58rem!important;letter-spacing:0!important}
  body>.lpw904-show-bumper.lpw916-show-bumper .lpw904-show-logo,.lpw904-show-bumper.lpw916-show-bumper .lpw904-show-logo{width:calc(100vw - 48px)!important}
 }
+
+/* 9.1.7 — transition must use the same compact show-intro logo proportions */
+.lpw917-show-bumper{
+  min-height:100dvh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  box-sizing:border-box;
+  background:#050505;
+}
+.lpw917-show-bumper > .lpw-show-logo,
+.lpw917-show-bumper > .lpw-ple-title,
+.lpw917-show-bumper > .lpw904-supercard-title{
+  width:min(86vw,620px) !important;
+  max-width:min(86vw,620px) !important;
+  margin:0 auto !important;
+  transform:none !important;
+  box-sizing:border-box;
+}
+.lpw917-show-bumper .lpw-show-logo b{
+  white-space:nowrap;
+  overflow:visible;
+}

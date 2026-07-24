@@ -4659,8 +4659,14 @@ render=function(html){
  /* A show-only title bumper appears after Start the Show. Static remains exclusive to Career onboarding. */
  function showBumper(c,next){
   const isSC=liveIsSupercard(c),show=isSC?liveCurrentSupercard(c):liveShowName(c);
-  const logo=isSC?`<div class="lpw904-supercard-title">${String(show||'SUPERCARD').toUpperCase()}</div>`:lpwShowLogo(show);
-  render(`<section class="lpw904-show-bumper"><div class="lpw904-show-logo">${logo}</div></section>`);
+  // Reuse the exact approved logo markup already rendered on the show-intro
+  // screen. This prevents the transition from falling back to the older,
+  // stretched transition-specific treatment.
+  const introLogo=document.querySelector('.live-show-intro .lpw-show-logo,.lpw-show-open .lpw-show-logo');
+  const logo=isSC
+   ?`<div class="lpw904-supercard-title">${String(show||'SUPERCARD').toUpperCase()}</div>`
+   :(introLogo?introLogo.outerHTML:lpwShowLogo(show));
+  render(`<section class="lpw904-show-bumper lpw917-show-bumper">${logo}</section>`);
   setTimeout(next,1150);
  }
  const runShowBase=gauntletLiveRunShowSegment;
@@ -7008,4 +7014,29 @@ render=function(html){
  window.LPW916_repairPlayerPreviewArt=repairPlayerPreviewArt916;
  window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+})();
+
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.1.7 — SHOW TRANSITION LOGO SOURCE FIX
+   The transition now clones the exact approved logo from the visible show intro.
+   ============================================================================= */
+(function(){
+ const BUILD='9.1.7';
+ const oldRun=window.gauntletLiveRunShowSegment;
+ if(typeof oldRun==='function'){
+  window.gauntletLiveRunShowSegment=function(){
+   const intro=document.querySelector('.live-show-intro,.lpw-show-open');
+   if(!intro)return oldRun.apply(this,arguments);
+   const c=liveLoad(),isSC=liveIsSupercard(c);
+   const approved=intro.querySelector('.lpw-show-logo,.lpw-ple-title,.lpw904-supercard-title');
+   if(!approved)return oldRun.apply(this,arguments);
+   const markup=approved.outerHTML;
+   render(`<section class="lpw904-show-bumper lpw917-show-bumper">${markup}</section>`);
+   setTimeout(()=>oldRun.apply(this,arguments),1150);
+  };
+ }
+ window.TTG_APP_VERSION=BUILD;
+ window.LPW_GAMEPLAY_BUILD=BUILD;
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
 })();
