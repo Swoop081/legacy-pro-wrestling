@@ -5084,3 +5084,42 @@ render=function(html){
  gauntletLiveHome=function(){const out=home909.apply(this,arguments);setTimeout(()=>document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`),0);return out};window.gauntletLiveHome=gauntletLiveHome;
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);window.LPW_GAMEPLAY_BUILD=BUILD;
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.10 — MATCH PREVIEW LAYOUT & POWER RANKS
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.10';
+ function rankLabel910(c,id){
+  if(id===c?.championships?.world)return 'WORLD CHAMPION';
+  const rows=typeof lpw8Rankings==='function'?lpw8Rankings(c):[...(c?.rankings||[])].sort((a,b)=>(Number(b.points)||0)-(Number(a.points)||0));
+  const index=rows.findIndex(row=>row.id===id);
+  return index>=0?`POWER RANK #${index+1}`:'UNRANKED';
+ }
+ function portraitCard910(c,w,label=''){
+  return `<div class="lpw-portrait-card">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<small>${label}</small><b>${w.name}</b><em class="lpw-match-rank">${rankLabel910(c,w.id)}</em></div>`;
+ }
+ gauntletLiveMatchCard65=function(){
+  try{
+   const c=liveLoad();if(!c)return gauntletLiveHome();
+   const isSC=liveIsSupercard(c),player=liveFounder(c.active);if(!player)throw new Error('Active wrestler is missing.');
+   let item=lpwRepairShowItem(c,livePlanItem(c));const rival=liveFeudOpponent(c);
+   if(isSC){
+    const opponent=(rival&&lpwValidCareerWrestler(rival.id)&&rival.id!==c.active)?rival:lpwPickCareerOpponent(c);
+    if(!opponent)throw new Error('No valid Supercard opponent is available.');
+    item={type:'singles',opponents:[opponent.id]};
+   }else item=lpwPersistRepairedShowItem(c,item);
+   const type=item.type,opponents=item.opponents||[],partner=item.partner||null;
+   const roster=[player,...(partner?[liveFounder(partner)]:[]),...opponents.map(liveFounder)].filter(Boolean);
+   const expected=type==='tag'?4:2;if(roster.length<expected)throw new Error('Tonight\'s match roster is incomplete.');
+   c.pending={opponent:opponents[0],opponents,type,partner,isSupercard:isSC};liveSave(c);
+   const title=isSC?'FEUD FINALE':type==='tag'?'TAG TEAM MATCH':'FEATURED SINGLES MATCH';
+   const branding=isSC?`<div class="lpw-ple-title">${liveCurrentSupercard(c).toUpperCase()}</div>`:lpwShowLogo(liveShowName(c));
+   render(`<section class="panel live-match-card lpw-match-card-830 lpw-match-card-910"><button class="shell-back lpw-match-calendar-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="lpw-match-branding">${branding}</div><button class="btn live-primary lpw-broadcast-button-top" onclick="gauntletLiveLaunchBroadcast65()">BEGIN MATCH BROADCAST</button><h1>${title}</h1><div class="live-match-lineup ${type} portrait-lineup">${roster.map((w,i)=>portraitCard910(c,w,i===0?'YOUR WRESTLER':i===1&&partner?'YOUR PARTNER':'OPPONENT')).join('')}</div><div class="live-npc-scene compact producer-card">${npcImage('raymond-briggs','portrait')}<div><small>MATCH PRODUCER</small><b>Raymond Briggs</b><p>Use the broadcast decisions to control the pace. The result will shape what happens tomorrow.</p></div></div></section>`);
+  }catch(err){
+   console.error('Career match card failed:',err);const c=liveLoad();if(c){liveGenerateMonthlyPlan(c);liveSave(c)}
+   render(`<section class="panel live-world-screen"><div class="tv-kicker">CAREER RECOVERY</div><h1>MATCH CARD REPAIRED</h1><p>The match card could not be loaded, so Career rebuilt tonight's segment.</p><button class="btn live-primary" onclick="gauntletLiveShowIntro()">RETURN TO SHOW</button><button class="btn secondary" onclick="gauntletLiveCalendar()">RETURN TO CALENDAR</button></section>`)
+  }
+ };
+ window.TTG_APP_VERSION=BUILD;
+})();
