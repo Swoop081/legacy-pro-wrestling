@@ -1,0 +1,20 @@
+{
+  "version": "9.2.0",
+  "status": "consolidated-runtime",
+  "shippingRuntime": [
+    "game.js",
+    "career-consolidated.js",
+    "data.js",
+    "update-manager.js",
+    "assets/config/imageManager.js"
+  ],
+  "removedReleaseRemnants": [
+    "README-9.1.11.txt",
+    "README-9.2.0.txt",
+    "CLEANUP-8.6.16.json",
+    "FEATURED-WRESTLER-CALIBRATION-8.6.20.json",
+    "VERSION-9.0-AUDIT.json"
+  ],
+  "coldBootParity": true,
+  "nojekyllPreserved": true
+}

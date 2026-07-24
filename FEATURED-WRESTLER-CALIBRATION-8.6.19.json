@@ -1,7 +1,0 @@
-{
-  "version": "8.6.19",
-  "change": "Main-menu-only scale correction for original roster wrestlers 1-20",
-  "scale": 1.18,
-  "anchor": "center bottom",
-  "characters_21_plus": "unchanged"
-}

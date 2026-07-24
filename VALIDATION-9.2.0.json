@@ -1,0 +1,14 @@
+{
+  "version": "9.2.0",
+  "checks": {
+    "gameJsSyntax": "passed",
+    "careerRuntimeSyntax": "passed",
+    "dataJsSyntax": "passed",
+    "updateManagerSyntax": "passed",
+    "imageManagerSyntax": "passed",
+    "nojekyllPresent": true,
+    "versionMetadataAligned": true,
+    "serviceWorkerCacheAligned": true,
+    "obsoleteRootBuildFilesRemoved": true
+  }
+}

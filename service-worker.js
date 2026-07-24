@@ -1,7 +1,6 @@
 /* LEGACY Pro Wrestling Service Worker 8.3.7 Build 9 */
-const APP_VERSION = '9.1.11-forced-centred-logo-zoom';
-const CACHE_NAME = `lpw-${APP_VERSION}`;
-const CRITICAL_FILES = ['index.html','game.js','data.js','styles.css','version.json','manifest.webmanifest','service-worker.js','update-manager.js','assets/config/imageManager.js'];
+const APP_VERSION = '9.2.0-forced-centred-logo-zoom';
+const CACHE_NAME = `lpw-9.2.0-consolidated'index.html','game.js','data.js','styles.css','version.json','manifest.webmanifest','service-worker.js','update-manager.js','assets/config/imageManager.js'];
 
 self.addEventListener('install', event => { self.skipWaiting(); });
 self.addEventListener('activate', event => {
