@@ -7040,3 +7040,32 @@ render=function(html){
  window.LPW_GAMEPLAY_BUILD=BUILD;
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.1.8 — VERIFIED SHOW TRANSITION LOGO
+   Uses a dedicated transition component with the approved compact intro proportions.
+   ============================================================================= */
+(function(){
+ const BUILD='9.1.8';
+ const priorRun=window.gauntletLiveRunShowSegment;
+ function transitionMarkup(c){
+  if(liveIsSupercard(c)){
+   return `<div class="lpw918-transition-ple">${String(liveCurrentSupercard(c)||'SUPERCARD').toUpperCase()}</div>`;
+  }
+  const full=String(liveShowName(c)||'').toUpperCase();
+  const throwdown=full.includes('THROWDOWN');
+  return `<div class="lpw918-transition-logo ${throwdown?'throwdown':'mayhem'}"><span>${throwdown?'THURSDAY NIGHT':'MONDAY NIGHT'}</span><b>${throwdown?'THROWDOWN':'MAYHEM'}</b></div>`;
+ }
+ if(typeof priorRun==='function'){
+  window.gauntletLiveRunShowSegment=function(){
+   const intro=document.querySelector('.live-show-intro,.lpw-show-open');
+   if(!intro)return priorRun.apply(this,arguments);
+   const c=liveLoad();
+   render(`<section class="lpw918-show-bumper">${transitionMarkup(c)}</section>`);
+   setTimeout(()=>priorRun.apply(this,arguments),1150);
+  };
+ }
+ window.TTG_APP_VERSION=BUILD;
+ window.LPW_GAMEPLAY_BUILD=BUILD;
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
+})();
