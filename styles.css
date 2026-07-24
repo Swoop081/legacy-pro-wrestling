@@ -2753,3 +2753,13 @@ body.career-view:has(.lpw914-preview-brand-only) header{min-height:18px!importan
 .lpw911-throwdown,.lpw-show-logo.throwdown{max-width:calc(100vw - 28px)!important;width:min(92vw,620px)!important;overflow:hidden!important}.lpw911-throwdown b,.lpw-show-logo.throwdown b{font-size:clamp(2rem,7.7vw,4rem)!important;letter-spacing:-.045em!important;white-space:nowrap!important;transform:scaleX(.9)!important;transform-origin:center!important}
 .lpw91-consequence .lpw-change-grid,.lpw911-consequence .lpw-change-grid{justify-items:center!important}.lpw91-consequence .lpw-change-grid>div,.lpw911-consequence .lpw-change-grid>div{text-align:center!important;border:0!important;background:transparent!important}.lpw91-change small,.lpw91-change b,.lpw91-change em{text-align:center!important;margin-left:auto!important;margin-right:auto!important}
 @media(max-width:560px){.lpw912-career-header{grid-template-columns:78px minmax(0,1fr) minmax(0,1fr)!important;gap:5px!important}.lpw912-career-header>img{width:74px!important;height:52px!important}.lpw912-career-header>button{font-size:.58rem!important;padding:9px 4px!important}.lpw912-social,.lpw912-dirt,.lpw912-npc-screen{padding-left:11px!important;padding-right:11px!important}.lpw912-feed article:nth-child(n+4){display:none!important}}
+
+/* 9.1.3 Career Hub feed/ranking final fixes */
+.lpw913-rank-movement{display:inline-block!important;margin-left:.45rem!important;font-size:.72em!important;line-height:1!important;vertical-align:middle!important;font-style:normal!important;font-weight:900!important}
+.lpw913-rank-movement.up{color:#42d77d!important}.lpw913-rank-movement.down{color:#ff5964!important}
+.lpw913-living-world .lpw908-rank-row>strong{align-self:center!important}
+.lpw913-living-world .lpw908-rank-row>span{display:flex!important;align-items:center!important;gap:.1rem!important;min-width:0!important}
+.lpw913-living-world .lpw908-rank-row>strong .lpw913-rank-movement,
+.lpw913-living-world .lpw908-rank-row>strong .lpw912-rank-movement,
+.lpw913-living-world .lpw908-rank-row>strong .lpw911-rank-movement,
+.lpw913-living-world .lpw908-rank-row>strong .lpw914-rank-move{display:none!important}

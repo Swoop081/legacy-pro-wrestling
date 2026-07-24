@@ -6714,3 +6714,192 @@ render=function(html){
  window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
  later(finalDomCleanup);
 })();
+
+/* ================================================================
+   LEGACY Pro Wrestling 9.1.3 — Career Hub Feed & Ranking Final Fix
+   ================================================================ */
+(()=>{
+ 'use strict';
+ const BUILD='9.1.3';
+ const later=(fn,ms=0)=>setTimeout(fn,ms);
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const pick=a=>a?.length?a[Math.floor(Math.random()*a.length)]:'';
+ const unique=a=>[...new Set(a.filter(Boolean))];
+ const founder=id=>typeof liveFounder==='function'?liveFounder(id):null;
+ const rankings=c=>typeof lpw8Rankings==='function'?lpw8Rankings(c):(c.rankings||[]);
+ const activeCareer=c=>c?.livingCareers?.[c.active]||{};
+ const isFreshCareer=c=>{
+  if(!c)return false;
+  const all=Object.values(c.livingCareers||{});
+  const noCareerResults=all.every(x=>Number(x?.wins||0)+Number(x?.losses||0)===0);
+  const noRankingResults=rankings(c).every(x=>Number(x?.wins||0)+Number(x?.losses||0)===0);
+  const noWorldResults=!c.world?.lastResult&&!c.world?.latestHouseShow;
+  return noCareerResults&&noRankingResults&&noWorldResults;
+ };
+ function ensureFeedState(c){
+  c.world=c.world||{};
+  c.world.hubFeedState=c.world.hubFeedState||{};
+  const s=c.world.hubFeedState;
+  if(!s.saveSeed){
+   try{s.saveSeed=(crypto.getRandomValues(new Uint32Array(1))[0]>>>0).toString(36)}catch(e){s.saveSeed=(Date.now()+Math.random()).toString(36)}
+  }
+  s.history=s.history||{headlines:[],social:[],dirt:[]};
+  return s;
+ }
+ function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+ function rng(seed){let x=seed>>>0;return()=>{x+=0x6D2B79F5;let t=x;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+ function chooseWithCooldown(pool,count,history,seed){
+  const r=rng(hash(seed));
+  let candidates=unique(pool).filter(x=>!history.slice(-12).includes(x));
+  if(candidates.length<count)candidates=unique(pool).filter(x=>!history.slice(-5).includes(x));
+  if(candidates.length<count)candidates=unique(pool);
+  const out=[];
+  while(candidates.length&&out.length<count){const i=Math.floor(r()*candidates.length);out.push(candidates.splice(i,1)[0])}
+  history.push(...out);if(history.length>48)history.splice(0,history.length-48);
+  return out;
+ }
+ function rosterPool(c){
+  return rankings(c).map(x=>founder(x.id)).filter(Boolean);
+ }
+ function rankOf(c,id){const i=rankings(c).findIndex(x=>x.id===id);return i<0?null:i+1}
+ function latestHouse(c){
+  const h=c.world?.latestHouseShow?.matches?.[0];if(!h)return null;
+  const w=founder(h.winner),l=founder(h.loser);return w&&l?{...h,w,l}:null;
+ }
+ function feedPools(c){
+  const p=founder(c.active),r=typeof liveFeudOpponent==='function'?liveFeudOpponent(c):null,champ=founder(c.championships?.world);
+  const rows=rankings(c),idx=rows.findIndex(x=>x.id===c.active),rank=idx+1;
+  const above=idx>0?founder(rows[idx-1].id):null,below=idx>=0&&idx<rows.length-1?founder(rows[idx+1].id):null;
+  const others=rosterPool(c).filter(w=>![p?.id,r?.id,champ?.id].includes(w.id));
+  const a=others[0]||p,b=others[1]||p,d=others[2]||p,e=others[3]||p,f=others[4]||p,house=latestHouse(c);
+  const result=c.world?.lastResult;
+  const headlines=unique([
+   champ&&`${champ.name} begins the day carrying the pressure that follows every reigning World Champion.`,
+   champ&&`Contenders across LPW are measuring their progress against ${champ.name}'s championship standard.`,
+   p&&`${p.name} enters the new cycle ranked #${rank||'—'}, with every televised result capable of changing the picture.`,
+   above&&`${above.name} currently holds the position directly above ${p.name}, but the margin remains within reach.`,
+   below&&`${below.name} is close enough to challenge ${p.name}'s current place in the rankings.`,
+   r&&`${r.name} has sharpened the tone of the rivalry before the next confrontation.`,
+   r&&`The tension between ${p.name} and ${r.name} is beginning to influence the wider card.`,
+   a&&`${a.name} is drawing stronger internal reviews after a productive run away from television.`,
+   b&&`${b.name} has asked for opposition capable of proving whether the recent momentum is real.`,
+   d&&`${d.name} is quietly becoming one of the promotion's most active competitors.`,
+   e&&`${e.name} is being discussed as a possible breakout name for the coming weeks.`,
+   f&&`Officials are studying ${f.name}'s recent form before finalising another televised opportunity.`,
+   house&&`${house.w.name} defeated ${house.l.name} at the latest house show${house.upset?', producing an upset that reached the locker room quickly':''}.`,
+   house&&`${house.w.name}'s live-event victory has created fresh pressure for a television booking.`,
+   result&&result.win&&`${p.name}'s latest victory has forced the rankings committee to reconsider the middle of the table.`,
+   result&&!result.win&&`The response to ${p.name}'s latest defeat is now one of the week's central questions.`,
+   `Management is reviewing recent results before locking in the next televised card.`,
+   `Several wrestlers outside the spotlight improved their records on the live-event circuit.`,
+   `The middle of the Power Rankings is becoming the most unstable part of LPW.`,
+   `A strong week at house shows has made upcoming television selections harder for management.`,
+   `The locker room is paying closer attention to strength of opposition as records begin to separate.`,
+   `One unexpected result has changed how producers are discussing the next round of matches.`,
+   `The road to the next SuperCard is already producing new alliances and new pressure.`,
+   `LPW officials are balancing established names against wrestlers demanding a larger opportunity.`,
+   `A cluster of contenders has emerged within only a few ranking points of one another.`,
+   `The next televised result could alter several matchups currently under discussion.`
+  ]);
+  const social=unique([
+   `@AvaCross: House shows matter. Every win counts, even when the cameras are not there.`,
+   `@AvaCross: New results are official, the rankings are moving, and the next card already feels different.`,
+   `@AvaCross: Which wrestler deserves more television time this week? The replies are open.`,
+   `@AvaCross: Match announcements, backstage clips and rankings updates are coming throughout the day.`,
+   `@AvaCross: One result can change an entire month. That is not hype—it is the standings.`,
+   `@AvaCross: The road to the next SuperCard continues whether the cameras are rolling or not.`,
+   `@AvaCross: Fan poll—who has earned the next main-event opportunity?`,
+   `@AvaCross: The audience is debating the rankings again. Keep the arguments respectful. Mostly.`,
+   `@AvaCross: There are more stories in LPW today than any one rivalry can contain.`,
+   `@AvaCross: The latest live-event report is in. A few wrestlers just made management's job harder.`,
+   `@AvaCross: Today’s question—momentum, rankings or championships: which matters most right now?`,
+   `@AvaCross: Some of the loudest reactions this week came from matches that never aired.`,
+   `@LPWOfficial: Results from across the roster have been added to the official records.`,
+   `@LPWOfficial: The next televised card is taking shape.`,
+   `@LPWOfficial: Updated rankings will follow the completion of the current results cycle.`,
+   `@LPWFans: The championship picture feels one result away from changing.`,
+   `@LPWFans: Who had the strongest performance of the week?`,
+   `@LPWFans: The middle of the rankings is absolute chaos right now.`,
+   `@RingsideReport: Recent activity and strength of opposition are becoming impossible to ignore.`,
+   `@BackstageWire: Several wrestlers are asking for tougher opponents after recent wins.`,
+   a&&`@${a.name.replace(/[^A-Za-z0-9]/g,'')}: “I do not need every headline. I need the next win.”`,
+   b&&`@${b.name.replace(/[^A-Za-z0-9]/g,'')}: “Check the record after the next bell.”`,
+   d&&`@${d.name.replace(/[^A-Za-z0-9]/g,'')}: “The spotlight eventually finds the person who keeps winning.”`,
+   e&&`@${e.name.replace(/[^A-Za-z0-9]/g,'')}: “Everybody keeps talking about opportunity. I am preparing for it.”`,
+   r&&`@${r.name.replace(/[^A-Za-z0-9]/g,'')}: “One result does not settle this.”`,
+   house&&`@LPWFans: ${house.w.name}'s house-show victory deserves a televised follow-up.`,
+   p&&`@CannonCalls: ${p.name}'s next result will tell us whether the current attention becomes a real run.`
+  ]);
+  const dirt=unique([
+   `The rankings committee is placing more weight on recent activity and strength of opposition.`,
+   b&&d&&`There has been internal discussion about pairing ${b.name} with ${d.name} in a fresh programme.`,
+   a&&`${a.name} is believed to be lobbying for a televised match after increased live-event activity.`,
+   e&&`Sources say ${e.name} has impressed producers with consistency away from the main broadcasts.`,
+   f&&`Talent Relations is reportedly discussing a higher-profile opportunity for ${f.name}.`,
+   r&&`Officials are considering how far the rivalry involving ${p.name} and ${r.name} should escalate.`,
+   r&&`A stipulation may be discussed if ${p.name} and ${r.name} continue to raise the intensity.`,
+   house&&`Officials were reportedly impressed by ${house.w.name}'s victory over ${house.l.name} at the latest house show.`,
+   house&&`${house.l.name} may receive another booking quickly after the latest live-event result raised questions.`,
+   champ&&`Management is believed to be protecting ${champ.name}'s next championship programme from premature exposure.`,
+   `Producers are said to be using house-show performance to influence upcoming television bookings.`,
+   `A wrestler currently outside the top ten is reportedly receiving strong backstage reviews.`,
+   `One planned match may be changed after an unexpected result away from television.`,
+   `Several names with fewer appearances have been prioritised for upcoming live events.`,
+   `Officials are debating whether ranking position or current form should carry more booking weight.`,
+   `A possible surprise opponent has been discussed for an upcoming televised match.`,
+   `Management is reportedly monitoring one rivalry for signs that it can carry a SuperCard.`,
+   `Sources claim a recent social-media reaction has influenced how one segment will be presented.`,
+   `There is internal pressure to feature more wrestlers from the lower half of the rankings.`,
+   `A veteran name is believed to be advising a younger wrestler behind the scenes.`,
+   `Producers may reward a strong house-show run with a televised match before the month ends.`,
+   `One wrestler has reportedly rejected an easy opponent in favour of a more dangerous test.`,
+   `The next rankings update may create a matchup that was not part of the original monthly plan.`,
+   `Backstage discussion has shifted toward who can sustain momentum rather than create one viral moment.`,
+   `A future contract conversation may depend on consistency over the next several appearances.`
+  ]);
+  return {headlines,social,dirt,champ,rows,idx};
+ }
+ function movementFor(c,id){
+  if(isFreshCareer(c))return 0;
+  const m=Number(c.world?.rankingMovement?.[id]||0);
+  return Number.isFinite(m)?m:0;
+ }
+ function renderHubFeed(){
+  const host=document.querySelector('.lpw908-living-world,.lpw909-living-world,.lpw-future-hub');
+  const c=typeof liveLoad==='function'?liveLoad():null;if(!host||!c)return;
+  const state=ensureFeedState(c),pools=feedPools(c);
+  const cycle=`${state.saveSeed}|${c.month||1}|${c.week||1}|${c.day||1}|${activeCareer(c).wins||0}|${activeCareer(c).losses||0}`;
+  const headlines=chooseWithCooldown(pools.headlines,2,state.history.headlines,cycle+'|h');
+  const social=chooseWithCooldown(pools.social,2,state.history.social,cycle+'|s');
+  const dirt=chooseWithCooldown(pools.dirt,2,state.history.dirt,cycle+'|d');
+  const idx=Math.max(0,pools.idx),from=Math.max(0,Math.min(idx-2,Math.max(0,pools.rows.length-5)));
+  const rankRows=pools.rows.slice(from,from+5).map((row,i)=>{
+   const w=founder(row.id),move=movementFor(c,row.id),mark=move>0?`<i class="lpw913-rank-movement up">▲${move>1?move:''}</i>`:move<0?`<i class="lpw913-rank-movement down">▼${move<-1?Math.abs(move):''}</i>`:'';
+   return `<div class="lpw908-rank-row ${row.id===c.active?'is-player':''}"><strong>#${from+i+1}</strong><span>${esc(w?.name||'Unknown')}${mark}</span>${row.id===c.active?'<em>YOU</em>':''}</div>`
+  }).join('');
+  host.className='lpw908-living-world lpw909-living-world lpw913-living-world';
+  host.innerHTML=`<div class="lpw908-feed-heading"><small>LPW LIVING WORLD</small><h2>AROUND THE LIVING WORLD</h2><p>Updated every in-game day as results, stories and rankings evolve.</p></div>
+  <section class="lpw908-feed-section"><div class="lpw908-section-title"><h3>LATEST HEADLINES</h3><button onclick="lpw909OpenNews()">VIEW NEWS</button></div>${headlines.map((x,i)=>`<article><small>${i?'AROUND LPW':'TOP STORY'}</small><p>${esc(x)}</p></article>`).join('')}</section>
+  <section class="lpw908-feed-section lpw908-rankings"><div class="lpw908-section-title"><h3>POWER RANKINGS</h3><button onclick="lpw909OpenRankings()">FULL RANKINGS</button></div><div class="lpw908-champion"><small>WORLD CHAMPION</small><b>${esc(pools.champ?.name||'VACANT')}</b></div>${rankRows}</section>
+  <section class="lpw908-feed-section"><div class="lpw908-section-title"><h3>SOCIAL PULSE</h3></div>${social.map(x=>`<article class="lpw908-social"><p>${esc(x)}</p></article>`).join('')}</section>
+  <section class="lpw908-feed-section"><div class="lpw908-section-title"><h3>DIRT SHEET DIGEST</h3><button onclick="lpw909OpenArchive()">MEDIA ARCHIVE</button></div>${dirt.map(x=>`<article><small>SOURCES SAY…</small><p>${esc(x)}</p></article>`).join('')}</section>`;
+  try{liveSave(c)}catch(e){}
+ }
+ function cleanRankingMarkers(){
+  const c=typeof liveLoad==='function'?liveLoad():null;if(!c)return;
+  const fresh=isFreshCareer(c);
+  document.querySelectorAll('.lpw908-rank-row,.lpw8-ranking-list article,.power-rankings article,.lpw919-rank-row').forEach(row=>{
+   const rank=row.querySelector('strong');
+   const name=[...row.querySelectorAll('span,b')].find(n=>n!==rank&&!/^(YOU|ACTIVE|WORLD CHAMPION)$/i.test((n.textContent||'').trim())&&!/^#?\d+$/.test((n.textContent||'').trim()));
+   const markers=[...row.querySelectorAll('i,em,small,span')].filter(n=>/^[▲▼↑↓]\s*\d*$/.test((n.textContent||'').trim()));
+   markers.forEach(m=>{if(fresh)m.remove();else if(name&&!name.contains(m)){m.classList.add('lpw913-rank-movement');name.appendChild(m)}});
+  });
+ }
+ const oldCalendar=window.gauntletLiveCalendar;
+ window.gauntletLiveCalendar=function(){const r=oldCalendar.apply(this,arguments);later(()=>{renderHubFeed();cleanRankingMarkers()},30);return r};
+ const oldRender=window.render;
+ window.render=function(html){const r=oldRender.call(this,html);later(cleanRankingMarkers,30);return r};
+ window.LPW913_renderHubFeed=renderHubFeed;
+ window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
+ later(()=>{renderHubFeed();cleanRankingMarkers()},80);
+})();

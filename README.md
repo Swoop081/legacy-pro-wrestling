@@ -1,4 +1,4 @@
-# LEGACY Pro Wrestling 9.1.2 — Career QA Final Consolidation
+# LEGACY Pro Wrestling 9.1.3 — Career Hub News & Ranking Fix
 
 Changed-files patch for the cumulative working build.
 
