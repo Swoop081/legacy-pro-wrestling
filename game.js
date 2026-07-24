@@ -5138,3 +5138,200 @@ render=function(html){
  window.TTG_APP_VERSION=BUILD;
  window.LPW_GAMEPLAY_BUILD=BUILD;
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.12 — TRUE RESET & PERSONAL-BEST BASELINE FIX
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.12';
+
+ // A personal best belongs to a completed previous Gauntlet run. Capture that
+ // record when a new run starts so wins inside a freshly reset/current run do
+ // not congratulate the player for merely matching the record being created.
+ const previousResetClassicState=resetClassicState;
+ resetClassicState=function(){
+  previousResetClassicState.apply(this,arguments);
+  const stats=loadStats();
+  S.gauntletRecordAtStart=Math.max(0,Number(stats?.bestGauntlet||0));
+  S.personalBestShownForRun=false;
+ };
+ window.resetClassicState=resetClassicState;
+
+ const previousMilestoneData=milestoneData;
+ milestoneData=function(){
+  if(S?.liveMode)return previousMilestoneData.apply(this,arguments);
+  const items=[];
+  if(S.streak===1)items.push(['FIRST VICTORY','The Gauntlet journey is officially underway.']);
+  if(S.streak===5)items.push(['FIVE MATCH STREAK','Momentum is becoming a legacy.']);
+  if(S.streak===10)items.push(['DOMINATING THE GAUNTLET','Ten straight victories have changed the entire broadcast.']);
+  const oldRecord=Math.max(0,Number(S.gauntletRecordAtStart||0));
+  if(oldRecord>0&&S.streak>oldRecord&&!S.personalBestShownForRun){
+   S.personalBestShownForRun=true;
+   items.push(['NEW PERSONAL BEST',`A new standard has been set at ${S.streak} victories.`]);
+  }
+  return items.slice(0,2);
+ };
+ window.milestoneData=milestoneData;
+
+ // Clear every browser persistence layer used by current or legacy builds.
+ // Reload only after service workers, caches and databases have been removed.
+ window.lpw909ConfirmReset=async function(){
+  try{localStorage.clear()}catch(e){}
+  try{sessionStorage.clear()}catch(e){}
+  try{
+   if('indexedDB' in window&&indexedDB.databases){
+    const dbs=await indexedDB.databases();
+    await Promise.all((dbs||[]).filter(db=>db?.name).map(db=>new Promise(resolve=>{
+     const req=indexedDB.deleteDatabase(db.name);
+     req.onsuccess=req.onerror=req.onblocked=()=>resolve();
+    })));
+   }
+  }catch(e){}
+  try{
+   if('caches' in window){
+    const keys=await caches.keys();
+    await Promise.all(keys.map(key=>caches.delete(key)));
+   }
+  }catch(e){}
+  try{
+   if(navigator.serviceWorker){
+    const registrations=await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map(reg=>reg.unregister()));
+   }
+  }catch(e){}
+  location.replace(`${location.pathname}?reset=${Date.now()}`);
+ };
+
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+ window.TTG_APP_VERSION=BUILD;
+ window.LPW_GAMEPLAY_BUILD=BUILD;
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.13 — TABLED PRESENTATION & MATCH STORY FIXES
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.13';
+ const clamp913=(n,min,max)=>Math.max(min,Math.min(max,n));
+
+ // Let the control meter genuinely swing both ways, including the debut match.
+ // From the middle stages onward it progressively leans toward the stronger
+ // projected match score without a sudden closing jump.
+ shiftControl=function(amount,reason){
+  const before=M.playerControl;
+  M.playerControl=clamp913(M.playerControl+amount,5,95);
+  if(Math.abs(M.playerControl-before)>=7)M.turningPoint=reason||M.turningPoint;
+ };
+ window.shiftControl=shiftControl;
+ function reconcileLateControl913(){
+  if(!M||M.ended)return;
+  const progress=clamp913((Number(M.eventIndex)||0)/Math.max(1,Number(M.eventTarget)||1),0,1);
+  if(progress<.48)return;
+  const diff=projectedScore('player')-projectedScore('opp');
+  const target=clamp913(50+diff*.22,27,73);
+  const strength=clamp913((progress-.48)/.52,0,1)*.34;
+  const desired=M.playerControl+(target-M.playerControl)*strength;
+  const step=clamp913(desired-M.playerControl,-4.5,4.5);
+  M.playerControl=clamp913(M.playerControl+step,5,95);
+ }
+ const auto913=generateAutomaticBeat;
+ generateAutomaticBeat=function(){const out=auto913.apply(this,arguments);reconcileLateControl913();return out};
+ window.generateAutomaticBeat=generateAutomaticBeat;
+ const finish913=resolveFinish;
+ resolveFinish=function(){reconcileLateControl913();return finish913.apply(this,arguments)};
+ window.resolveFinish=resolveFinish;
+
+ // Half-star presentation with the written decimal remaining authoritative.
+ matchRatingData=function(rating){
+  const half=clamp913(Math.round(Number(rating||0)*2)/2,0,5);
+  const labels=['QUICK CONTEST','SOLID BOUT','STRONG MATCH','SHOW-STEALER','INSTANT CLASSIC'];
+  let stars='';
+  for(let i=1;i<=5;i++){
+   const value=half-(i-1);
+   stars+=value>=1?'<i class="lpw913-star full">★</i>':value>=.5?'<i class="lpw913-star half">★</i>':'<i class="lpw913-star empty">☆</i>';
+  }
+  return {rounded:half,stars,label:labels[clamp913(Math.ceil(Number(rating||1))-1,0,4)]};
+ };
+ window.matchRatingData=matchRatingData;
+ finishHeadline=function(){
+  const gap=Math.abs(Number(M.finalPlayer||0)-Number(M.finalOpp||0));
+  if(gap<=6)return 'A LAST-GASP VICTORY';
+  if(gap<=18)return 'A HARD-FOUGHT VICTORY';
+  if(gap<=34)return 'A CONVINCING VICTORY';
+  return 'A DOMINANT VICTORY';
+ };
+ window.finishHeadline=finishHeadline;
+
+ function compressDecisions913(history=[]){
+  const out=[];
+  history.forEach(item=>{
+   const last=out[out.length-1];
+   if(last&&last.choice===item.choice){
+    last.count=(last.count||1)+1;last.score+=Number(item.score||0);last.control+=Number(item.control||0);last.crowd+=Number(item.crowd||0);last.momentum+=Number(item.momentum||0);
+    last.outcome=last.outcome===item.outcome?item.outcome:'MIXED SEQUENCE';last.choice=`${item.choice} (${last.count} attempts)`;
+   }else out.push({...item,count:1});
+  });
+  return out;
+ }
+ function resultAnalysis913(){
+  const playerWon=S.team.some(x=>x.id===M.winner?.id),winnerScore=playerWon?M.finalPlayer:M.finalOpp,loserScore=playerWon?M.finalOpp:M.finalPlayer;
+  const winnerDecision=playerWon?M.decisionPlayer:M.decisionOpp,loserDecision=playerWon?M.decisionOpp:M.decisionPlayer;
+  const decisionEdge=Math.round(winnerDecision-loserDecision),gap=Math.round(winnerScore-loserScore);
+  if(decisionEdge>=12)return `${M.winner.name}'s stronger decision impact created a ${gap}-point advantage and turned the closing stretch in their favour.`;
+  if(gap<=8)return `${M.winner.name} survived a near-even contest and converted the final opening when the scores were closest.`;
+  return `${M.winner.name} built the stronger overall score and progressively took control as the match entered its decisive phase.`;
+ }
+ function turningPoint913(){
+  const finisherLine=(M.log||[]).map(x=>x.text).find(x=>x.includes(M.loser?.finisher||'__never__'));
+  if(finisherLine)return `${finisherLine} ${M.winner.name} survived the danger and changed the direction of the finish.`;
+  if(M.turningPoint&&M.turningPoint.length>28)return M.turningPoint;
+  return `${M.winner.name} shifted the closing exchanges in their favour and created the opening for ${M.winner.finisher}.`;
+ }
+ function curatedHighlights913(){
+  const texts=(M.log||[]).filter(x=>x&&x.text&&!['phase','result'].includes(x.type)).map(x=>x.text);
+  const unique=[];texts.forEach(x=>{if(!unique.includes(x))unique.push(x)});
+  const winner=M.winner?.name||'',loser=M.loser?.name||'';
+  const loserBeat=unique.find(x=>x.includes(loser)&&!x.includes('THREE'));
+  const winnerBeat=unique.find(x=>x.includes(winner)&&!x.includes(M.winner?.finisher||'__'));
+  const nearFall=unique.find(x=>/ONE\.\.\.|near fall|kick/i.test(x));
+  const finish=unique.find(x=>x.includes(M.winner?.finisher||'__'))||`${winner} lands ${M.winner?.finisher} to finish the match!`;
+  return [loserBeat||`${loser} establishes the early pace.`,winnerBeat||`${winner} answers and begins to build momentum.`,nearFall||`${loser} creates a dangerous near fall.`,`${winner} takes increasing control as the match moves toward its finish.`,finish].filter(Boolean).slice(0,5);
+ }
+ const summary913=showSummary;
+ showSummary=function(win){
+  const originalHistory=M.decisionHistory;
+  M.decisionHistory=compressDecisions913(originalHistory||[]);
+  const out=summary913.apply(this,arguments);
+  M.decisionHistory=originalHistory;
+  setTimeout(()=>{
+   const panel=document.querySelector('.presentation-summary');if(!panel)return;
+   const findArticle=label=>[...panel.querySelectorAll('.summary-grid article')].find(a=>(a.querySelector('small')?.textContent||'').trim()===label);
+   const analysis=findArticle('MATCH ANALYSIS'),turn=findArticle('TURNING POINT');
+   if(analysis)analysis.querySelector('p').textContent=resultAnalysis913();
+   if(turn)turn.querySelector('p').textContent=turningPoint913();
+   const reel=panel.querySelector('.highlight-reel');
+   if(reel)reel.innerHTML=`<h3>Broadcast Highlights</h3>${curatedHighlights913().map(x=>`<p>${x}</p>`).join('')}`;
+   const psych=panel.querySelector('.psychology-breakdown'),grid=panel.querySelector('.summary-grid');
+   if(psych&&grid)grid.insertAdjacentElement('afterend',psych);
+  },0);
+  return out;
+ };
+ window.showSummary=showSummary;
+
+ // Put the compact show logo beside the LEGACY mark on show introductions.
+ function arrangeShowBranding913(){
+  const intro=document.querySelector('.live-show-intro.lpw-show-open');if(!intro)return;
+  intro.classList.add('lpw913-show-open');
+  const copy=intro.querySelector('.show-intro-copy'),show=copy?.querySelector('.lpw-show-logo,.lpw-ple-title'),brand=intro.querySelector('.lpw-career-brand');
+  if(!copy||!show||!brand||copy.querySelector('.lpw913-brand-row'))return;
+  const row=document.createElement('div');row.className='lpw913-brand-row';
+  row.append(show,brand);
+  const start=copy.querySelector('.lpw837-start-first,.live-primary');copy.insertBefore(row,start||copy.firstChild);
+ }
+ const intro913=gauntletLiveShowIntro;
+ gauntletLiveShowIntro=function(){const out=intro913.apply(this,arguments);setTimeout(arrangeShowBranding913,25);return out};
+ window.gauntletLiveShowIntro=gauntletLiveShowIntro;
+
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+ window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
+})();
