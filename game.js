@@ -4867,3 +4867,73 @@ render=function(html){
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
  window.LPW_GAMEPLAY_BUILD=BUILD;
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.8 — DAILY LIVING WORLD CAREER HUB
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.8';
+ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+ const daySeed=c=>((Number(c.year||1)*372)+(Number(c.month||1)*31)+(Number(c.week||1)*7)+Number(c.day||0));
+ const pick=(items,seed,offset=0)=>items[Math.abs(seed+offset)%items.length];
+ function playerRankWindow(c){
+  const rows=lpw8Rankings(c)||[],idx=Math.max(0,rows.findIndex(r=>r.id===c.active));
+  const from=Math.max(0,Math.min(idx-2,Math.max(0,rows.length-5)));
+  return rows.slice(from,from+5).map((row,i)=>({row,rank:from+i+1,w:liveFounder(row.id)}));
+ }
+ function dailyFeed(c){
+  const seed=daySeed(c),player=liveFounder(c.active),rival=liveFeudOpponent(c),champ=liveFounder(c.championships?.world);
+  const rows=lpw8Rankings(c)||[],pidx=rows.findIndex(r=>r.id===c.active),rank=pidx>=0?pidx+1:'—';
+  const above=pidx>0?liveFounder(rows[pidx-1].id):null,below=pidx>=0&&pidx<rows.length-1?liveFounder(rows[pidx+1].id):null;
+  const show=liveDayLabel(c,c.day),supercard=liveCurrentSupercard(c);
+  const headlineAngles=[
+   rival?`${rival.name} has increased the pressure ahead of ${supercard}.`:`The race for the next major opportunity tightened overnight.`,
+   `${champ?.name||'The World Champion'} remains the measuring stick as the rankings shift around ${player.name}.`,
+   `${player.name} enters ${show} ranked #${rank}, with every result capable of changing the picture.`,
+   above?`${above.name} is trying to protect the position directly above ${player.name}.`:`The top of the rankings is under renewed scrutiny.`,
+   below?`${below.name} is close enough to threaten ${player.name}'s current position.`:`Contenders below the player are searching for a breakthrough.`
+  ];
+  const social=[
+   rival?`@${rival.name.replace(/\s+/g,'')}: “${player.name} can read the rankings. I am focused on what happens face-to-face.”`:`@LPW: The next result could create an entirely new rivalry.`,
+   `@LPWFans: ${pick(['The crowd is debating who has the most momentum today.','The championship picture feels one result away from changing.','Every appearance is starting to matter more.'],seed,3)}`,
+   `${above?`@${above.name.replace(/\s+/g,'')}: “Nobody takes my spot without earning it.”`:`@LPWOfficial: The top contenders are being watched closely.`}`,
+   `${below?`@${below.name.replace(/\s+/g,'')}: “I only need one opening.”`:`@LPWInsider: Opportunity is moving through the roster.`}`
+  ];
+  const dirt=[
+   rival?`Backstage sources say officials are preparing another escalation involving ${player.name} and ${rival.name}.`:`There is growing internal interest in identifying ${player.name}'s next major opponent.`,
+   above?`People close to the rankings committee believe ${above.name}'s position is less secure than it appears.`:`The rankings committee is reportedly reviewing the leading contenders.`,
+   below?`${below.name} is believed to be pushing for a match that could leapfrog ${player.name}.`:`Several wrestlers are lobbying for a high-profile match.`,
+   `One producer described today's ${show} plans as “important for the next phase of the month.”`
+  ];
+  return {
+   headlines:[headlineAngles[seed%headlineAngles.length],headlineAngles[(seed+2)%headlineAngles.length]],
+   social:[social[seed%social.length],social[(seed+1)%social.length]],
+   dirt:[dirt[seed%dirt.length],dirt[(seed+2)%dirt.length]],
+   champion:champ,
+   rankingWindow:playerRankWindow(c)
+  };
+ }
+ function mountLivingWorld(){
+  const host=document.querySelector('.lpw-future-hub');
+  if(!host)return;
+  const c=liveLoad(),feed=dailyFeed(c);
+  host.className='lpw908-living-world';
+  host.innerHTML=`
+   <div class="lpw908-feed-heading"><small>LPW LIVING WORLD</small><h2>AROUND THE LIVING WORLD</h2><p>Updated today as stories, rankings and rivalries evolve.</p></div>
+   <section class="lpw908-feed-section"><div class="lpw908-section-title"><h3>LATEST HEADLINES</h3><button onclick="lpw84NewsNetwork()">VIEW NEWS</button></div>${feed.headlines.map((x,i)=>`<article><small>${i?'CAREER WATCH':'TOP STORY'}</small><p>${esc(x)}</p></article>`).join('')}</section>
+   <section class="lpw908-feed-section lpw908-rankings"><div class="lpw908-section-title"><h3>POWER RANKINGS</h3><button onclick="lpw8RankingScreen()">FULL RANKINGS</button></div><div class="lpw908-champion"><small>WORLD CHAMPION</small><b>${esc(feed.champion?.name||'VACANT')}</b></div>${feed.rankingWindow.map(x=>`<div class="lpw908-rank-row ${x.row.id===c.active?'is-player':''}"><strong>#${x.rank}</strong><span>${esc(x.w?.name||'Unknown')}</span>${x.row.id===c.active?'<em>YOU</em>':''}</div>`).join('')}</section>
+   <section class="lpw908-feed-section"><div class="lpw908-section-title"><h3>SOCIAL PULSE</h3></div>${feed.social.map(x=>`<article class="lpw908-social"><p>${esc(x)}</p></article>`).join('')}</section>
+   <section class="lpw908-feed-section"><div class="lpw908-section-title"><h3>DIRT SHEET DIGEST</h3><button onclick="gauntletLiveArchive()">MEDIA ARCHIVE</button></div>${feed.dirt.map(x=>`<article><small>SOURCES SAY…</small><p>${esc(x)}</p></article>`).join('')}</section>`;
+ }
+ const calendar908=gauntletLiveCalendar;
+ gauntletLiveCalendar=function(){const r=calendar908.apply(this,arguments);setTimeout(mountLivingWorld,0);return r};
+ window.gauntletLiveCalendar=gauntletLiveCalendar;
+ const home908=gauntletLiveHome;
+ gauntletLiveHome=function(){const r=home908.apply(this,arguments);setTimeout(()=>{
+  document.querySelectorAll('.lpw84-home-dashboard').forEach(n=>n.remove());
+  document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
+ },0);return r};
+ window.gauntletLiveHome=gauntletLiveHome;
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
+ window.LPW_GAMEPLAY_BUILD=BUILD;
+})();

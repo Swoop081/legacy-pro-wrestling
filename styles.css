@@ -2596,3 +2596,30 @@ body>.lpw904-show-bumper .lpw-show-logo,body>.lpw904-show-bumper img{max-height:
 .lpw907-neutral-momentum{justify-content:center!important;text-align:center!important}
 .lpw907-neutral-momentum span{width:100%;text-align:center}
 .lpw907-debut-row{justify-content:space-between!important}
+
+/* VERSION 9.0.8 — daily Living World feed and feud-origin cleanup */
+.lpw-feud-origin .origin-matchup-820>.origin-vs-820,
+.lpw-feud-origin .origin-matchup-819>.origin-vs-819,
+.lpw-feud-origin .origin-matchup-811>strong{
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+.lpw908-living-world{margin-top:1.6rem;padding-top:1.5rem;border-top:1px solid #2b2f39;display:grid;gap:1rem}
+.lpw908-feed-heading small{color:#efc64c;letter-spacing:.22em;font-weight:900}
+.lpw908-feed-heading h2{margin:.45rem 0 .3rem;font-size:1.55rem}
+.lpw908-feed-heading p{margin:0;color:#aeb1bb}
+.lpw908-feed-section{border:1px solid #343944;border-radius:18px;background:#11141c;padding:1rem;display:grid;gap:.7rem}
+.lpw908-section-title{display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+.lpw908-section-title h3{margin:0;font-size:1.05rem;letter-spacing:.04em}
+.lpw908-section-title button{border:0;background:transparent;color:#efc64c;font-size:.7rem;font-weight:900;letter-spacing:.08em;padding:.25rem}
+.lpw908-feed-section article{padding:.75rem;border-radius:12px;background:#171a23}
+.lpw908-feed-section article small{display:block;color:#efc64c;font-size:.68rem;font-weight:900;letter-spacing:.12em;margin-bottom:.25rem}
+.lpw908-feed-section article p{margin:0;line-height:1.42}
+.lpw908-champion{display:flex;justify-content:space-between;align-items:center;padding:.7rem .8rem;background:#2a2412;border:1px solid #695821;border-radius:10px}
+.lpw908-champion small{color:#efc64c;font-weight:900;letter-spacing:.08em}
+.lpw908-rank-row{display:grid;grid-template-columns:42px 1fr auto;align-items:center;padding:.62rem .75rem;border-top:1px solid #2d313b}
+.lpw908-rank-row strong{color:#efc64c}.lpw908-rank-row em{font-style:normal;font-size:.7rem;font-weight:900;color:#fff;background:#c9232c;padding:.2rem .42rem;border-radius:4px}
+.lpw908-rank-row.is-player{background:#202a49;border:1px solid #4266bd;border-radius:9px}
+.lpw908-social{border-left:3px solid #4367bd}
+@media(max-width:520px){.lpw908-living-world{margin-top:1.25rem}.lpw908-feed-section{padding:.85rem}.lpw908-feed-heading h2{font-size:1.35rem}}
