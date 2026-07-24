@@ -2589,3 +2589,10 @@ body>.lpw904-show-bumper .lpw-show-logo,body>.lpw904-show-bumper img{max-height:
 .jett-decision-outcome .outcome-deltas,.story-decision.decision-outcome .outcome-deltas{gap:18px!important;margin-top:14px!important}
 .jett-decision-outcome .outcome-deltas span,.story-decision.decision-outcome .outcome-deltas span{border:0!important;background:transparent!important;padding:6px 2px!important;box-shadow:none!important}
 .jett-decision-outcome .outcome-deltas b,.story-decision.decision-outcome .outcome-deltas b{font-size:1.65rem!important}
+
+/* LEGACY Pro Wrestling 9.0.7 — debut momentum and onboarding alignment */
+.lpw902-interview-stage article.speaking{transform:none!important}
+.lpw902-interview-stage article>small{align-self:center!important}
+.lpw907-neutral-momentum{justify-content:center!important;text-align:center!important}
+.lpw907-neutral-momentum span{width:100%;text-align:center}
+.lpw907-debut-row{justify-content:space-between!important}

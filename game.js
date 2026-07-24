@@ -4767,3 +4767,103 @@ render=function(html){
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
  window.LPW_GAMEPLAY_BUILD=BUILD;
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.7 — DEBUT MOMENTUM & MONTH ONE PROTECTION
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.7';
+ const clamp907=(n,min,max)=>Math.max(min,Math.min(max,n));
+ function firstCareerMonth(c){return !!c&&Number(c.month||1)===1}
+ function debutMatchAvailable(c){
+  return !!c&&firstCareerMonth(c)&&Number(c.week||1)===1&&Number(c.day||0)===0&&
+   !(c.history||[]).length&&!c.world?.debutMomentumConsumed;
+ }
+
+ /* The player cannot be injured during Month One of a new Career save. */
+ const save907=liveSave;
+ liveSave=function(c){
+  if(c&&firstCareerMonth(c)){
+   c.world=c.world||{};
+   c.world.monthOneInjuryProtection=true;
+   c.world.injury=null;
+   c.world.injuryDetail=null;
+  }
+  return save907(c);
+ };
+ window.liveSave=liveSave;
+ const load907=liveLoad;
+ liveLoad=function(){
+  const c=load907.apply(this,arguments);
+  if(c&&firstCareerMonth(c)&&(c.world?.injury||c.world?.injuryDetail)){
+   c.world=c.world||{};
+   c.world.monthOneInjuryProtection=true;
+   c.world.injury=null;
+   c.world.injuryDetail=null;
+   save907(c);
+  }
+  return c;
+ };
+ window.liveLoad=liveLoad;
+
+ function cleanMomentumCards(c){
+  document.querySelectorAll('.lpw904-momentum-grid article').forEach((article,index)=>{
+   article.querySelectorAll('li').forEach(li=>{
+    if(/No major advantage/i.test(li.textContent||'')){
+     li.classList.add('lpw907-neutral-momentum');
+     li.querySelector('b')?.remove();
+    }
+   });
+   if(index===0&&debutMatchAvailable(c)){
+    const list=article.querySelector('ul');
+    if(list){
+     list.querySelectorAll('.lpw907-neutral-momentum').forEach(n=>n.remove());
+     if(!list.querySelector('.lpw907-debut-row')){
+      list.insertAdjacentHTML('afterbegin','<li class="lpw907-debut-row"><span>Debut Momentum</span><b class="positive">+20</b></li>');
+     }
+    }
+    const total=article.querySelector(':scope > strong');
+    if(total)total.textContent='+20';
+   }
+  });
+ }
+ const card907=gauntletLiveMatchCard65;
+ gauntletLiveMatchCard65=function(){
+  const result=card907.apply(this,arguments);
+  cleanMomentumCards(liveLoad());
+  return result;
+ };
+ window.gauntletLiveMatchCard65=gauntletLiveMatchCard65;
+
+ /* Apply the one-match debut advantage, then consume it permanently for this save. */
+ const launch907=gauntletLiveLaunchBroadcast65;
+ gauntletLiveLaunchBroadcast65=function(){
+  const before=liveLoad();
+  const applyDebut=debutMatchAvailable(before);
+  const regularPlayerTotal=Number(before?.world?.pendingMomentum?.playerTotal||0);
+  const regularOpponentTotal=Number(before?.world?.pendingMomentum?.opponentTotal||0);
+  const result=launch907.apply(this,arguments);
+  if(applyDebut&&M){
+   const regularEdge=clamp907(regularPlayerTotal-regularOpponentTotal,-20,20);
+   const debutPlayerTotal=20;
+   const debutEdge=clamp907(debutPlayerTotal-regularOpponentTotal,-20,20);
+   const extraEdge=debutEdge-regularEdge;
+   M.careerMomentumEdge=debutEdge;
+   M.playerControl=clamp907(Number(M.playerControl||50)+(extraEdge*.45),38,62);
+   M.psychologyMomentum=clamp907(Number(M.psychologyMomentum||0)+(extraEdge*1.5),-24,24);
+   const c=liveLoad();
+   if(c){
+    c.world=c.world||{};
+    c.world.debutMomentumConsumed=true;
+    c.world.lastDebutMomentum=20;
+    liveSave(c);
+   }
+   renderMatch();
+  }
+  return result;
+ };
+ window.gauntletLiveLaunchBroadcast65=gauntletLiveLaunchBroadcast65;
+
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+ window.LPW_GAMEPLAY_BUILD=BUILD;
+})();
