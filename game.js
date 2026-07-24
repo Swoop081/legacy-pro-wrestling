@@ -5483,3 +5483,872 @@ render=function(html){
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
  window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.15 — TAG PARTICIPATION, LEGAL CONTROL & MONTH FLOW
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.15';
+
+ function tagReady(){return !!(M&&S&&Array.isArray(S.team)&&Array.isArray(S.opp)&&S.team.length===2&&S.opp.length===2)}
+ function ensureTagState(){
+  if(!tagReady())return null;
+  M.lpw915Tag=M.lpw915Tag||{
+   playerSeen:[M.activeP],oppSeen:[M.activeO],
+   playerLast:M.eventIndex||0,oppLast:M.eventIndex||0,
+   playerCount:0,oppCount:0
+  };
+  return M.lpw915Tag;
+ }
+ function noteTag(side,oldIndex,newIndex){
+  const st=ensureTagState();if(!st||oldIndex===newIndex)return;
+  const seen=side==='player'?st.playerSeen:st.oppSeen;
+  if(!seen.includes(newIndex))seen.push(newIndex);
+  if(side==='player'){st.playerLast=M.eventIndex;st.playerCount++}
+  else{st.oppLast=M.eventIndex;st.oppCount++}
+ }
+ function forceTag(side,hot=false){
+  if(!tagReady())return false;
+  const st=ensureTagState();
+  if(side==='player'){
+   const oldIndex=M.activeP,old=S.team[oldIndex];M.activeP=1-oldIndex;const fresh=S.team[M.activeP];
+   noteTag('player',oldIndex,M.activeP);M.tags=(M.tags||0)+1;
+   addBroadcast('tag',hot?`${old.name} finally reaches the corner—HOT TAG TO ${fresh.name.toUpperCase()}!`:`${old.name} tags out and ${fresh.name} becomes the legal wrestler.`,{highlight:true,weight:hot?2:1.35});
+   shiftControl(hot?7:4,`${fresh.name}'s tag changed the match.`);addMatchScore('player',hot?7:4);heatCrowd(hot?7:4,'player');
+  }else{
+   const oldIndex=M.activeO,old=S.opp[oldIndex];M.activeO=1-oldIndex;const fresh=S.opp[M.activeO];
+   noteTag('opp',oldIndex,M.activeO);M.tags=(M.tags||0)+1;
+   addBroadcast('tag',hot?`${old.name} escapes the pressure and makes the hot tag to ${fresh.name}!`:`${old.name} tags out and ${fresh.name} becomes the legal wrestler.`,{highlight:true,weight:hot?2:1.3});
+   shiftControl(hot?-7:-4,`${fresh.name}'s tag changed the match.`);addMatchScore('opp',hot?7:4);heatCrowd(hot?7:4,'opp');
+  }
+  return true;
+ }
+
+ const match0=match;
+ match=function(){
+  const out=match0.apply(this,arguments);
+  if(tagReady())ensureTagState();
+  return out;
+ };
+
+ const auto0=generateAutomaticBeat;
+ generateAutomaticBeat=function(){
+  if(!tagReady())return auto0.apply(this,arguments);
+  const beforeP=M.activeP,beforeO=M.activeO;
+  const out=auto0.apply(this,arguments);
+  const st=ensureTagState();
+  if(beforeP!==M.activeP)noteTag('player',beforeP,M.activeP);
+  if(beforeO!==M.activeO)noteTag('opp',beforeO,M.activeO);
+
+  const progress=M.eventIndex/Math.max(1,M.eventTarget);
+  const pGap=M.eventIndex-st.playerLast,oGap=M.eventIndex-st.oppLast;
+  const playerUnderPressure=M.playerControl<38||M.playerMom<28;
+  const oppUnderPressure=M.playerControl>62||M.oppMom<28;
+
+  // Guarantee that every wrestler enters before the match reaches its closing stretch.
+  if(progress>=.36&&st.playerSeen.length<2&&pGap>=3)forceTag('player',playerUnderPressure);
+  else if(progress>=.42&&st.oppSeen.length<2&&oGap>=3)forceTag('opp',oppUnderPressure);
+  // Normal matches should continue exchanging legal wrestlers rather than leaving one
+  // competitor in for the entire contest. Pressure increases the chance of a hot tag.
+  else if(M.phaseIndex>0&&pGap>=Math.max(3,Math.round(M.eventTarget*.22))&&Math.random()<(playerUnderPressure?.82:.5))forceTag('player',playerUnderPressure);
+  else if(M.phaseIndex>0&&oGap>=Math.max(3,Math.round(M.eventTarget*.22))&&Math.random()<(oppUnderPressure?.82:.5))forceTag('opp',oppUnderPressure);
+  return out;
+ };
+
+ const choice0=storyChoice;
+ storyChoice=function(token){
+  const oldIndex=tagReady()?M.activeP:null;
+  const chosen=M?.currentDecision?.options?.find(x=>x.token===token);
+  const out=choice0.apply(this,arguments);
+  if(tagReady()&&chosen?.action==='tag'&&oldIndex!==M.activeP){
+   noteTag('player',oldIndex,M.activeP);
+   const legal=S.team[M.activeP];
+   addBroadcast('tag',`${legal.name} is now legal. Player control and decisions switch to ${legal.name}.`,{highlight:true,weight:1.4});
+  }
+  return out;
+ };
+
+ // Keep Jett's artwork cards only while Jett is the legal wrestler. Every other legal
+ // wrestler deliberately uses the established text decision presentation.
+ const decision0=decisionHTML;
+ decisionHTML=function(){
+  const legal=S?.team?.[M?.activeP];
+  if(legal?.id!=='jett-valentine')return decision0.apply(this,arguments);
+  return decision0.apply(this,arguments);
+ };
+
+ function cleanRivals(c){
+  if(!c)return;
+  const active=c.active;
+  if(c.livingCareers){
+   Object.values(c.livingCareers).forEach(x=>{if(x)x.rival=null});
+  }
+  if(c.world){
+   c.world.feud=null;c.world.pendingFeudOrigin=null;c.world.feudOriginSeen=false;
+  }
+  const x=c.livingCareers?.[active];if(x)x.rival=null;
+ }
+ function chooseFreshRival(c,id){
+  const champ=c.championships?.world;
+  const blocked=new Set([id]);
+  if(champ&&id!==champ&&typeof contenderRank==='function'&&contenderRank(c,id)!==1)blocked.add(champ);
+  const pool=(typeof liveOtherPool==='function'?liveOtherPool(c,[...blocked]):WRESTLERS.filter(w=>!blocked.has(w.id))).filter(Boolean);
+  return one(pool) || WRESTLERS.find(w=>w.id!==id);
+ }
+
+ const rosterChoice0=gauntletLiveMonthRosterChoice;
+ gauntletLiveMonthRosterChoice=function(){
+  const c=liveLoad();
+  if(c){cleanRivals(c);liveSave(c)}
+  return rosterChoice0.apply(this,arguments);
+ };
+
+ const startMonth0=gauntletLiveStartNextMonth;
+ gauntletLiveStartNextMonth=function(id){
+  const c=liveLoad();
+  if(!c||!c.stable?.includes(id))return startMonth0.apply(this,arguments);
+  cleanRivals(c);c.active=id;
+  const rival=chooseFreshRival(c,id);
+  c.world=c.world||{};
+  c.world.pendingFeudOrigin={player:id,opponent:rival.id,reason:'A new month begins with a fresh rivalry.',month:Number(c.month)};
+  liveSave(c);
+  const out=startMonth0.apply(this,arguments);
+  const after=liveLoad();
+  if(after){
+   after.world=after.world||{};
+   after.world.pendingFeudOrigin={player:id,opponent:rival.id,reason:'A new month begins with a fresh rivalry.',month:Number(after.month)};
+   after.world.feud={opponent:rival.id,intensity:20,playerWins:0,rivalWins:0,chapter:1,reason:'A new month begins with a fresh rivalry.'};
+   if(after.livingCareers?.[id])after.livingCareers[id].rival=rival.id;
+   liveSave(after);
+  }
+  if(typeof gauntletLiveFeudOrigin==='function')return gauntletLiveFeudOrigin();
+  return out;
+ };
+
+ // Dedicated SuperCard unlock reveal. The stable addition is saved before the reveal,
+ // and repeats never queue another presentation.
+ const accept0=gauntletLiveAcceptRecruit;
+ gauntletLiveAcceptRecruit=function(id){
+  const c=liveLoad(),isNew=!!(c&&!c.stable?.includes(id)),isSC=!!c?.pending?.isSupercard;
+  if(c&&isNew&&isSC){c.world=c.world||{};c.world.pendingSupercardUnlock=id;liveSave(c)}
+  return accept0.apply(this,arguments);
+ };
+ window.lpw915ShowSupercardUnlock=function(){
+  const c=liveLoad(),id=c?.world?.pendingSupercardUnlock,w=id&&liveFounder(id);
+  if(!c||!w)return gauntletLiveMonthRosterChoice();
+  c.world.pendingSupercardUnlock=null;liveSave(c);
+  render(`<section class="panel live-world-screen lpw915-wrestler-unlock"><div class="tv-kicker">SUPERCARD REWARD</div><h1>NEW WRESTLER UNLOCKED</h1><div class="lpw915-unlock-art">${imageWithFallback(w,'victory','art-full','resultVictory')}</div><small>${w.title}</small><h2>${w.name}</h2><p>${w.name} has joined your roster and is now available to control in future months.</p><button class="btn live-primary" onclick="gauntletLiveMonthRosterChoice()">CONTINUE TO MONTH-END SELECTION</button></section>`);
+ };
+ const finish0=gauntletLiveFinishMatch;
+ gauntletLiveFinishMatch=function(win,oppId,recruited){
+  const c=liveLoad(),showUnlock=!!(win&&recruited&&c?.pending?.isSupercard&&c?.world?.pendingSupercardUnlock===oppId);
+  const out=finish0.apply(this,arguments);
+  if(showUnlock)setTimeout(()=>lpw915ShowSupercardUnlock(),0);
+  return out;
+ };
+
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
+ window.LPW_GAMEPLAY_BUILD=BUILD;
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.16 — MATCH PSYCHOLOGY 2.3 REBALANCE
+   Player-readable decisions, accountable CPU scoring and less random finishes.
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.16';
+ const clamp916=(n,min,max)=>Math.max(min,Math.min(max,n));
+ let automaticBeat916=false;
+
+ function actionContext916(action){
+  if(!M)return 0;
+  const control=Number(M.playerControl||50),phase=Number(M.phaseIndex||0);
+  switch(action){
+   case 'survive': return control<42?.10:control>62?-.08:.02;
+   case 'comeback': return control<44?.13:control>60?-.10:0;
+   case 'control': return control>=42&&control<=68?.08:control<32?-.05:.02;
+   case 'pressure': return control>54?.10:control<38?-.07:.01;
+   case 'risk': return control>58?.09:control<40?-.12:-.01;
+   case 'finisher': return phase>=4&&control>54?.14:phase<3?-.16:control<42?-.10:0;
+   case 'tag': return Array.isArray(S?.team)&&S.team.length>1?(control<43?.10:.04):-.20;
+   default:return 0;
+  }
+ }
+
+ // Attributes and match context now matter enough to be felt. Strong, well-timed
+ // choices are usually positive; poor or mistimed calls remain genuinely risky.
+ decisionChance=function(w,o,action){
+  const own=Number(attributeValue(w,action)||75);
+  const defence=(Number(o?.resilience||75)+Number(o?.technique||75))/2;
+  const attributeEdge=(own-defence)/135;
+  const controlEdge=(Number(M?.playerControl||50)-50)/260;
+  const base={risk:.54,control:.64,pressure:.61,comeback:.55,survive:.68,finisher:.48,tag:.70}[action]||.59;
+  return clamp916(base+attributeEdge+controlEdge+actionContext916(action),.30,.88);
+ };
+ window.decisionChance=decisionChance;
+
+ psychologyTier=function(chance,roll){
+  const positive=clamp916(chance,.30,.88);
+  const majorSuccess=clamp916(.08+(positive-.50)*.28,.05,.18);
+  const success=clamp916(positive-majorSuccess,.22,.58);
+  const mixed=clamp916(.26-Math.abs(positive-.58)*.18,.16,.28);
+  const majorFailure=clamp916(.05+(.50-positive)*.18,.035,.13);
+  if(roll<majorSuccess)return {key:'major-success',label:'MAJOR SUCCESS',mult:1.4};
+  if(roll<majorSuccess+success)return {key:'success',label:'SUCCESS',mult:1};
+  if(roll<majorSuccess+success+mixed)return {key:'mixed',label:'MIXED RESULT',mult:.45};
+  if(roll>1-majorFailure)return {key:'major-failure',label:'MAJOR FAILURE',mult:-1.05};
+  return {key:'failure',label:'FAILURE',mult:-.6};
+ };
+ window.psychologyTier=psychologyTier;
+
+ // Automatic sequences should build the story, not overwhelm decisions. This
+ // scales only performance scoring created while an automatic beat is running.
+ const score916=addMatchScore;
+ addMatchScore=function(side,amount,category='performance'){
+  let adjusted=Number(amount||0);
+  if(automaticBeat916&&category==='performance'){
+   adjusted=adjusted>0?Math.max(1,Math.round(adjusted*.66)):Math.round(adjusted*.75);
+  }
+  return score916(side,adjusted,category);
+ };
+ window.addMatchScore=addMatchScore;
+
+ const auto916=generateAutomaticBeat;
+ generateAutomaticBeat=function(){
+  automaticBeat916=true;
+  try{return auto916.apply(this,arguments)}finally{automaticBeat916=false}
+ };
+ window.generateAutomaticBeat=generateAutomaticBeat;
+
+ // The prior CPU response applied positive Decision Impact twice. Keep one earned
+ // score award, surface it in commentary, and retain the rest of the response.
+ const choice916=storyChoice;
+ storyChoice=function(token){
+  const beforeCount=(M?.aiDecisionHistory||[]).length;
+  const beforeDecision=Number(M?.decisionOpp||0);
+  const result=choice916.apply(this,arguments);
+  const history=M?.aiDecisionHistory||[];
+  if(history.length>beforeCount){
+   const ai=history[history.length-1];
+   const earned=Math.max(0,Number(ai?.score||0));
+   if(earned>0){
+    const delta=Math.max(0,Number(M.decisionOpp||0)-beforeDecision);
+    if(delta>earned)M.decisionOpp=Math.max(beforeDecision,Number(M.decisionOpp||0)-Math.min(earned,delta-earned));
+   }
+   const label=String(ai?.outcome||'mixed').replace(/-/g,' ').toUpperCase();
+   const shown=Number(ai?.score||0);
+   addBroadcast('commentary',`CPU DECISION: ${label} · ${shown>=0?'+':''}${shown} MATCH SCORE`);
+  }
+  return result;
+ };
+ window.storyChoice=storyChoice;
+
+ // Replace hidden opponent floors and finish volatility with accountable scoring.
+ // CPU points come from visible automatic offence and its actual decision history.
+ const finish916=resolveFinish;
+ resolveFinish=function(){
+  if(!M||M.ended)return finish916.apply(this,arguments);
+  const wasLive=!!S?.liveMode;
+  if(wasLive){
+   const c=typeof liveLoad==='function'?liveLoad():null;
+   const player=S.team?.[M.activeP]||S.team?.[0];
+   const opp=S.opp?.[M.activeO]||S.opp?.[0];
+   const pStrength=((player?.overall||75)+(player?.technique||75)+(player?.resilience||75)+(player?.power||75))/4;
+   const oStrength=((opp?.overall||75)+(opp?.technique||75)+(opp?.resilience||75)+(opp?.power||75))/4;
+   const edge=clamp916((oStrength-pStrength)/8,-5,5);
+   const aiHistory=M.aiDecisionHistory||[];
+   const aiPositive=aiHistory.filter(x=>x.outcome==='success'||x.outcome==='major-success').length;
+   const playerHistory=M.decisionHistory||[];
+   const playerPositive=playerHistory.filter(x=>x.outcome==='SUCCESS'||x.outcome==='MAJOR SUCCESS').length;
+   const playerNegative=playerHistory.filter(x=>x.outcome==='FAILURE'||x.outcome==='MAJOR FAILURE').length;
+
+   // Small, explainable strength/form influence; never an opaque score floor.
+   if(edge>0){M.performanceOpp+=Math.round(edge*1.4);M.decisionOpp+=Math.round(edge*.9)}
+   else if(edge<0){M.performancePlayer+=Math.round(Math.abs(edge)*1.4);M.decisionPlayer+=Math.round(Math.abs(edge)*.9)}
+   if(aiPositive>=3)M.decisionOpp+=Math.min(6,aiPositive*2);
+   if(playerPositive>=3)M.decisionPlayer+=Math.min(7,playerPositive*2);
+   if(playerNegative>playerPositive)M.performanceOpp+=Math.min(5,playerNegative*2);
+
+   // Debut protection remains helpful but no longer guarantees a result.
+   if(c&&Array.isArray(c.history)&&c.history.length===0){M.performancePlayer+=9;M.decisionPlayer+=7}
+
+   // Prevent every earlier Career-only finish wrapper from reintroducing hidden
+   // floors or rescue rules. Base finish logic still handles score calculation,
+   // psychology carry, winner selection, commentary and result presentation.
+   S.liveMode=false;
+   try{return finish916.apply(this,arguments)}finally{S.liveMode=true}
+  }
+  return finish916.apply(this,arguments);
+ };
+ window.resolveFinish=resolveFinish;
+
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+ window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.17 — CAREER PROGRESSION INTEGRATION
+   Connects permanent development, momentum, popularity and NPC opportunity
+   choices to Match Psychology 2.3 and removes the legacy training split.
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.17';
+ const clamp917=(n,min,max)=>Math.max(min,Math.min(max,Number(n)||0));
+ const DEVELOPMENT_STATS=['power','speed','technique','charisma','resilience','versatility','finisher'];
+ const STAT_EFFECTS={
+  power:'Pressure and power-based decisions are now slightly stronger.',
+  speed:'Risk, escape and high-tempo decisions are now slightly stronger.',
+  technique:'Control, counter and precision decisions are now slightly more reliable.',
+  charisma:'Crowd-driven, comeback and showmanship decisions are now slightly stronger.',
+  resilience:'Survival and comeback decisions are now slightly more reliable.',
+  versatility:'Situational decisions receive a broader reliability benefit.',
+  finisher:'Finisher decisions are now slightly more reliable in the closing stages.'
+ };
+
+ function ensure917(c){
+  if(!c)return c;
+  c.world=c.world||{};
+  c.world.careerModifiers=c.world.careerModifiers||{};
+  c.world.progressionVersion=917;
+  c.progression=c.progression&&typeof c.progression==='object'?c.progression:{};
+  (c.stable||[c.active]).filter(Boolean).forEach(id=>{
+   const p=liveProgress(id,c);
+   p.stats=p.stats||{};p.caps=p.caps||{};
+   DEVELOPMENT_STATS.forEach(k=>{
+    if(!Number.isFinite(Number(p.stats[k])))p.stats[k]=liveStartingStat(liveFounder(id),k);
+    if(!Number.isFinite(Number(p.caps[k])))p.caps[k]=livePotentialCap(liveFounder(id),k);
+   });
+   if(!Number.isFinite(Number(p.stats.recovery)))p.stats.recovery=72;
+   if(!Number.isFinite(Number(p.caps.recovery)))p.caps.recovery=95;
+  });
+  // One-time migration from the old global training object into the active
+  // wrestler's permanent profile. This removes the split source of truth.
+  if(!c.world.trainingMigrated917){
+   const t=c.training||{},p=liveProgress(c.active,c);
+   ['power','speed','technique','charisma'].forEach(k=>{
+    const legacy=Math.max(0,Number(t[k])||0);
+    if(legacy)p.stats[k]=Math.min(p.caps[k],p.stats[k]+legacy);
+   });
+   const recovery=Math.max(0,Number(t.recovery)||0);
+   if(recovery)p.stats.recovery=Math.min(p.caps.recovery,p.stats.recovery+recovery);
+   c.training={power:0,speed:0,technique:0,charisma:0,recovery:0};
+   c.world.trainingMigrated917=true;
+  }
+  return c;
+ }
+
+ const load917=liveLoad;
+ liveLoad=function(){const c=load917();if(!c)return c;ensure917(c);return c};
+ window.liveLoad=liveLoad;
+
+ function popularityTier(value){
+  const n=Number(value)||0;
+  if(n>=95)return 'GLOBAL ICON';
+  if(n>=85)return 'MAIN-EVENT ATTRACTION';
+  if(n>=70)return 'FEATURED STAR';
+  if(n>=50)return 'ESTABLISHED';
+  if(n>=30)return 'EMERGING';
+  return 'UNKNOWN';
+ }
+ window.lpwPopularityTier=popularityTier;
+
+ function effectiveCareerWrestler(w,c){
+  if(!w||!c||!c.progression?.[w.id])return w;
+  const p=liveProgress(w.id,c),stats=p.stats||{},copy={...w};
+  DEVELOPMENT_STATS.forEach(k=>copy[k]=Number(stats[k]??w[k]??75));
+  const recovery=Number(stats.recovery||72);
+  const injury=c.world?.injury?.active?Math.max(3,12-recovery/12):0;
+  copy.resilience=clamp917(copy.resilience-injury,45,99);
+  copy.overall=Math.round(DEVELOPMENT_STATS.reduce((sum,k)=>sum+Number(copy[k]||75),0)/DEVELOPMENT_STATS.length);
+  copy._careerEffective=true;
+  return copy;
+ }
+ window.lpwCareerEffectiveWrestler=effectiveCareerWrestler;
+
+ function activeCareer(){return S?.liveMode&&typeof liveLoad==='function'?liveLoad():null}
+
+ // Permanent Career attributes now feed directly into every Match Psychology
+ // decision. Momentum is a modest temporary confidence modifier, while
+ // popularity helps crowd-facing actions without deciding the match by itself.
+ const chance917=decisionChance;
+ decisionChance=function(w,o,action){
+  const c=activeCareer();
+  const ew=c&&w?.id===c.active?effectiveCareerWrestler(w,c):w;
+  const eo=c&&o?.id===c.active?effectiveCareerWrestler(o,c):o;
+  let chance=chance917(ew,eo,action);
+  if(c&&w?.id===c.active){
+   chance+=(Number(c.momentum||50)-50)/520;
+   const p=liveProgress(c.active,c),vers=Number(p.stats.versatility||75);
+   chance+=(vers-75)/700;
+   if(['comeback','risk','finisher'].includes(action))chance+=(Number(c.popularity||20)-50)/1100;
+   const mods=c.world?.careerModifiers||{};
+   if(mods.matchQualityBoost)chance+=.025;
+   if(mods.managementOpportunity)chance+=.02;
+  }
+  return clamp917(chance,.28,.90);
+ };
+ window.decisionChance=decisionChance;
+
+ // Match setup uses Career Momentum and temporary NPC opportunity modifiers for
+ // a small opening edge. The meter remains fully free to swing after the bell.
+ const match917=match;
+ match=function(){
+  const out=match917.apply(this,arguments),c=activeCareer();
+  if(c&&M&&!M._careerProgressionApplied917){
+   const mods=c.world?.careerModifiers||{};
+   const momentumEdge=clamp917((Number(c.momentum||50)-50)/6,-6,6);
+   const opportunity=(mods.tvPlacement||0)+(mods.managementOpportunity||0)+(mods.competitionFocus||0);
+   M.playerControl=clamp917(Number(M.playerControl||50)+momentumEdge+clamp917(opportunity,0,4),36,64);
+   M.psychologyMomentum=clamp917((Number(M.psychologyMomentum)||0)+momentumEdge*1.5,-24,24);
+   M._careerProgressionApplied917=true;
+   if(typeof renderMatch==='function')renderMatch();
+  }
+  return out;
+ };
+ window.match=match;
+
+ // Popularity increases crowd-score potential, not raw performance or decision
+ // score. This makes popularity useful while keeping wins skill-driven.
+ const score917=addMatchScore;
+ addMatchScore=function(side,amount,category='performance'){
+  let adjusted=Number(amount||0),c=activeCareer();
+  if(c&&side==='player'&&category==='crowd'&&adjusted>0){
+   const pop=Number(c.popularity||20),mult=1+clamp917((pop-50)/500,-.04,.10);
+   const mods=c.world?.careerModifiers||{};
+   const social=Number(mods.socialReach||0),media=Number(mods.mediaConfidence||0);
+   adjusted=Math.max(1,Math.round(adjusted*(mult+social*.01+media*.01)));
+  }
+  return score917(side,adjusted,category);
+ };
+ window.addMatchScore=addMatchScore;
+
+ // Closing strength comparisons now use the player's developed Career profile.
+ const finish917=resolveFinish;
+ resolveFinish=function(){
+  const c=activeCareer();
+  if(!c||!M||M.ended)return finish917.apply(this,arguments);
+  const index=Number(M.activeP||0),original=S.team?.[index];
+  if(!original)return finish917.apply(this,arguments);
+  const effective=effectiveCareerWrestler(original,c);
+  S.team[index]=effective;
+  try{return finish917.apply(this,arguments)}finally{S.team[index]=original}
+ };
+ window.resolveFinish=resolveFinish;
+
+ // XP remains rewarding, but long-term growth is slowed slightly now that every
+ // upgrade has a real competitive effect.
+ const xp917=liveAwardXp;
+ liveAwardXp=function(c,id,amount,reason){
+  let adjusted=Number(amount)||0;const text=String(reason||'').toLowerCase();
+  if(text.includes('victory')||text.includes('match experience')||text.includes('broadcast'))adjusted=Math.round(adjusted*.90);
+  else if(text.includes('career activity')||text.includes('encounter')||text.includes('promo')||text.includes('segment')||text.includes('recap'))adjusted=Math.round(adjusted*.78);
+  return xp917(c,id,Math.max(1,adjusted),reason);
+ };
+ window.liveAwardXp=liveAwardXp;
+
+ // NPC choices now create persistent, real modifiers instead of promise-only
+ // copy. Each modifier has a restrained effect and is consumed by future play.
+ const outcome917=lpw836ApplyOutcome;
+ lpw836ApplyOutcome=function(npcId,title,changes,reaction,ripple){
+  const c=liveLoad();if(c){
+   const mods=c.world.careerModifiers;
+   if(npcId==='veronica-vale')mods.managementOpportunity=1;
+   if(npcId==='madison-price'&&/CAMPAIGN|SPONSOR/i.test(title))mods.socialReach=Math.min(3,(mods.socialReach||0)+1);
+   if(npcId==='noah-grant'&&/MAIN EVENT/i.test(title))mods.tvPlacement=Math.min(2,(mods.tvPlacement||0)+1);
+   if(npcId==='noah-grant'&&/QUALITY/i.test(title))mods.matchQualityBoost=1;
+   if(npcId==='ethan-brooks')mods.competitionFocus=Math.min(2,(mods.competitionFocus||0)+1);
+   if(npcId==='katie-morgan')mods.mediaConfidence=Math.min(2,(mods.mediaConfidence||0)+1);
+   if(npcId==='olivia-chase')mods.fanGoodwill=Math.min(2,(mods.fanGoodwill||0)+1);
+   if(npcId==='marcus-steele')mods.lockerRoomRespect=Math.min(2,(mods.lockerRoomRespect||0)+1);
+   liveSave(c);
+  }
+  return outcome917.apply(this,arguments);
+ };
+ window.lpw836ApplyOutcome=lpw836ApplyOutcome;
+
+ // Ava's direct social choices also build a modest social-reach modifier.
+ if(typeof lpw837SocialChoice==='function'){
+  const social917=lpw837SocialChoice;
+  lpw837SocialChoice=function(){const c=liveLoad();if(c){c.world.careerModifiers.socialReach=Math.min(3,(c.world.careerModifiers.socialReach||0)+1);liveSave(c)}return social917.apply(this,arguments)};
+  window.lpw837SocialChoice=lpw837SocialChoice;
+ }
+
+ // Consume short-term opportunity modifiers after a completed televised match,
+ // while relationship-style progression remains persistent.
+ if(typeof liveCompleteBroadcast==='function'){
+  const broadcast917=liveCompleteBroadcast;
+  liveCompleteBroadcast=function(win){
+   const c=liveLoad();if(c){const m=c.world.careerModifiers||{};m.managementOpportunity=0;m.tvPlacement=0;m.matchQualityBoost=0;m.competitionFocus=0;liveSave(c)}
+   return broadcast917.apply(this,arguments);
+  };
+  window.liveCompleteBroadcast=liveCompleteBroadcast;
+ }
+
+ // Upgrade feedback explains exactly what changed and why it matters.
+ const spend917=gauntletLiveSpendPoint;
+ gauntletLiveSpendPoint=function(id,key){
+  const c=liveLoad(),p=liveProgress(id,c),before=Number(p.stats[key]||0);
+  if(!DEVELOPMENT_STATS.includes(key)||p.points<1||before>=p.caps[key])return spend917.apply(this,arguments);
+  c.world.lastUpgrade917={id,key,before,after:before+1,message:STAT_EFFECTS[key]||'This attribute now contributes more strongly in matches.'};liveSave(c);
+  return spend917.apply(this,arguments);
+ };
+ window.gauntletLiveSpendPoint=gauntletLiveSpendPoint;
+
+ const card917=gauntletLiveCareerCard;
+ gauntletLiveCareerCard=function(id){
+  const out=card917.apply(this,arguments),c=liveLoad();if(!c)return out;
+  const p=liveProgress(id||c.active,c),w=liveFounder(id||c.active),overall=Math.round(DEVELOPMENT_STATS.reduce((s,k)=>s+Number(p.stats[k]||75),0)/DEVELOPMENT_STATS.length);
+  const card=document.querySelector('.live-stat-card');
+  if(card){
+   const tier=popularityTier(c.popularity);
+   card.insertAdjacentHTML('afterbegin',`<div class="lpw917-progression-summary"><span><small>EFFECTIVE OVR</small><b>${overall}</b></span><span><small>POPULARITY STATUS</small><b>${tier}</b></span><span><small>MOMENTUM</small><b>${Math.round(c.momentum||50)}</b></span></div>`);
+   const u=c.world.lastUpgrade917;
+   if(u&&u.id===w.id){card.insertAdjacentHTML('afterbegin',`<div class="lpw917-upgrade-note"><b>${String(u.key).toUpperCase()} ${u.before} → ${u.after}</b><span>${u.message}</span></div>`);c.world.lastUpgrade917=null;liveSave(c)}
+  }
+  return out;
+ };
+ window.gauntletLiveCareerCard=gauntletLiveCareerCard;
+
+ // Replace the old stable training summary with the active wrestler's true,
+ // permanent progression values.
+ const stable917=gauntletLiveStable;
+ gauntletLiveStable=function(){
+  const out=stable917.apply(this,arguments),c=liveLoad();if(!c)return out;
+  const box=document.querySelector('.live-training-summary');
+  if(box){const p=liveProgress(c.active,c);box.innerHTML=`<h2>${liveFounder(c.active).name.toUpperCase()} · PERMANENT DEVELOPMENT</h2>${DEVELOPMENT_STATS.map(k=>`<span><small>${k.toUpperCase()}</small><b>${p.stats[k]}</b></span>`).join('')}`}
+  return out;
+ };
+ window.gauntletLiveStable=gauntletLiveStable;
+
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
+ window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.18 — CAREER STATE CONSOLIDATION & SEASONS
+   Consolidates world simulation, wrestler-owned progression, season records,
+   long-term arcs and month-to-month continuity.
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.18';
+ const STATS=['power','speed','technique','charisma','resilience','versatility','finisher'];
+ const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
+ const seasonOf=c=>Math.floor((Math.max(1,Number(c?.month)||1)-1)/12)+1;
+ const monthInSeason=c=>((Math.max(1,Number(c?.month)||1)-1)%12)+1;
+ const dayKey=c=>`${seasonOf(c)}:${monthInSeason(c)}:${Number(c?.week||1)}:${Number(c?.day||0)}`;
+ const televised=c=>Number(c?.day)===0||Number(c?.day)===3||(typeof liveIsSupercard==='function'&&liveIsSupercard(c));
+ const wrestler=id=>typeof liveFounder==='function'?liveFounder(id):WRESTLERS.find(w=>w.id===id);
+ function career(c,id){
+  c.livingCareers=c.livingCareers||{};
+  const row=(c.rankings||[]).find(r=>r.id===id)||{};
+  return c.livingCareers[id]||(c.livingCareers[id]={id,wins:Number(row.wins)||0,losses:Number(row.losses)||0,streak:0,momentum:50,popularity:20,status:'Active',history:[],monthsControlled:0,monthsAI:0,modifiers:{},relationships:{},opportunities:{}});
+ }
+ function ensure918(c){
+  if(!c)return c;
+  c.world=c.world||{};c.world.seasons=c.world.seasons||{current:seasonOf(c),history:[]};
+  c.world.houseShows918=c.world.houseShows918||{};c.world.cpuFeuds=c.world.cpuFeuds||{};
+  c.world.monthlyBookings=c.world.monthlyBookings||{};
+  c.world.storyPriority=c.world.storyPriority||null;
+  (c.rankings||[]).forEach(r=>{
+   const x=career(c,r.id);x.modifiers=x.modifiers||{};x.relationships=x.relationships||{};x.opportunities=x.opportunities||{};
+   if(!Number.isFinite(Number(x.momentum)))x.momentum=50;
+   if(!Number.isFinite(Number(x.popularity)))x.popularity=20;
+  });
+  // Migrate the former global personal modifiers to the wrestler who earned them.
+  const active=career(c,c.active),global=c.world.careerModifiers||{};
+  if(!c.world.personalModifiersMigrated918){Object.assign(active.modifiers,global);c.world.personalModifiersMigrated918=true}
+  c.world.careerModifiers={...(active.modifiers||{})};
+  return c;
+ }
+ const load0=liveLoad;
+ liveLoad=function(){const c=load0();return ensure918(c)};window.liveLoad=liveLoad;
+ const save0=liveSave;
+ liveSave=function(c){return save0(ensure918(c))};window.liveSave=liveSave;
+
+ function profileMaxed(c,id){
+  const p=liveProgress(id,c);return STATS.every(k=>Number(p.stats?.[k]||0)>=Number(p.caps?.[k]||99));
+ }
+ function markArc(c,id){
+  const x=career(c,id),p=liveProgress(id,c),done=profileMaxed(c,id);
+  x.arcComplete=done;x.maxed=done;
+  if(done){p.points=0;p.xp=0;x.status='COMPLETED ARC';x.arcCompletedSeason=x.arcCompletedSeason||seasonOf(c)}
+  return done;
+ }
+ // Maxed wrestlers remain playable and powerful, but no longer earn stat points.
+ const xp0=liveAwardXp;
+ liveAwardXp=function(c,id,amount,reason){
+  ensure918(c);if(markArc(c,id))return {amount:0,reason:'Character arc complete',levels:0,level:liveProgress(id,c).level,points:0,maxed:true};
+  const result=xp0(c,id,amount,reason);markArc(c,id);return result;
+ };window.liveAwardXp=liveAwardXp;
+ const spend0=gauntletLiveSpendPoint;
+ gauntletLiveSpendPoint=function(id,key,stay){const out=spend0.apply(this,arguments),c=liveLoad();if(c){markArc(c,id);liveSave(c)}return out};window.gauntletLiveSpendPoint=gauntletLiveSpendPoint;
+
+ function archiveSeason(c,number){
+  ensure918(c);if(c.world.seasons.history.some(s=>s.season===number))return;
+  const rows=(c.rankings||[]).map((r,i)=>{const x=career(c,r.id);return {id:r.id,wins:Number(x.wins)||0,losses:Number(x.losses)||0,finalRank:i+1,points:Number(r.points)||0,champion:c.championships?.world===r.id}});
+  c.world.seasons.history.unshift({season:number,champion:c.championships?.world,completedAt:new Date().toISOString(),records:rows});
+  c.world.seasons.history=c.world.seasons.history.slice(0,20);
+  rows.forEach(rec=>{const x=career(c,rec.id);x.seasonHistory=x.seasonHistory||[];x.seasonHistory.unshift({season:number,wins:rec.wins,losses:rec.losses,finalRank:rec.finalRank});x.seasonHistory=x.seasonHistory.slice(0,20);x.wins=0;x.losses=0;x.streak=0;x.lastResult=null;const r=c.rankings.find(z=>z.id===rec.id);if(r){r.wins=0;r.losses=0}});
+  c.wins=0;c.losses=0;c.world.seasons.current=number+1;c.world.seasons.pendingPremiere=true;c.world.seasons.lastCompleted=number;
+  c.world.monthlyBookings={};
+ }
+ function monthlyKey(c,id){return `${seasonOf(c)}:${monthInSeason(c)}:${id}`}
+ function bookingCount(c,id){return Number(c.world.monthlyBookings[monthlyKey(c,id)]||0)}
+ function addBooking(c,id){const k=monthlyKey(c,id);c.world.monthlyBookings[k]=bookingCount(c,id)+1}
+ function rankRow(c,id){return (c.rankings||[]).find(r=>r.id===id)}
+ function updateForm(c,id,win){const x=career(c,id);x.wins+=win?1:0;x.losses+=win?0:1;x.streak=win?Math.max(1,Number(x.streak||0)+1):Math.min(-1,Number(x.streak||0)-1);x.lastResult=win?'W':'L';x.momentum=clamp(Number(x.momentum||50)+(win?4:-4),10,90);x.status=x.streak>=3?'Rising':x.streak<=-3?'Slumping':'Active';const r=rankRow(c,id);if(r){r.wins=x.wins;r.losses=x.losses;r.points=Math.max(0,Number(r.points||50)+(win?2:-1))}}
+ function houseShow(c){
+  ensure918(c);const key=dayKey(c);if(televised(c)||c.world.houseShows918[key])return;
+  const injured=c.world?.injury?.id;const ids=(c.rankings||[]).map(r=>r.id).filter(id=>id!==c.active&&id!==injured&&bookingCount(c,id)<4);
+  ids.sort((a,b)=>bookingCount(c,a)-bookingCount(c,b)||((career(c,a).wins+career(c,a).losses)-(career(c,b).wins+career(c,b).losses)));
+  const count=2+((Number(c.week||1)+Number(c.day||0))%2),selected=[];
+  while(selected.length<count*2&&ids.length){const top=ids.slice(0,Math.min(8,ids.length));const id=top[(Number(c.week||1)*7+Number(c.day||0)*3+selected.length)%top.length];selected.push(id);ids.splice(ids.indexOf(id),1)}
+  const matches=[];
+  for(let i=0;i+1<selected.length;i+=2){const a=selected[i],b=selected[i+1],ra=rankRow(c,a),rb=rankRow(c,b);const pa=Number(ra?.points||50),pb=Number(rb?.points||50);const chance=clamp(.5+(pa-pb)/260,.34,.66),awin=Math.random()<chance,w=awin?a:b,l=awin?b:a;updateForm(c,w,true);updateForm(c,l,false);addBooking(c,a);addBooking(c,b);matches.push({winner:w,loser:l,upset:(w===a?pa:pb)<(w===a?pb:pa)});}
+  (c.rankings||[]).sort((a,b)=>Number(b.points||0)-Number(a.points||0)||Number(b.wins||0)-Number(a.wins||0));
+  c.world.houseShows918[key]={season:seasonOf(c),month:monthInSeason(c),week:c.week,day:c.day,matches};c.world.latestHouseShow=c.world.houseShows918[key];
+ }
+ // Block the superseded 9.0.9 house-show simulator, run the consolidated one,
+ // and archive records only when a full season rolls over.
+ const advance0=liveAdvanceDay;
+ liveAdvanceDay=function(c){
+  if(!c)return advance0(c);ensure918(c);const beforeSeason=seasonOf(c),oldKey=`${Number(c.year||1)}:${Number(c.month||1)}:${Number(c.week||1)}:${Number(c.day||0)}`;
+  c.world.houseShows=c.world.houseShows||{};if(!televised(c)&&!c.world.houseShows[oldKey])c.world.houseShows[oldKey]={blockedBy918:true};
+  houseShow(c);const out=advance0(c);const afterSeason=seasonOf(c);if(afterSeason>beforeSeason)archiveSeason(c,beforeSeason);liveSave(c);return out;
+ };window.liveAdvanceDay=liveAdvanceDay;
+
+ function cpuGrowth(c){
+  const mk=`${seasonOf(c)}:${monthInSeason(c)}`;if(c.world.lastCpuGrowthMonth918===mk)return;c.world.lastCpuGrowthMonth918=mk;
+  (c.rankings||[]).map(r=>r.id).filter(id=>id!==c.active).forEach(id=>{
+   const x=career(c,id);x.monthsAI=Number(x.monthsAI||0)+1;
+   // One archetype-respecting point every four CPU months.
+   if(x.monthsAI%4===0){const p=liveProgress(id,c);const available=STATS.filter(k=>Number(p.stats[k])<Number(p.caps[k]));if(available.length){available.sort((a,b)=>(Number(p.caps[b])-Number(p.stats[b]))-(Number(p.caps[a])-Number(p.stats[a])));p.stats[available[0]]++;x.cpuGrowth=(x.cpuGrowth||0)+1}}
+   if(bookingCount(c,id)===0)x.momentum=clamp(Number(x.momentum||50)+(Number(x.momentum||50)>50?-1:Number(x.momentum||50)<50?1:0),20,80);
+   markArc(c,id);
+  });
+ }
+ function rank(c,id){const i=(typeof lpw8Rankings==='function'?lpw8Rankings(c):c.rankings||[]).findIndex(r=>r.id===id);return i<0?'—':i+1}
+ function streak(x){return x.streak>0?`W${x.streak}`:x.streak<0?`L${Math.abs(x.streak)}`:'—'}
+ function relationshipSummary(x){const vals=Object.values(x.relationships||{}).map(Number).filter(Number.isFinite);if(!vals.length)return 'Relationships: Neutral';const avg=vals.reduce((a,b)=>a+b,0)/vals.length;return `Relationships: ${avg>=40?'Supportive':avg<=-40?'Hostile':avg>=15?'Positive':avg<=-15?'Strained':'Neutral'}`}
+ function selectionCard(c,id){const w=wrestler(id),x=career(c,id),p=liveProgress(id,c),ovr=Math.round(STATS.reduce((s,k)=>s+Number(p.stats[k]||75),0)/STATS.length),injured=c.world?.injury?.id===id,champ=c.championships?.world===id;return `<button class="live-founder-card lpw918-career-choice" onclick="gauntletLiveStartNextMonth('${id}')">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'CURRENT FOCUS':'AVAILABLE CAREER'}${champ?' · WORLD CHAMPION':''}</small><b>${w.name}</b><em>Rank #${rank(c,id)} · ${x.wins}-${x.losses} · ${streak(x)}</em><i>Level ${p.level} · OVR ${ovr} · Momentum ${Math.round(x.momentum)} · Popularity ${Math.round(x.popularity)}</i><i>${x.arcComplete?'CHARACTER ARC COMPLETE':injured?'INJURED':x.rival?`Active story: ${wrestler(x.rival)?.name||'Unknown'}`:'Ready for a new story'}</i><i>${relationshipSummary(x)}</i></span></button>`}
+ // Replaces the old month-end method entirely: no duplicate invisible matches and
+ // no global feud wipe.
+ gauntletLiveMonthRosterChoice=function(){const c=liveLoad();if(!c)return gauntletLiveHome();cpuGrowth(c);const active=career(c,c.active);active.modifiers={...(c.world.careerModifiers||active.modifiers||{})};liveSave(c);render(`<section class="panel live-founder-screen lpw918-season-choice"><div class="tv-kicker">MONTH COMPLETE · SEASON ${seasonOf(c)}</div><h1>WHOSE STORY WILL THE CAMERAS FOLLOW?</h1><p class="sub">Stay with one wrestler to complete their arc, or switch to develop your stable over the long term.</p><div class="live-founder-grid">${c.stable.map(id=>selectionCard(c,id)).join('')}</div></section>`)};
+ window.gauntletLiveMonthRosterChoice=gauntletLiveMonthRosterChoice;
+ function contextualRival(c,id){
+  const rows=typeof lpw8Rankings==='function'?lpw8Rankings(c):c.rankings||[],pos=rows.findIndex(r=>r.id===id),near=rows.slice(Math.max(0,pos-2),pos+3).map(r=>r.id).filter(x=>x!==id&&x!==c.championships?.world);const last=c.world?.latestHouseShow?.matches||[];const recent=last.find(m=>m.winner===id||m.loser===id);let opponent=recent?(recent.winner===id?recent.loser:recent.winner):near[0];if(!opponent)opponent=rows.map(r=>r.id).find(x=>x!==id&&x!==c.championships?.world);const reason=recent?`${wrestler(opponent).name} confronted ${wrestler(id).name} after their latest house-show result.`:`A rankings collision has placed ${wrestler(id).name} and ${wrestler(opponent).name} on the same path.`;return {opponent,reason}}
+ gauntletLiveStartNextMonth=function(id){
+  const c=liveLoad();if(!c?.stable?.includes(id))return gauntletLiveMonthRosterChoice();
+  const outgoing=career(c,c.active);outgoing.modifiers={...(c.world.careerModifiers||outgoing.modifiers||{})};c.active=id;const x=career(c,id);x.monthsControlled=Number(x.monthsControlled||0)+1;c.wins=x.wins;c.losses=x.losses;c.momentum=x.momentum;c.popularity=x.popularity;c.world.careerModifiers={...(x.modifiers||{})};c.world.katieThisWeek=0;
+  // Only the previously controlled wrestler's concluded feud is closed. Genuine
+  // CPU rivalries remain alive in the wider world.
+  outgoing.rival=null;if(c.world.feud?.player===outgoing.id||c.world.feud?.opponent===outgoing.rival)c.world.feud=null;
+  const seasonMonth=monthInSeason(c),currentRank=rank(c,id),titleEligible=Number(currentRank)===1&&id!==c.championships?.world;
+  c.world.storyPriority=titleEligible?'WORLD_CHAMPIONSHIP':seasonMonth===3?'ANNUAL_TOURNAMENT':'STANDARD_RIVALRY';
+  const fresh=contextualRival(c,id);x.rival=fresh.opponent;c.world.pendingFeudOrigin={player:id,opponent:fresh.opponent,reason:fresh.reason,month:c.month};
+  if(typeof liveStartFeud==='function')liveStartFeud(c,fresh.opponent,fresh.reason);if(c.world.feud){c.world.feud.player=id;c.world.feud.reason=fresh.reason}
+  if(typeof liveGenerateMonthlyPlan==='function')liveGenerateMonthlyPlan(c);liveSave(c);return typeof gauntletLiveFeudOrigin==='function'?gauntletLiveFeudOrigin():gauntletLiveCalendar();
+ };window.gauntletLiveStartNextMonth=gauntletLiveStartNextMonth;
+
+ // Personal NPC consequences now belong to the wrestler who earned them.
+ if(typeof lpw836ApplyOutcome==='function'){
+  const npc0=lpw836ApplyOutcome;lpw836ApplyOutcome=function(npcId,title,changes,reaction,ripple){const result=npc0.apply(this,arguments),c=liveLoad();if(c){const x=career(c,c.active);x.modifiers={...(c.world.careerModifiers||x.modifiers||{})};x.relationships[npcId]=clamp(Number(x.relationships[npcId]||0)+(Object.values(changes||{}).some(v=>Number(v)>0)?5:-2),-100,100);liveSave(c)}return result};window.lpw836ApplyOutcome=lpw836ApplyOutcome;
+ }
+ // Season branding and championship-path context.
+ const showName0=liveShowName;
+ liveShowName=function(c){const base=showName0(c),m=monthInSeason(c);if(m===1&&c.world?.seasons?.pendingPremiere&&televised(c))return `SEASON ${seasonOf(c)} PREMIERE · ${base}`;if(m===12&&Number(c.day)===3&&liveMonthWeek(c)===4)return `SEASON ${seasonOf(c)} FINALE · ${base}`;return base};window.liveShowName=liveShowName;
+ if(typeof gauntletLiveShowIntro==='function'){
+  const intro0=gauntletLiveShowIntro;gauntletLiveShowIntro=function(){const c=liveLoad(),premiere=monthInSeason(c)===1&&c.world?.seasons?.pendingPremiere;const result=intro0.apply(this,arguments);if(premiere){c.world.seasons.pendingPremiere=false;liveSave(c)}return result};window.gauntletLiveShowIntro=gauntletLiveShowIntro;
+ }
+ const calendar0=gauntletLiveCalendar;
+ gauntletLiveCalendar=function(){const result=calendar0.apply(this,arguments);setTimeout(()=>{const c=liveLoad(),hub=document.querySelector('.live-calendar-screen,.live-calendar-hub,.panel');if(!c||!hub||hub.querySelector('.lpw918-championship-path'))return;const r=rank(c,c.active),champ=wrestler(c.championships?.world),x=career(c,c.active);hub.insertAdjacentHTML('beforeend',`<section class="lpw918-championship-path"><small>SEASON ${seasonOf(c)} · CHAMPIONSHIP PATH</small><b>${wrestler(c.active).name} is ranked #${r}</b><span>${r===1&&c.active!==c.championships?.world?'World Championship opportunity earned.':c.active===c.championships?.world?`${champ.name} is defending the World Championship.`:`Reach #1 to challenge ${champ?.name||'the World Champion'}.`}</span><em>${x.arcComplete?'Character arc complete · continue for legacy rewards':'Development remains active'}</em></section>`)},0);return result};window.gauntletLiveCalendar=gauntletLiveCalendar;
+
+ // Give already-unlocked SuperCard opponents a meaningful long-term reward.
+ if(typeof gauntletLiveSupercardResult==='function'){
+  const sc0=gauntletLiveSupercardResult;gauntletLiveSupercardResult=function(win,oppId){const c=liveLoad(),already=!!c?.stable?.includes(oppId);if(c&&win&&already){const p=liveProgress(c.active,c);if(!profileMaxed(c,c.active))p.xp+=80;career(c,c.active).popularity=clamp(career(c,c.active).popularity+4,0,100);c.world.lastAlternativeSupercardReward={xp:profileMaxed(c,c.active)?0:80,popularity:4,opponent:oppId};liveSave(c)}return sc0.apply(this,arguments)};window.gauntletLiveSupercardResult=gauntletLiveSupercardResult;
+ }
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.19 — CAREER FLOW & LONGEVITY CONSOLIDATION
+   Completes the recommendations from the long-form Career simulations:
+   calmer rankings, wrestler-owned relationships and opportunities, persistent
+   CPU feuds, richer switching context, championship-path clarity, season awards,
+   momentum decay and varied long-term SuperCard rewards.
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.19';
+ const clamp919=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
+ const season919=c=>Math.floor((Math.max(1,Number(c?.month)||1)-1)/12)+1;
+ const month919=c=>((Math.max(1,Number(c?.month)||1)-1)%12)+1;
+ const wrestler919=id=>typeof liveFounder==='function'?liveFounder(id):(window.WRESTLERS||[]).find(w=>w.id===id);
+ function career919(c,id){
+  c.livingCareers=c.livingCareers||{};
+  const row=(c.rankings||[]).find(r=>r.id===id)||{};
+  const x=c.livingCareers[id]||(c.livingCareers[id]={id,wins:Number(row.wins)||0,losses:Number(row.losses)||0,streak:0,momentum:50,popularity:20,history:[]});
+  x.modifiers=x.modifiers||{};x.relationships=x.relationships||{};x.opportunities=x.opportunities||{};x.history=x.history||[];
+  return x;
+ }
+ function rankings919(c){return typeof lpw8Rankings==='function'?lpw8Rankings(c):(c.rankings||[]).slice().sort((a,b)=>Number(b.points||0)-Number(a.points||0));}
+ function rank919(c,id){const i=rankings919(c).findIndex(r=>r.id===id);return i<0?null:i+1}
+ function ensure919(c){
+  if(!c)return c;c.world=c.world||{};
+  c.world.career919=c.world.career919||{};
+  c.world.cpuFeuds=c.world.cpuFeuds||{};
+  c.world.rankSnapshots919=c.world.rankSnapshots919||{};
+  c.world.seasonAwards=c.world.seasonAwards||[];
+  c.world.titleOpportunities=c.world.titleOpportunities||{};
+  (c.rankings||[]).forEach(r=>career919(c,r.id));
+  return c;
+ }
+ const load919=liveLoad;
+ liveLoad=function(){return ensure919(load919())};window.liveLoad=liveLoad;
+ const save919=liveSave;
+ liveSave=function(c){return save919(ensure919(c))};window.liveSave=liveSave;
+
+ function monthKey919(c){return `${season919(c)}:${month919(c)}`}
+ function ensureRankSnapshot919(c){
+  ensure919(c);const key=monthKey919(c);if(c.world.rankSnapshots919[key])return c.world.rankSnapshots919[key];
+  const snap={};rankings919(c).forEach((r,i)=>snap[r.id]={rank:i+1,points:Number(r.points||0)});c.world.rankSnapshots919[key]=snap;
+  const keys=Object.keys(c.world.rankSnapshots919);if(keys.length>18)keys.slice(0,keys.length-18).forEach(k=>delete c.world.rankSnapshots919[k]);return snap;
+ }
+ function movement919(c,id){const snap=ensureRankSnapshot919(c),now=rank919(c,id),old=snap[id]?.rank;return Number.isFinite(now)&&Number.isFinite(old)?old-now:0}
+ function capHouseShowVolatility919(c){
+  const snap=ensureRankSnapshot919(c),rows=rankings919(c);let changed=false;
+  rows.forEach((row,i)=>{
+   const start=snap[row.id]?.rank;if(!start)return;const now=i+1,delta=start-now;
+   if(Math.abs(delta)<=5)return;
+   const boundaryRank=delta>0?Math.max(1,start-5):Math.min(rows.length,start+5);
+   const boundary=rows[boundaryRank-1];if(!boundary||boundary.id===row.id)return;
+   row.points=delta>0?Math.min(Number(row.points||0),Number(boundary.points||0)+0.25):Math.max(Number(row.points||0),Number(boundary.points||0)-0.25);changed=true;
+  });
+  if(changed)(c.rankings||[]).sort((a,b)=>Number(b.points||0)-Number(a.points||0)||Number(b.wins||0)-Number(a.wins||0));
+ }
+
+ // Keep ordinary house-show movement gentle and cap routine monthly volatility.
+ const advance919=liveAdvanceDay;
+ liveAdvanceDay=function(c){
+  if(!c)return advance919(c);ensure919(c);ensureRankSnapshot919(c);
+  const before={};(c.rankings||[]).forEach(r=>before[r.id]=Number(r.points||0));
+  const out=advance919(c);
+  // Any house-show-only point jump above the intended +2/-1 scale is reduced.
+  if(c.world?.latestHouseShow?.matches){
+   const ids=new Set(c.world.latestHouseShow.matches.flatMap(m=>[m.winner,m.loser]));
+   (c.rankings||[]).forEach(r=>{if(!ids.has(r.id))return;const diff=Number(r.points||0)-Number(before[r.id]||0);if(diff>2)r.points=Number(before[r.id]||0)+2;if(diff<-1)r.points=Math.max(0,Number(before[r.id]||0)-1)});
+   (c.rankings||[]).sort((a,b)=>Number(b.points||0)-Number(a.points||0)||Number(b.wins||0)-Number(a.wins||0));capHouseShowVolatility919(c);
+  }
+  // Momentum is temporary form: inactive wrestlers drift gently toward 50.
+  const booked=new Set((c.world?.latestHouseShow?.matches||[]).flatMap(m=>[m.winner,m.loser]));
+  (c.rankings||[]).forEach(r=>{if(r.id===c.active||booked.has(r.id))return;const x=career919(c,r.id),m=Number(x.momentum||50);if(m!==50)x.momentum=clamp919(m+(m>50?-0.5:0.5),20,80)});
+  liveSave(c);return out;
+ };window.liveAdvanceDay=liveAdvanceDay;
+
+ function relationState919(value){const n=Number(value)||0;return n>=60?'LOYAL':n>=25?'SUPPORTIVE':n<=-60?'HOSTILE':n<=-25?'DISTRUSTFUL':'NEUTRAL'}
+ window.lpwRelationshipState=relationState919;
+ function relationshipEffect919(c,id,npc){
+  const x=career919(c,id),state=relationState919(x.relationships[npc]);
+  if(state==='LOYAL')return {positive:1.18,negative:.82,label:'Loyal'};
+  if(state==='SUPPORTIVE')return {positive:1.08,negative:.92,label:'Supportive'};
+  if(state==='HOSTILE')return {positive:.78,negative:1.22,label:'Hostile'};
+  if(state==='DISTRUSTFUL')return {positive:.90,negative:1.10,label:'Distrustful'};
+  return {positive:1,negative:1,label:'Neutral'};
+ }
+
+ // Repeated NPC interactions now build visible wrestler-owned relationships and
+ // make later benefits or setbacks slightly stronger without becoming decisive.
+ if(typeof lpw836ApplyOutcome==='function'){
+  const npc919=lpw836ApplyOutcome;
+  lpw836ApplyOutcome=function(npcId,title,changes,reaction,ripple){
+   const c0=liveLoad(),id=c0?.active,effect=c0&&id?relationshipEffect919(c0,id,npcId):{positive:1,negative:1};
+   const scaled={};Object.entries(changes||{}).forEach(([k,v])=>{const n=Number(v)||0;scaled[k]=Math.round(n*(n>=0?effect.positive:effect.negative))});
+   const result=npc919.call(this,npcId,title,scaled,reaction,ripple),c=liveLoad();
+   if(c&&id){const x=career919(c,id),positive=Object.values(scaled).some(v=>Number(v)>0);x.relationships[npcId]=clamp919(Number(x.relationships[npcId]||0)+(positive?6:-4),-100,100);x.lastNpcInteraction={npc:npcId,title,relationship:relationState919(x.relationships[npcId]),season:season919(c),month:month919(c)};liveSave(c)}
+   return result;
+  };window.lpw836ApplyOutcome=lpw836ApplyOutcome;
+ }
+
+ function feudId919(a,b){return [a,b].sort().join('__')}
+ function maintainCpuFeuds919(c){
+  ensure919(c);const key=monthKey919(c);if(c.world.career919.lastFeudTick===key)return;c.world.career919.lastFeudTick=key;
+  Object.values(c.world.cpuFeuds).forEach(f=>{if(f.status!=='active')return;f.months=Number(f.months||0)+1;f.intensity=clamp919(Number(f.intensity||35)+((f.months%2)?6:-2),10,100);if(f.months>=Number(f.duration||2)){f.status='concluded';f.conclusionReason=f.intensity>=70?'Settled at a major event':'The rivalry cooled after its final confrontation';f.concludedSeason=season919(c);f.concludedMonth=month919(c)}});
+  const activeIds=new Set(Object.values(c.world.cpuFeuds).filter(f=>f.status==='active').flatMap(f=>f.participants||[]));
+  const rows=rankings919(c).map(r=>r.id).filter(id=>id!==c.active&&id!==c.championships?.world&&!activeIds.has(id));
+  for(let i=0;i+1<rows.length&&Object.values(c.world.cpuFeuds).filter(f=>f.status==='active').length<4;i+=2){const a=rows[i],b=rows[i+1],id=feudId919(a,b);if(!c.world.cpuFeuds[id])c.world.cpuFeuds[id]={id,participants:[a,b],startSeason:season919(c),startMonth:month919(c),duration:1+((i/2)%3),months:0,intensity:30+(i%4)*8,status:'active',origin:'Rankings proximity'}}
+ }
+
+ function titlePath919(c,id){
+  const rows=rankings919(c),pos=rows.findIndex(r=>r.id===id),row=rows[pos],above=pos>0?rows[pos-1]:null,champ=c.championships?.world;
+  return {rank:pos<0?null:pos+1,points:Number(row?.points||0),gap:above?Math.max(0,Number(above.points||0)-Number(row?.points||0)):0,champion:champ,eligible:pos===0&&id!==champ};
+ }
+ function recentSummary919(c,id){const x=career919(c,id),h=(x.history||[]).slice(-3);if(h.length)return String(h[h.length-1]?.text||h[h.length-1]?.result||'Recent activity recorded.');const hs=c.world?.latestHouseShow?.matches?.find(m=>m.winner===id||m.loser===id);if(hs)return hs.winner===id?'Won the latest house-show appearance.':'Lost the latest house-show appearance.';return 'No major recent development.'}
+ function candidateCard919(c,id){
+  const w=wrestler919(id),x=career919(c,id),p=liveProgress(id,c),path=titlePath919(c,id),move=movement919(c,id),injured=c.world?.injury?.id===id;
+  const stats=['power','speed','technique','charisma','resilience','versatility','finisher'];const ovr=Math.round(stats.reduce((s,k)=>s+Number(p.stats?.[k]||75),0)/stats.length);
+  const rel=Object.entries(x.relationships||{}).sort((a,b)=>Math.abs(Number(b[1]))-Math.abs(Number(a[1])))[0];const relText=rel?`${String(rel[0]).replace(/-/g,' ')}: ${relationState919(rel[1])}`:'Relationships: Neutral';
+  const movement=move>0?`↑${move}`:move<0?`↓${Math.abs(move)}`:'—';const title=path.eligible?'TITLE OPPORTUNITY EARNED':x.opportunities?.worldTitle?'TITLE OPPORTUNITY PRESERVED':'';
+  return `<button class="live-founder-card lpw919-career-choice" onclick="gauntletLiveStartNextMonth('${id}')">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'CURRENT FOCUS':'AVAILABLE CAREER'}${c.championships?.world===id?' · WORLD CHAMPION':''}</small><b>${w.name}</b><em>Rank #${path.rank??'—'} ${movement} · ${x.wins||0}-${x.losses||0} · ${x.streak>0?'W'+x.streak:x.streak<0?'L'+Math.abs(x.streak):'—'}</em><i>Level ${p.level||1} · OVR ${ovr} · ${p.points||0} point${Number(p.points||0)===1?'':'s'} available</i><i>Momentum ${Math.round(x.momentum||50)} · Popularity ${Math.round(x.popularity||20)}${injured?' · INJURED':''}</i><i>${title||x.arcComplete?'CHARACTER ARC COMPLETE':x.rival?`Current story: ${wrestler919(x.rival)?.name||'Unresolved rivalry'}`:'Ready for a new story'}</i><i>${relText}</i><i>While away: ${recentSummary919(c,id)}</i></span></button>`;
+ }
+
+ // Richer month-end switching information, persistent CPU feuds and explicit
+ // title-opportunity consequences.
+ gauntletLiveMonthRosterChoice=function(){
+  const c=liveLoad();if(!c)return gauntletLiveHome();ensureRankSnapshot919(c);maintainCpuFeuds919(c);
+  const active=career919(c,c.active),path=titlePath919(c,c.active);if(path.eligible)active.opportunities.worldTitle={earnedSeason:season919(c),earnedMonth:month919(c),status:'earned'};
+  liveSave(c);render(`<section class="panel live-founder-screen lpw919-season-choice"><div class="tv-kicker">MONTH COMPLETE · SEASON ${season919(c)}</div><h1>WHOSE STORY WILL THE CAMERAS FOLLOW?</h1><p class="sub">Stay with one wrestler to complete their arc, or switch to develop your stable. A title opportunity remains with the wrestler who earned it and may continue under CPU control.</p><div class="live-founder-grid">${(c.stable||[]).map(id=>candidateCard919(c,id)).join('')}</div></section>`)
+ };window.gauntletLiveMonthRosterChoice=gauntletLiveMonthRosterChoice;
+
+ function chooseStoryPriority919(c,id){const path=titlePath919(c,id),x=career919(c,id);if(path.eligible||x.opportunities?.worldTitle?.status==='earned')return 'WORLD_CHAMPIONSHIP';if(month919(c)===3)return 'ANNUAL_TOURNAMENT';if(c.world?.specialStoryMonth)return 'SPECIAL_STORY';return 'STANDARD_RIVALRY'}
+ function contextualOrigin919(c,id){
+  const rows=rankings919(c),pos=rows.findIndex(r=>r.id===id),near=rows.slice(Math.max(0,pos-2),pos+3).map(r=>r.id).filter(x=>x!==id&&x!==c.championships?.world);
+  const feud=Object.values(c.world.cpuFeuds||{}).find(f=>f.status==='active'&&(f.participants||[]).includes(id));if(feud){const opponent=feud.participants.find(x=>x!==id);return {opponent,reason:`The cameras return to ${wrestler919(id).name} with an unresolved rivalry against ${wrestler919(opponent).name} already simmering.`}}
+  const hs=c.world?.latestHouseShow?.matches?.find(m=>m.winner===id||m.loser===id);if(hs){const opponent=hs.winner===id?hs.loser:hs.winner;return {opponent,reason:`A confrontation after the latest house-show result brought ${wrestler919(id).name} and ${wrestler919(opponent).name} face to face.`}}
+  const opponent=near[0]||rows.find(r=>r.id!==id&&r.id!==c.championships?.world)?.id;return {opponent,reason:`Their positions in the Power Rankings have put ${wrestler919(id).name} and ${wrestler919(opponent).name} on a collision course.`}
+ }
+ const startMonth919=gauntletLiveStartNextMonth;
+ gauntletLiveStartNextMonth=function(id){
+  const c=liveLoad();if(!c?.stable?.includes(id))return gauntletLiveMonthRosterChoice();const outgoing=career919(c,c.active),outPath=titlePath919(c,c.active);
+  if(outPath.eligible)outgoing.opportunities.worldTitle={earnedSeason:season919(c),earnedMonth:month919(c),status:id===c.active?'active':'cpu-continuing'};
+  const result=startMonth919.apply(this,arguments),next=liveLoad();if(next){next.world.storyPriority=chooseStoryPriority919(next,id);const x=career919(next,id);if(!x.rival&&next.world.storyPriority!=='WORLD_CHAMPIONSHIP'){const origin=contextualOrigin919(next,id);x.rival=origin.opponent;next.world.pendingFeudOrigin={player:id,opponent:origin.opponent,reason:origin.reason,month:next.month};if(typeof liveStartFeud==='function')liveStartFeud(next,origin.opponent,origin.reason)}liveSave(next)}return result;
+ };window.gauntletLiveStartNextMonth=gauntletLiveStartNextMonth;
+
+ function seasonAwards919(c,seasonNumber,records){
+  if(c.world.seasonAwards.some(a=>a.season===seasonNumber))return;const sorted=records.slice().sort((a,b)=>b.wins-a.wins),best=sorted[0],improved=records.slice().sort((a,b)=>{const xa=career919(c,a.id),xb=career919(c,b.id);return Number(xb.cpuGrowth||0)-Number(xa.cpuGrowth||0)})[0];
+  c.world.seasonAwards.unshift({season:seasonNumber,mostWins:best?.id,breakout:improved?.id,champion:c.championships?.world});c.world.seasonAwards=c.world.seasonAwards.slice(0,20);
+ }
+ // Add awards to archived seasons after the existing 9.0.18 rollover has run.
+ const advanceSeason919=liveAdvanceDay;
+ liveAdvanceDay=function(c){const before=c?season919(c):null,out=advanceSeason919(c),after=c?season919(c):null;if(c&&after>before){const archive=c.world?.seasons?.history?.find(s=>s.season===before);if(archive)seasonAwards919(c,before,archive.records||[]);liveSave(c)}return out};window.liveAdvanceDay=liveAdvanceDay;
+
+ // Championship path now explains the exact gap and next meaningful route.
+ const calendar919=gauntletLiveCalendar;
+ gauntletLiveCalendar=function(){const result=calendar919.apply(this,arguments);setTimeout(()=>{const c=liveLoad(),host=document.querySelector('.lpw918-championship-path');if(!c||!host)return;const p=titlePath919(c,c.active),champ=wrestler919(p.champion),x=career919(c,c.active);host.innerHTML=`<small>SEASON ${season919(c)} · CHAMPIONSHIP PATH</small><b>${wrestler919(c.active).name} is ranked #${p.rank??'—'}</b><span>${p.eligible?'World Championship opportunity earned.':c.active===p.champion?`${champ?.name||'The champion'} is carrying the World Championship into the next defence.`:`Gap to the next position: ${p.gap.toFixed(1)} ranking points. Reach #1 to challenge ${champ?.name||'the World Champion'}.`}</span><em>${x.opportunities?.worldTitle?.status==='cpu-continuing'?'This opportunity is continuing while another wrestler is controlled.':x.arcComplete?'Character arc complete · legacy rewards remain available':'Next major movement comes from televised wins, rivalry victories and SuperCards.'}</em>`},0);return result};window.gauntletLiveCalendar=gauntletLiveCalendar;
+
+ // Varied repeat-opponent SuperCard rewards keep the late game meaningful.
+ if(typeof gauntletLiveSupercardResult==='function'){
+  const reward919=gauntletLiveSupercardResult;
+  gauntletLiveSupercardResult=function(win,oppId){
+   const before=liveLoad(),already=!!before?.stable?.includes(oppId),activeId=before?.active;
+   const beforeXp=before&&activeId?Number(liveProgress(activeId,before).xp||0):0;
+   const beforePop=before&&activeId?Number(career919(before,activeId).popularity||20):20;
+   const result=reward919.apply(this,arguments);
+   const c=liveLoad();
+   if(c&&win&&already&&activeId){
+    const x=career919(c,activeId),p=liveProgress(activeId,c);
+    // Remove the fixed 9.0.18 repeat-opponent reward before applying the new cycle.
+    p.xp=Math.min(Number(p.xp||0),beforeXp);
+    x.popularity=Math.min(Number(x.popularity||20),beforePop);
+    const cycle=(Number(x.repeatSupercardWins||0)++)%5;let reward;
+    if(cycle===0&&!x.arcComplete){p.xp=Number(p.xp||0)+60;reward={type:'BONUS XP',value:60}}
+    else if(cycle===1){x.popularity=clamp919(Number(x.popularity||20)+5,0,100);reward={type:'POPULARITY',value:5}}
+    else if(cycle===2){x.momentum=clamp919(Number(x.momentum||50)+6,0,100);reward={type:'MOMENTUM',value:6}}
+    else if(cycle===3){x.opportunities.traitToken=Number(x.opportunities.traitToken||0)+1;reward={type:'TRAIT TOKEN',value:1}}
+    else{x.modifiers.chemistryBoost=clamp919(Number(x.modifiers.chemistryBoost||0)+1,0,5);reward={type:'CHEMISTRY DEVELOPMENT',value:1}}
+    c.world.lastAlternativeSupercardReward={...reward,opponent:oppId,season:season919(c),month:month919(c)};liveSave(c)
+   }
+   return result
+  };window.gauntletLiveSupercardResult=gauntletLiveSupercardResult;
+ }
+
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
+})();

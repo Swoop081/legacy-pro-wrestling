@@ -2686,3 +2686,24 @@ body.career-view:has(.lpw914-preview-brand-only) header{min-height:18px!importan
  .lpw914-show-brand-only .show-intro-copy>.lpw-show-logo{width:100%!important;padding:10px 16px 8px!important}
  .lpw914-show-brand-only .lpw-show-logo b{font-size:clamp(3rem,14vw,5rem)!important}
 }
+
+/* 9.0.15 SuperCard wrestler unlock */
+.lpw915-wrestler-unlock{text-align:center;overflow:hidden}
+.lpw915-wrestler-unlock .lpw915-unlock-art{height:min(52vh,560px);display:flex;align-items:flex-end;justify-content:center;margin:6px auto 12px;overflow:hidden}
+.lpw915-wrestler-unlock .lpw915-unlock-art img{height:100%;max-width:100%;object-fit:contain;object-position:center bottom}
+.lpw915-wrestler-unlock h2{font-size:clamp(2rem,8vw,4.4rem);margin:.15em 0}
+.lpw915-wrestler-unlock>small{letter-spacing:.18em;font-weight:900;color:#d3aa52}
+
+/* 9.0.17 Career progression integration */
+.lpw917-progression-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 14px}.lpw917-progression-summary span,.lpw917-upgrade-note{border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.28);border-radius:10px;padding:10px}.lpw917-progression-summary small{display:block;opacity:.68;font-size:.66rem}.lpw917-progression-summary b{display:block;margin-top:3px;font-size:.86rem}.lpw917-upgrade-note{margin-bottom:12px;border-color:rgba(244,197,66,.55)}.lpw917-upgrade-note b,.lpw917-upgrade-note span{display:block}.lpw917-upgrade-note span{margin-top:4px;opacity:.82;font-size:.8rem}@media(max-width:520px){.lpw917-progression-summary{grid-template-columns:1fr}.lpw917-progression-summary span{padding:8px 10px}}
+
+/* 9.0.18 Career State Consolidation */
+.lpw918-career-choice span{display:flex;flex-direction:column;gap:4px}.lpw918-career-choice i{font-style:normal;font-size:.72rem;line-height:1.25;color:var(--muted,#b8b8c4)}.lpw918-season-choice .live-founder-grid{align-items:stretch}.lpw918-season-choice .live-founder-card{min-height:168px}.lpw918-championship-path{margin:16px 0 4px;padding:14px 16px;border:1px solid rgba(255,210,70,.35);background:linear-gradient(135deg,rgba(30,24,8,.9),rgba(12,12,18,.95));display:flex;flex-direction:column;gap:5px;border-radius:12px}.lpw918-championship-path small{color:#f2c84b;font-weight:800;letter-spacing:.08em}.lpw918-championship-path b{font-size:1.05rem}.lpw918-championship-path span,.lpw918-championship-path em{font-size:.8rem;color:#d5d5dc}.lpw918-championship-path em{font-style:normal;color:#9ca0aa}
+
+/* 9.0.19 Career Flow & Longevity Consolidation */
+.lpw919-season-choice .live-founder-grid{display:grid;gap:12px}
+.lpw919-career-choice{align-items:center;text-align:left;min-height:150px}
+.lpw919-career-choice span{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lpw919-career-choice em,.lpw919-career-choice i{font-style:normal;line-height:1.25}
+.lpw919-career-choice i:last-child{opacity:.78;font-size:.82rem}
+@media (max-width:640px){.lpw919-career-choice{min-height:132px}.lpw919-career-choice i{font-size:.78rem}}
