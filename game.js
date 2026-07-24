@@ -6941,3 +6941,71 @@ render=function(html){
     return result;
   };
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.1.6 — HEADER, PREVIEW ART & SHOW BUMPER HOTFIX
+   ============================================================================= */
+(function(){
+ const BUILD='9.1.6';
+
+ function repairCareerHeader916(){
+  const top=document.querySelector('.live-calendar-screen .live-calendar-top');
+  if(!top)return;
+  [...top.classList].forEach(cls=>{if(/^lpw91\d*-career-header$/.test(cls)||cls==='lpw91-career-header')top.classList.remove(cls)});
+  top.classList.add('lpw916-career-header');
+  top.removeAttribute('style');
+  top.innerHTML=`
+   <img class="lpw916-career-logo" src="assets/branding/lpw-logo-compact-400.webp" alt="LEGACY Pro Wrestling">
+   <div class="lpw916-career-actions">
+    <button type="button" class="lpw916-career-nav" onclick="home()">← MAIN MENU</button>
+    <button type="button" class="lpw916-career-nav" onclick="gauntletLiveHome()">CAREER MENU</button>
+   </div>`;
+ }
+
+ function repairPlayerPreviewArt916(){
+  const card=document.querySelector('.live-match-card');
+  const c=typeof liveLoad==='function'?liveLoad():null;
+  if(!card||!c)return;
+  const first=card.querySelector('.live-match-lineup > div');
+  const wrestler=typeof liveFounder==='function'?liveFounder(c.active):null;
+  if(!first||!wrestler)return;
+  const current=first.querySelector('img.wrestler-art, img');
+  const replacement=imageWithFallback(wrestler,'portrait','art-portrait lpw916-player-preview-art','matchPortrait');
+  if(current)current.outerHTML=replacement;
+  else first.insertAdjacentHTML('afterbegin',replacement);
+  const img=first.querySelector('img.lpw916-player-preview-art');
+  if(img){img.style.display='block';img.removeAttribute('hidden');}
+  first.classList.remove('missing-art');
+ }
+
+ function markShowBumper916(){
+  document.querySelectorAll('body > .lpw904-show-bumper,.lpw904-show-bumper').forEach(node=>node.classList.add('lpw916-show-bumper'));
+ }
+
+ const previousRender=window.render;
+ window.render=function(html){
+  const result=previousRender.call(this,html);
+  setTimeout(()=>{repairCareerHeader916();repairPlayerPreviewArt916();markShowBumper916()},0);
+  setTimeout(()=>{repairCareerHeader916();repairPlayerPreviewArt916();markShowBumper916()},80);
+  return result;
+ };
+
+ const previousCalendar=window.gauntletLiveCalendar;
+ if(typeof previousCalendar==='function')window.gauntletLiveCalendar=function(){
+  const result=previousCalendar.apply(this,arguments);
+  setTimeout(repairCareerHeader916,0);setTimeout(repairCareerHeader916,80);
+  return result;
+ };
+
+ const previousMatchCard=window.gauntletLiveMatchCard65;
+ if(typeof previousMatchCard==='function')window.gauntletLiveMatchCard65=function(){
+  const result=previousMatchCard.apply(this,arguments);
+  setTimeout(repairPlayerPreviewArt916,0);setTimeout(repairPlayerPreviewArt916,100);
+  return result;
+ };
+
+ window.LPW916_repairCareerHeader=repairCareerHeader916;
+ window.LPW916_repairPlayerPreviewArt=repairPlayerPreviewArt916;
+ window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+})();
