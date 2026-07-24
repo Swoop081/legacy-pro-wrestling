@@ -7130,3 +7130,87 @@ render=function(html){
  window.LPW_GAMEPLAY_BUILD=BUILD;
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.1.10 — INITIAL MAIN MENU SYNCHRONISATION
+   Ensures late-loaded menu extensions are present on the very first home render.
+   ============================================================================= */
+(function(){
+ 'use strict';
+ const BUILD='9.1.10';
+
+ function makeMenuButton(id,className,title,description,handler){
+  const button=document.createElement('button');
+  button.type='button';
+  button.id=id;
+  button.className=`hub-option ${className}`;
+  button.addEventListener('click',handler);
+  button.innerHTML=`<b>${title}</b><small>${description}</small>`;
+  return button;
+ }
+
+ function ensureMainMenuExtensions(root=document){
+  const nav=root.querySelector?.('.hub-menu');
+  if(!nav)return false;
+
+  let battle=nav.querySelector('#battleRoyalMenuButton');
+  if(!battle&&typeof window.battleRoyalHome==='function'){
+   battle=makeMenuButton(
+    'battleRoyalMenuButton',
+    'battle-royal-menu',
+    '20-PERSON BATTLE ROYAL',
+    'Twenty enter, one survives. Can you outlast the field in the Battle Royal?',
+    ()=>window.battleRoyalHome()
+   );
+   const career=nav.querySelector('button');
+   career?.after(battle);
+  }
+
+  let specialty=nav.querySelector('#specialtyMatchesMenuButton');
+  if(!specialty&&typeof window.specialtyMatchesHome==='function'){
+   specialty=makeMenuButton(
+    'specialtyMatchesMenuButton',
+    'specialty-menu-option',
+    'SPECIALTY MATCHES',
+    'Experience match types with completely different gameplay.',
+    ()=>window.specialtyMatchesHome()
+   );
+   battle=nav.querySelector('#battleRoyalMenuButton');
+   if(battle)battle.after(specialty);
+   else{
+    const collection=[...nav.querySelectorAll('button')].find(node=>node.textContent.includes('COLLECTION'));
+    collection?collection.before(specialty):nav.appendChild(specialty);
+   }
+  }
+  return !!nav.querySelector('#specialtyMatchesMenuButton');
+ }
+
+ window.lpw9110EnsureMainMenuExtensions=ensureMainMenuExtensions;
+
+ // Run after every render so the initial home screen and any future re-render match.
+ const previousRender=window.render;
+ if(typeof previousRender==='function'){
+  window.render=function(){
+   const result=previousRender.apply(this,arguments);
+   ensureMainMenuExtensions(document);
+   requestAnimationFrame(()=>ensureMainMenuExtensions(document));
+   return result;
+  };
+ }
+
+ // game.js has already produced the first home screen before this final module loads.
+ ensureMainMenuExtensions(document);
+ requestAnimationFrame(()=>ensureMainMenuExtensions(document));
+ window.addEventListener('DOMContentLoaded',()=>ensureMainMenuExtensions(document),{once:true});
+ window.addEventListener('pageshow',()=>ensureMainMenuExtensions(document));
+
+ // Guard against a cached/legacy home renderer replacing the menu after startup.
+ const observer=new MutationObserver(()=>{
+  if(document.querySelector('.hub-menu'))ensureMainMenuExtensions(document);
+ });
+ observer.observe(document.getElementById('app')||document.body,{childList:true,subtree:true});
+
+ window.TTG_APP_VERSION=BUILD;
+ window.LPW_GAMEPLAY_BUILD=BUILD;
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+})();

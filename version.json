@@ -1,5 +1,5 @@
 {
-  "version": "9.1.9",
-  "build": "exact-transition-clone",
-  "name": "Exact Intro Logo Transition"
+  "version": "9.1.10",
+  "build": "initial-main-menu-sync",
+  "name": "Initial Main Menu Synchronisation"
 }
