@@ -2455,7 +2455,7 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
 
 
 
-/* LEGACY PRO WRESTLING 9.0 — SPECIALTY MATCHES: LAST MAN STANDING */
+/* LEGACY PRO WRESTLING 1.0 — SPECIALTY MATCHES: LAST MAN STANDING */
 .specialty-menu-option b{color:#fff}
 .lms-home,.lms-select,.lms-preview,.lms-match,.lms-result{max-width:1180px;margin:0 auto}
 .lms-rules{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}.lms-rules span{border:1px solid #c79b2b;background:#071329;padding:18px;text-align:center}.lms-rules b{display:block;font-size:2rem;color:#f5c542}.lms-rules small{letter-spacing:.13em}
@@ -2466,7 +2466,7 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
 .lms-result{text-align:center}.lms-result-art img{height:430px;max-width:100%;object-fit:contain}.lms-result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.lms-result-stats span{border:1px solid #405174;padding:12px}.lms-result-stats small,.lms-result-stats b{display:block}.lms-result-stats b{font-size:1.5rem;color:#f5c542}
 @media(max-width:700px){.lms-roster-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.lms-roster-card img{height:125px}.lms-roster-card span{padding:8px}.lms-roster-card b{font-size:.85rem}.lms-roster-card small{font-size:.67rem}.lms-versus img{height:260px}.lms-scoreboard{grid-template-columns:1fr 1fr}.lms-scoreboard>strong{display:none}.lms-scoreboard article{display:block;text-align:center;padding:8px}.lms-scoreboard article>img{width:78px;height:78px}.lms-card{width:105px;height:140px;font-size:4rem}.lms-match{padding-left:10px!important;padding-right:10px!important}}
 
-/* 9.0.1 — Last Man Standing mobile control and broadcast polish */
+/* 1.0 — Last Man Standing mobile control and broadcast polish */
 .lms-scoreboard article{
   border:0;
   background:transparent;
@@ -2499,7 +2499,7 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
  .lms-commentary-heading .commentary-desk{min-height:92px}
 }
 
-/* LEGACY 9.0.2 — one-time Career channel-tune onboarding */
+/* LEGACY 1.0 — one-time Career channel-tune onboarding */
 .lpw902-channel-static,.lpw902-breaking-card{position:fixed!important;top:0!important;right:0!important;bottom:0!important;left:0!important;width:100vw!important;height:100dvh!important;min-height:100vh!important;z-index:2147483647!important;overflow:hidden;background:#020305;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;transform:none!important;margin:0!important;padding:0;overscroll-behavior:none}
 .lpw902-static-noise{position:absolute;inset:-30%;background-image:repeating-radial-gradient(circle at 15% 30%,#fff 0 1px,#111 1px 3px),repeating-linear-gradient(90deg,transparent 0 2px,rgba(255,255,255,.34) 2px 3px,transparent 3px 5px);background-size:7px 7px,11px 100%;filter:contrast(260%);opacity:.72;animation:lpw902Noise .09s steps(2) infinite}
 .lpw902-static-band{position:absolute;left:-10%;right:-10%;height:18%;background:rgba(255,255,255,.3);filter:blur(5px);animation:lpw902Band .42s linear infinite}
@@ -2526,7 +2526,7 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
 .lpw902-champion-interview>.btn.live-primary{display:block;margin:0 auto}
 @media(max-width:700px){.lpw902-interview-stage{min-height:235px;grid-template-columns:1fr 1fr;gap:4px}.lpw902-interview-stage article{min-height:225px}.lpw902-interview-stage img{height:185px;max-height:185px}.lpw902-interview-stage b{font-size:.88rem}.lpw902-interview-stage small{font-size:clamp(.49rem,2.25vw,.62rem);letter-spacing:.025em}.lpw902-interview-stage .lpw837-world-belt{display:none}.lpw902-dialogue-card{min-height:160px;padding:13px}.lpw902-dialogue-card p{font-size:1rem}}
 
-/* LEGACY Pro Wrestling 9.0.5 */
+/* LEGACY Pro Wrestling 1.0 */
 .lpw904-show-bumper{position:fixed;inset:0;z-index:10050;background:radial-gradient(circle at center,#181818 0,#070707 58%,#000 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;animation:lpw904Bumper 1.15s ease both}
 .lpw904-show-logo{width:min(92vw,760px);display:flex;align-items:center;justify-content:center;transform:scale(.86);animation:lpw904Logo 1.15s ease both}
 .lpw904-show-logo .lpw-show-logo,.lpw904-show-logo img{width:100%!important;max-width:760px!important;height:auto!important;margin:0!important}
@@ -2544,12 +2544,12 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
 .lpw904-momentum-grid article>strong{display:block;text-align:center;font-size:1.55rem;margin-top:10px;color:#f4cf46}.lpw904-momentum .positive{color:#7fe18c}.lpw904-momentum .negative{color:#ff7777}.lpw904-momentum>p{text-align:center;font-size:.7rem;opacity:.7;margin:12px 0 0}
 @media(max-width:560px){.lpw904-momentum-grid{gap:8px}.lpw904-momentum-grid article{padding:9px}.lpw904-momentum-grid h3{font-size:.72rem}.lpw904-momentum-grid li{font-size:.62rem}.lpw904-show-logo{width:94vw}}
 
-/* 9.0.5 verified control-owner presentation */
+/* 1.0 verified control-owner presentation */
 .match-control .team-label:first-child{color:#f4cf46!important;font-weight:900!important;text-align:center!important}
 .match-control .team-label.right{opacity:.72!important;text-align:center!important}
 
 
-/* LEGACY Pro Wrestling 9.0.6 — presentation polish */
+/* LEGACY Pro Wrestling 1.0 — presentation polish */
 html.lpw-show-bumper-active,body.lpw-show-bumper-active,
 html.lpw-raymond-guide-active,body.lpw-raymond-guide-active{overflow:hidden!important}
 body>.lpw904-show-bumper{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:100vh!important;z-index:2147483000!important;margin:0!important;transform:none!important}
@@ -2590,14 +2590,14 @@ body>.lpw904-show-bumper .lpw-show-logo,body>.lpw904-show-bumper img{max-height:
 .jett-decision-outcome .outcome-deltas span,.story-decision.decision-outcome .outcome-deltas span{border:0!important;background:transparent!important;padding:6px 2px!important;box-shadow:none!important}
 .jett-decision-outcome .outcome-deltas b,.story-decision.decision-outcome .outcome-deltas b{font-size:1.65rem!important}
 
-/* LEGACY Pro Wrestling 9.0.7 — debut momentum and onboarding alignment */
+/* LEGACY Pro Wrestling 1.0 — debut momentum and onboarding alignment */
 .lpw902-interview-stage article.speaking{transform:none!important}
 .lpw902-interview-stage article>small{align-self:center!important}
 .lpw907-neutral-momentum{justify-content:center!important;text-align:center!important}
 .lpw907-neutral-momentum span{width:100%;text-align:center}
 .lpw907-debut-row{justify-content:space-between!important}
 
-/* VERSION 9.0.8 — daily Living World feed and feud-origin cleanup */
+/* VERSION 1.0 — daily Living World feed and feud-origin cleanup */
 .lpw-feud-origin .origin-matchup-820>.origin-vs-820,
 .lpw-feud-origin .origin-matchup-819>.origin-vs-819,
 .lpw-feud-origin .origin-matchup-811>strong{
@@ -2624,10 +2624,10 @@ body>.lpw904-show-bumper .lpw-show-logo,body>.lpw904-show-bumper img{max-height:
 .lpw908-social{border-left:3px solid #4367bd}
 @media(max-width:520px){.lpw908-living-world{margin-top:1.25rem}.lpw908-feed-section{padding:.85rem}.lpw908-feed-heading h2{font-size:1.35rem}}
 
-/* LEGACY Pro Wrestling 9.0.9 */
+/* LEGACY Pro Wrestling 1.0 */
 .lpw909-options .mode-landing-copy{max-width:760px}.lpw909-option-list{margin-top:28px}.lpw909-reset-option{width:100%;border-color:#7d2727;background:linear-gradient(135deg,rgba(94,18,18,.88),rgba(35,12,12,.96));text-align:left}.lpw909-reset-option b{color:#ffb3b3}.lpw909-reset-screen{max-width:760px;margin:auto;text-align:center}.lpw909-reset-screen>strong{display:block;margin:20px 0;color:#ff8f8f;letter-spacing:.08em}.lpw909-reset-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}.btn.lpw909-danger{background:#8d1f1f;border-color:#d65a5a;color:white}.lpw909-living-world .lpw908-social:first-of-type{border-left:3px solid #d5aa39}.lpw909-living-world .lpw908-social:first-of-type p{font-weight:700}@media(max-width:620px){.lpw909-reset-actions{grid-template-columns:1fr}}
 
-/* LEGACY Pro Wrestling 9.0.11 — safe match-preview layout correction */
+/* LEGACY Pro Wrestling 1.0 — safe match-preview layout correction */
 body.career-view:has(.lpw-match-card-911) header{position:relative;min-height:106px;padding:12px 18px;border-bottom:0}
 body.career-view:has(.lpw-match-card-911) header .brand-header-logo{position:absolute;top:12px;right:18px;left:auto;margin:0;width:clamp(112px,18vw,170px);z-index:20}
 body.career-view:has(.lpw-match-card-911) header .header-meta{display:none!important}
@@ -2647,7 +2647,7 @@ body.career-view:has(.lpw-match-card-911) header .header-meta{display:none!impor
  .lpw-match-card-911 .lpw-show-logo{max-width:94%;box-sizing:border-box}
 }
 
-/* LEGACY Pro Wrestling 9.0.13 — tabled presentation fixes */
+/* LEGACY Pro Wrestling 1.0 — tabled presentation fixes */
 .lpw913-brand-row{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;width:100%;margin:12px 0 18px}
 .lpw913-brand-row .lpw-show-logo{flex:1 1 auto;max-width:72%;margin:0!important}
 .lpw913-brand-row .lpw-career-brand{position:static!important;flex:0 0 auto;width:112px!important;max-width:22%!important;height:auto!important;margin:0!important;align-self:flex-start}
@@ -2668,7 +2668,7 @@ body>.lpw904-show-bumper .lpw-show-logo b{font-size:clamp(3rem,13vw,6rem)!import
  .lpw913-brand-row .lpw-career-brand{width:92px!important;max-width:21%!important}
 }
 
-/* LEGACY Pro Wrestling 9.0.14 — tabled QA corrections */
+/* LEGACY Pro Wrestling 1.0 — tabled QA corrections */
 body.career-view:has(.lpw914-preview-brand-only) header .brand-header-logo{display:none!important}
 body.career-view:has(.lpw914-preview-brand-only) header{min-height:18px!important;padding:0!important}
 .lpw914-preview-brand-only{padding-top:76px!important}
@@ -2687,20 +2687,20 @@ body.career-view:has(.lpw914-preview-brand-only) header{min-height:18px!importan
  .lpw914-show-brand-only .lpw-show-logo b{font-size:clamp(3rem,14vw,5rem)!important}
 }
 
-/* 9.0.15 SuperCard wrestler unlock */
+/* 1.0 SuperCard wrestler unlock */
 .lpw915-wrestler-unlock{text-align:center;overflow:hidden}
 .lpw915-wrestler-unlock .lpw915-unlock-art{height:min(52vh,560px);display:flex;align-items:flex-end;justify-content:center;margin:6px auto 12px;overflow:hidden}
 .lpw915-wrestler-unlock .lpw915-unlock-art img{height:100%;max-width:100%;object-fit:contain;object-position:center bottom}
 .lpw915-wrestler-unlock h2{font-size:clamp(2rem,8vw,4.4rem);margin:.15em 0}
 .lpw915-wrestler-unlock>small{letter-spacing:.18em;font-weight:900;color:#d3aa52}
 
-/* 9.0.17 Career progression integration */
+/* 1.0 Career progression integration */
 .lpw917-progression-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 14px}.lpw917-progression-summary span,.lpw917-upgrade-note{border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.28);border-radius:10px;padding:10px}.lpw917-progression-summary small{display:block;opacity:.68;font-size:.66rem}.lpw917-progression-summary b{display:block;margin-top:3px;font-size:.86rem}.lpw917-upgrade-note{margin-bottom:12px;border-color:rgba(244,197,66,.55)}.lpw917-upgrade-note b,.lpw917-upgrade-note span{display:block}.lpw917-upgrade-note span{margin-top:4px;opacity:.82;font-size:.8rem}@media(max-width:520px){.lpw917-progression-summary{grid-template-columns:1fr}.lpw917-progression-summary span{padding:8px 10px}}
 
-/* 9.0.18 Career State Consolidation */
+/* 1.0 Career State Consolidation */
 .lpw918-career-choice span{display:flex;flex-direction:column;gap:4px}.lpw918-career-choice i{font-style:normal;font-size:.72rem;line-height:1.25;color:var(--muted,#b8b8c4)}.lpw918-season-choice .live-founder-grid{align-items:stretch}.lpw918-season-choice .live-founder-card{min-height:168px}.lpw918-championship-path{margin:16px 0 4px;padding:14px 16px;border:1px solid rgba(255,210,70,.35);background:linear-gradient(135deg,rgba(30,24,8,.9),rgba(12,12,18,.95));display:flex;flex-direction:column;gap:5px;border-radius:12px}.lpw918-championship-path small{color:#f2c84b;font-weight:800;letter-spacing:.08em}.lpw918-championship-path b{font-size:1.05rem}.lpw918-championship-path span,.lpw918-championship-path em{font-size:.8rem;color:#d5d5dc}.lpw918-championship-path em{font-style:normal;color:#9ca0aa}
 
-/* 9.0.19 Career Flow & Longevity Consolidation */
+/* 1.0 Career Flow & Longevity Consolidation */
 .lpw919-season-choice .live-founder-grid{display:grid;gap:12px}
 .lpw919-career-choice{align-items:center;text-align:left;min-height:150px}
 .lpw919-career-choice span{display:flex;flex-direction:column;gap:4px;min-width:0}
@@ -2708,7 +2708,7 @@ body.career-view:has(.lpw914-preview-brand-only) header{min-height:18px!importan
 .lpw919-career-choice i:last-child{opacity:.78;font-size:.82rem}
 @media (max-width:640px){.lpw919-career-choice{min-height:132px}.lpw919-career-choice i{font-size:.78rem}}
 
-/* LEGACY Pro Wrestling 9.2.0 consolidated Career presentation */
+/* LEGACY Pro Wrestling 1.0 consolidated Career presentation */
 .lpw91-responsive-show-logo,.lpw-show-logo{width:min(100%,620px)!important;max-width:calc(100vw - 48px)!important;margin:12px auto 18px!important;overflow:hidden!important;box-sizing:border-box!important}
 .lpw91-responsive-show-logo b,.lpw-show-logo b{font-size:clamp(2.75rem,11vw,5.25rem)!important;line-height:.92!important;white-space:nowrap!important;max-width:100%!important;display:block!important;transform:none!important}
 .live-show-intro .show-intro-copy>.brand,.live-match-card>.brand,.live-match-card .lpw913-legacy-mark,.live-show-intro .lpw913-legacy-mark{display:none!important}
@@ -2732,7 +2732,7 @@ body.career-view:has(.lpw914-preview-brand-only) header{min-height:18px!importan
 .lpw911-career-header>.shell-back:nth-of-type(1){grid-column:2}.lpw911-career-header>.shell-back:nth-of-type(2){grid-column:3}
 .lpw911-rank-movement{display:inline-block!important;margin-left:8px!important;font-size:.72em!important;vertical-align:.1em!important}.lpw911-rank-movement.up{color:#43d477!important}.lpw911-rank-movement.down{color:#ff5360!important}
 .lpw911-throwdown{width:min(94vw,640px)!important;max-width:calc(100vw - 28px)!important;padding-left:18px!important;padding-right:18px!important;overflow:hidden!important}
-.lpw911-throwdown b{font-size:clamp(2.35rem,9.2vw,4.7rem)!important;letter-spacing:-.035em!important;transform:none!important;white-space:nowrap!important;width:100%!important;text-align:center!important}
+.lpw911-throwdown b{font-size:clamp(2.35rem,1.0vw,4.7rem)!important;letter-spacing:-.035em!important;transform:none!important;white-space:nowrap!important;width:100%!important;text-align:center!important}
 .lpw911-recap-header{display:flex;align-items:center;justify-content:space-between;margin:0 0 4px}.lpw911-recap-header .shell-back{margin:0!important}.lpw911-recap-header img{width:108px;height:76px;object-fit:contain}.lpw911-world-recap{padding-top:8px!important}.lpw911-world-recap>.tv-kicker{margin-top:2px!important}.lpw911-recap-continue,.lpw911-centered-button{display:block!important;margin:14px auto!important}
 .lpw911-social,.lpw911-dirt{padding-top:10px!important}.lpw911-social>header,.lpw911-dirt>header{margin-bottom:10px!important}.lpw911-social>header img,.lpw911-dirt>header img{width:92px!important;height:92px!important}.lpw911-social>header h1,.lpw911-dirt>header h1{font-size:clamp(2rem,8vw,3.4rem)!important}.lpw911-social .lpw91-feed{gap:8px!important}.lpw911-social .lpw91-feed article{padding:10px 12px!important}.lpw911-social h2{font-size:1rem;margin:10px 0 6px}.lpw911-social .lpw91-post-choices{gap:8px!important}.lpw911-social .lpw91-post-choices button{padding:11px 12px!important;min-height:0!important}.lpw911-social .lpw91-post-choices button b{font-size:.88rem!important}.lpw911-social .lpw91-post-choices button span{font-size:.72rem!important}
 .lpw911-dirt .lpw91-publication{gap:9px!important}.lpw911-dirt .lpw91-publication article{padding:12px!important}.lpw911-dirt .lpw91-publication h2{font-size:1.2rem!important}.lpw911-dirt .lpw91-publication em{display:block;margin-top:8px;opacity:.48;font-size:.68rem;font-style:normal}
@@ -3031,3 +3031,81 @@ body>.lpw904-show-bumper.lpw916-show-bumper .lpw-show-logo span,
  flex:0 0 auto!important;
  margin:0!important;
 }
+
+/* 1.0 — unified commentary desk on televised show introductions */
+.lpw921-commentary-desk{
+ margin:24px 0 18px;
+ border:1px solid rgba(151,164,194,.28);
+ background:linear-gradient(180deg,rgba(12,18,38,.98),rgba(8,13,28,.98));
+ padding:20px;
+}
+.lpw921-commentators{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:18px;
+ align-items:end;
+ max-width:430px;
+ margin:0 auto 18px;
+}
+.lpw921-commentator{
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:flex-end;
+ min-width:0;
+ text-align:center;
+}
+.lpw921-commentator img{
+ display:block;
+ width:104px!important;
+ height:104px!important;
+ max-width:100%!important;
+ object-fit:contain!important;
+ object-position:center bottom!important;
+ margin:0 auto 8px!important;
+}
+.lpw921-commentator b{
+ display:block;
+ font-size:1.05rem;
+ line-height:1.2;
+ color:#fff;
+}
+.lpw921-commentary-copy{
+ border-top:1px solid rgba(151,164,194,.2);
+ padding-top:16px;
+}
+.lpw921-commentary-copy p{
+ display:grid;
+ grid-template-columns:minmax(110px,140px) minmax(0,1fr);
+ gap:16px;
+ align-items:start;
+ margin:0;
+ padding:12px 0;
+ color:#f4f5f8;
+ font-size:1.02rem;
+ line-height:1.48;
+}
+.lpw921-commentary-copy p+p{border-top:1px solid rgba(151,164,194,.15)}
+.lpw921-commentary-copy strong{
+ color:#f4c84a;
+ font-size:.82rem;
+ letter-spacing:.08em;
+ text-transform:uppercase;
+}
+.lpw921-commentary-copy span{min-width:0}
+@media(max-width:520px){
+ .lpw921-commentary-desk{padding:16px 14px;margin-top:18px}
+ .lpw921-commentators{gap:10px;margin-bottom:12px}
+ .lpw921-commentator img{width:88px!important;height:88px!important}
+ .lpw921-commentator b{font-size:.98rem}
+ .lpw921-commentary-copy{padding-top:10px}
+ .lpw921-commentary-copy p{grid-template-columns:1fr;gap:4px;padding:10px 2px;font-size:.98rem}
+}
+
+/* LEGACY Pro Wrestling 1.0 — Money in the Bank / Ladder Match */
+.specialty-match-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}.specialty-match-grid article{border:1px solid #3c4c6d;background:linear-gradient(145deg,#111827,#080d18);padding:20px;text-align:center}.specialty-match-grid h2{margin:8px 0}.specialty-match-icon{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;margin:0 auto;background:#9d1722;color:#fff;font-size:2rem;font-weight:900;border:3px solid #d94b55}.specialty-match-icon.ladder{background:#b98519;border-color:#f2c14d;color:#111;transform:rotate(-12deg)}
+.mitb-preview{text-align:center}.mitb-preview-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;align-items:end;margin:18px 0}.mitb-preview-grid article{border:1px solid #394967;background:#0b1120;padding:8px}.mitb-preview-grid article.you{border-color:#f2c14d;box-shadow:0 0 0 1px #f2c14d inset}.mitb-preview-grid img{width:100%;height:230px;object-fit:contain;object-position:center bottom}.mitb-preview-grid b,.mitb-preview-grid small{display:block}.mitb-preview-rules{max-width:760px;margin:0 auto 18px;text-align:left;border-left:4px solid #f2c14d;padding:10px 16px;background:#0c1322}.mitb-preview-rules p{margin:6px 0}
+.mitb-match h1{text-align:center}.mitb-ladder{position:relative;width:150px;margin:0 auto 14px;padding-top:42px}.mitb-briefcase{position:absolute;top:0;left:50%;transform:translateX(-50%);background:#c89422;color:#111;border:3px solid #f2c14d;padding:7px 13px;font-weight:900;font-size:.72rem;box-shadow:0 5px 0 #5e3d00}.mitb-rungs{display:grid;gap:5px}.mitb-rungs i{display:block;height:7px;background:#404a5d;border:1px solid #707d94}.mitb-rungs i.lit{background:#f2c14d;border-color:#fff0a4;box-shadow:0 0 8px rgba(242,193,77,.5)}
+.mitb-entrant-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}.mitb-entrant-grid article{display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:center;border:1px solid #34425f;background:#0b1120;padding:9px}.mitb-entrant-grid article.you{border-color:#f2c14d}.mitb-entrant-grid article.down{opacity:.55}.mitb-entrant-grid img{width:86px;height:86px;object-fit:contain}.mitb-entrant-grid small,.mitb-entrant-grid b,.mitb-entrant-grid em,.mitb-entrant-grid span{display:block}.mitb-entrant-grid em,.mitb-entrant-grid span{font-size:.68rem;font-style:normal;margin-top:4px}.mitb-progress{height:9px;background:#151c2b;border:1px solid #43506a;margin-top:6px}.mitb-progress i{display:block;height:100%;background:linear-gradient(90deg,#8d5d0a,#f2c14d)}.mitb-stamina{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;margin-top:6px}.mitb-stamina i{height:5px;background:#252f43}.mitb-stamina i.active{background:#50c878}
+.mitb-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:14px}.mitb-actions button,.mitb-ability button,.mitb-targets button{background:#111d35;color:#fff;border:1px solid #50678e;padding:13px 8px}.mitb-actions b,.mitb-actions small,.mitb-ability b,.mitb-ability small{display:block}.mitb-actions small,.mitb-ability small{font-size:.68rem;margin-top:4px}.mitb-ability button{width:100%;margin-top:9px;border-color:#c79b2b}.mitb-targets{margin-top:9px;border:1px solid #4b5d7c;padding:10px}.mitb-targets small{display:block;margin-bottom:8px}.mitb-targets button{margin:3px}.mitb-down{text-align:center;border:1px solid #a53636;background:#2a1014;padding:14px}.mitb-down b,.mitb-down span{display:block;margin-bottom:6px}
+@media(max-width:700px){.specialty-match-grid{grid-template-columns:1fr}.mitb-preview-grid{grid-template-columns:repeat(3,1fr)}.mitb-preview-grid img{height:170px}.mitb-entrant-grid{grid-template-columns:1fr 1fr;gap:7px}.mitb-entrant-grid article{grid-template-columns:62px 1fr;padding:6px}.mitb-entrant-grid img{width:62px;height:62px}.mitb-entrant-grid b{font-size:.84rem}.mitb-actions{grid-template-columns:1fr 1fr}.mitb-actions button{padding:11px 6px}.mitb-match{padding-left:9px!important;padding-right:9px!important}}

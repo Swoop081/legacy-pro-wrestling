@@ -1,6 +1,7 @@
-/* LEGACY Pro Wrestling Service Worker 8.3.7 Build 9 */
-const APP_VERSION = '9.2.0-forced-centred-logo-zoom';
-const CACHE_NAME = `lpw-9.2.0-consolidated'index.html','game.js','data.js','styles.css','version.json','manifest.webmanifest','service-worker.js','update-manager.js','assets/config/imageManager.js'];
+/* LEGACY Pro Wrestling Service Worker 1.0 */
+const APP_VERSION = '1.0';
+const CACHE_NAME = 'lpw-1.0-mitb-ladder-match';
+const CRITICAL_FILES = ['index.html','game.js','career-consolidated.js','data.js','styles.css','version.json','manifest.webmanifest','service-worker.js','update-manager.js','assets/config/imageManager.js'];
 
 self.addEventListener('install', event => { self.skipWaiting(); });
 self.addEventListener('activate', event => {

@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "status": "baseline",
+  "checks": [
+    "javascript syntax",
+    "required files",
+    "version consistency",
+    "zip integrity"
+  ]
+}

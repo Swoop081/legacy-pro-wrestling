@@ -1,16 +1,9 @@
-# LEGACY Pro Wrestling 9.2.0
+# LEGACY Pro Wrestling 1.0
 
-## Runtime consolidation build
+This is the canonical **LEGACY 1.0** baseline package.
 
-This full build replaces the separate 9.1 hotfix files with one canonical runtime module loaded after the core game engine.
+All previous build numbering has been retired. Development now continues from version **1.0**.
 
-Key consolidation work:
+## Deployment
 
-- one shipping Career runtime file (`career-consolidated.js`)
-- cold-launch and return-navigation menu parity
-- current Career Hub, news, NPC, recap, preview, ranking and show-transition routes loaded from the same final runtime
-- obsolete build reports and old version files removed from the release root
-- version, manifest and service-worker cache aligned to 9.2.0
-- `.nojekyll` preserved for GitHub Pages
-
-Deploy the complete contents of this folder over the repository root.
+Upload the contents of this package to the GitHub Pages repository root. Preserve the included `.nojekyll` file.

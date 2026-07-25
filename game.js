@@ -4357,12 +4357,12 @@ render=function(html){
 };
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0 — SPECIALTY MATCHES: LAST MAN STANDING
+   LEGACY PRO WRESTLING 1.0 — SPECIALTY MATCHES: LAST MAN STANDING
    Standalone test mode only. No Career integration.
    ============================================================================= */
 (function(){
  'use strict';
- const LMS_VERSION='9.0.1';
+ const LMS_VERSION='1.0';
  let LMS=null;
  const byId=id=>WRESTLERS.find(w=>w.id===id);
  const shuffle=list=>{const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -4465,14 +4465,14 @@ render=function(html){
  window.LPW_SPECIALTY_MATCHES_VERSION=LMS_VERSION;
 })();
 
-;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 9.0.1');
+;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 1.0');
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.2 — CAREER CHANNEL-TUNE ONBOARDING
+   LEGACY PRO WRESTLING 1.0 — CAREER CHANNEL-TUNE ONBOARDING
    Static is deliberately exclusive to the moment a new Career is entered.
    ============================================================================= */
 (function(){
- const ONBOARDING_VERSION='9.0.3';
+ const ONBOARDING_VERSION='1.0';
  let channelTimer=null;
  function clearChannelTimer(){if(channelTimer){clearTimeout(channelTimer);channelTimer=null}}
  function careerChampion(c){return liveFounder(c?.championships?.world)||liveFounder('jack-mercer')}
@@ -4536,7 +4536,7 @@ render=function(html){
    const rival=one(candidates)||livePickDifferent(career);
    if(rival)liveStartFeud(career,rival.id,'A new rivalry has emerged as the Career broadcast begins.');
    liveGenerateMonthlyPlan(career);liveSave(career);
-  }catch(error){console.error('9.0.2 Career opening failed:',error);liveSave(career)}
+  }catch(error){console.error('1.0 Career opening failed:',error);liveSave(career)}
   window.lpw902CareerStatic();
  }
  window.lpw835ChooseFounder=create902Career;
@@ -4545,13 +4545,13 @@ render=function(html){
  window.LPW_CAREER_ONBOARDING_VERSION=ONBOARDING_VERSION;
 })();
 
-;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 9.0.3');
+;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 1.0');
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.4 — SHOW OPENERS, MATCH PSYCHOLOGY & CAREER MOMENTUM
+   LEGACY PRO WRESTLING 1.0 — SHOW OPENERS, MATCH PSYCHOLOGY & CAREER MOMENTUM
    ============================================================================= */
 (function(){
- const BUILD='9.0.5';
+ const BUILD='1.0';
  const clamp904=(n,min,max)=>Math.max(min,Math.min(max,n));
 
  function consecutiveResults(history=[]){
@@ -4698,10 +4698,10 @@ render=function(html){
 
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.6 — PRESENTATION & MATCH PREVIEW POLISH
+   LEGACY PRO WRESTLING 1.0 — PRESENTATION & MATCH PREVIEW POLISH
    ============================================================================= */
 (function(){
- const BUILD='9.0.6';
+ const BUILD='1.0';
 
  /* True viewport show bumpers: move them outside any transformed app container. */
  const render906=render;
@@ -4775,10 +4775,10 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.7 — DEBUT MOMENTUM & MONTH ONE PROTECTION
+   LEGACY PRO WRESTLING 1.0 — DEBUT MOMENTUM & MONTH ONE PROTECTION
    ============================================================================= */
 (function(){
- const BUILD='9.0.7';
+ const BUILD='1.0';
  const clamp907=(n,min,max)=>Math.max(min,Math.min(max,n));
  function firstCareerMonth(c){return !!c&&Number(c.month||1)===1}
  function debutMatchAvailable(c){
@@ -4875,10 +4875,10 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.8 — DAILY LIVING WORLD CAREER HUB
+   LEGACY PRO WRESTLING 1.0 — DAILY LIVING WORLD CAREER HUB
    ============================================================================= */
 (function(){
- const BUILD='9.0.8';
+ const BUILD='1.0';
  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
  const daySeed=c=>((Number(c.year||1)*372)+(Number(c.month||1)*31)+(Number(c.week||1)*7)+Number(c.day||0));
  const pick=(items,seed,offset=0)=>items[Math.abs(seed+offset)%items.length];
@@ -4945,10 +4945,10 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.9 — WORLD DEPTH, HOUSE SHOWS & TEST RESET
+   LEGACY PRO WRESTLING 1.0 — WORLD DEPTH, HOUSE SHOWS & TEST RESET
    ============================================================================= */
 (function(){
- const BUILD='9.0.9';
+ const BUILD='1.0';
  const esc909=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
  const dayKey909=c=>`${Number(c?.year||1)}:${Number(c?.month||1)}:${Number(c?.week||1)}:${Number(c?.day||0)}`;
  const seed909=c=>(Number(c?.year||1)*10000)+(Number(c?.month||1)*500)+(Number(c?.week||1)*31)+Number(c?.day||0);
@@ -5092,12 +5092,12 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.11 — MATCH PREVIEW REGRESSION FIX
+   LEGACY PRO WRESTLING 1.0 — MATCH PREVIEW REGRESSION FIX
    Preserves the approved momentum panel and Raymond Briggs tutorial modal while
    applying only the requested navigation, branding, broadcast and rank layout.
    ============================================================================= */
 (function(){
- const BUILD='9.0.11';
+ const BUILD='1.0';
  function rankingRows(c){
   return typeof lpw8Rankings==='function'?lpw8Rankings(c):[...(c?.rankings||[])].sort((a,b)=>(Number(b.points)||0)-(Number(a.points)||0));
  }
@@ -5130,7 +5130,7 @@ render=function(html){
    const wrestler=wrestlers[index];if(!wrestler||node.querySelector('.lpw-match-rank'))return;
    node.insertAdjacentHTML('beforeend',`<em class="lpw-match-rank">${rankLabel(c,wrestler.id)}</em>`);
   });
-  // Raymond remains a one-time dismissible modal supplied by 9.0.6, never persistent.
+  // Raymond remains a one-time dismissible modal supplied by 1.0, never persistent.
   card.querySelectorAll('.producer-card').forEach(node=>node.remove());
  }
  const previous=gauntletLiveMatchCard65;
@@ -5146,10 +5146,10 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.12 — TRUE RESET & PERSONAL-BEST BASELINE FIX
+   LEGACY PRO WRESTLING 1.0 — TRUE RESET & PERSONAL-BEST BASELINE FIX
    ============================================================================= */
 (function(){
- const BUILD='9.0.12';
+ const BUILD='1.0';
 
  // A personal best belongs to a completed previous Gauntlet run. Capture that
  // record when a new run starts so wins inside a freshly reset/current run do
@@ -5214,10 +5214,10 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.13 — TABLED PRESENTATION & MATCH STORY FIXES
+   LEGACY PRO WRESTLING 1.0 — TABLED PRESENTATION & MATCH STORY FIXES
    ============================================================================= */
 (function(){
- const BUILD='9.0.13';
+ const BUILD='1.0';
  const clamp913=(n,min,max)=>Math.max(min,Math.min(max,n));
 
  // Let the control meter genuinely swing both ways, including the debut match.
@@ -5343,12 +5343,12 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.14 — TABLED QA CORRECTIONS
+   LEGACY PRO WRESTLING 1.0 — TABLED QA CORRECTIONS
    Show-brand cleanup, true post-reset achievement handling, ranking movement,
    and canonical Career momentum/popularity synchronisation.
    ============================================================================= */
 (function(){
- const BUILD='9.0.14';
+ const BUILD='1.0';
  const statKeys=new Set(['power','speed','technique','charisma','recovery']);
 
  function activeCareer914(c){
@@ -5491,10 +5491,10 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.15 — TAG PARTICIPATION, LEGAL CONTROL & MONTH FLOW
+   LEGACY PRO WRESTLING 1.0 — TAG PARTICIPATION, LEGAL CONTROL & MONTH FLOW
    ============================================================================= */
 (function(){
- const BUILD='9.0.15';
+ const BUILD='1.0';
 
  function tagReady(){return !!(M&&S&&Array.isArray(S.team)&&Array.isArray(S.opp)&&S.team.length===2&&S.opp.length===2)}
  function ensureTagState(){
@@ -5658,11 +5658,11 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.16 — MATCH PSYCHOLOGY 2.3 REBALANCE
+   LEGACY PRO WRESTLING 1.0 — MATCH PSYCHOLOGY 2.3 REBALANCE
    Player-readable decisions, accountable CPU scoring and less random finishes.
    ============================================================================= */
 (function(){
- const BUILD='9.0.16';
+ const BUILD='1.0';
  const clamp916=(n,min,max)=>Math.max(min,Math.min(max,n));
  let automaticBeat916=false;
 
@@ -5793,12 +5793,12 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.17 — CAREER PROGRESSION INTEGRATION
+   LEGACY PRO WRESTLING 1.0 — CAREER PROGRESSION INTEGRATION
    Connects permanent development, momentum, popularity and NPC opportunity
    choices to Match Psychology 2.3 and removes the legacy training split.
    ============================================================================= */
 (function(){
- const BUILD='9.0.17';
+ const BUILD='1.0';
  const clamp917=(n,min,max)=>Math.max(min,Math.min(max,Number(n)||0));
  const DEVELOPMENT_STATS=['power','speed','technique','charisma','resilience','versatility','finisher'];
  const STAT_EFFECTS={
@@ -6031,12 +6031,12 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.18 — CAREER STATE CONSOLIDATION & SEASONS
+   LEGACY PRO WRESTLING 1.0 — CAREER STATE CONSOLIDATION & SEASONS
    Consolidates world simulation, wrestler-owned progression, season records,
    long-term arcs and month-to-month continuity.
    ============================================================================= */
 (function(){
- const BUILD='9.0.18';
+ const BUILD='1.0';
  const STATS=['power','speed','technique','charisma','resilience','versatility','finisher'];
  const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
  const seasonOf=c=>Math.floor((Math.max(1,Number(c?.month)||1)-1)/12)+1;
@@ -6114,7 +6114,7 @@ render=function(html){
   (c.rankings||[]).sort((a,b)=>Number(b.points||0)-Number(a.points||0)||Number(b.wins||0)-Number(a.wins||0));
   c.world.houseShows918[key]={season:seasonOf(c),month:monthInSeason(c),week:c.week,day:c.day,matches};c.world.latestHouseShow=c.world.houseShows918[key];
  }
- // Block the superseded 9.0.9 house-show simulator, run the consolidated one,
+ // Block the superseded 1.0 house-show simulator, run the consolidated one,
  // and archive records only when a full season rolls over.
  const advance0=liveAdvanceDay;
  liveAdvanceDay=function(c){
@@ -6177,14 +6177,14 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0.19 — CAREER FLOW & LONGEVITY CONSOLIDATION
+   LEGACY PRO WRESTLING 1.0 — CAREER FLOW & LONGEVITY CONSOLIDATION
    Completes the recommendations from the long-form Career simulations:
    calmer rankings, wrestler-owned relationships and opportunities, persistent
    CPU feuds, richer switching context, championship-path clarity, season awards,
    momentum decay and varied long-term SuperCard rewards.
    ============================================================================= */
 (function(){
- const BUILD='9.0.19';
+ const BUILD='1.0';
  const clamp919=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
  const season919=c=>Math.floor((Math.max(1,Number(c?.month)||1)-1)/12)+1;
  const month919=c=>((Math.max(1,Number(c?.month)||1)-1)%12)+1;
@@ -6322,7 +6322,7 @@ render=function(html){
   if(c.world.seasonAwards.some(a=>a.season===seasonNumber))return;const sorted=records.slice().sort((a,b)=>b.wins-a.wins),best=sorted[0],improved=records.slice().sort((a,b)=>{const xa=career919(c,a.id),xb=career919(c,b.id);return Number(xb.cpuGrowth||0)-Number(xa.cpuGrowth||0)})[0];
   c.world.seasonAwards.unshift({season:seasonNumber,mostWins:best?.id,breakout:improved?.id,champion:c.championships?.world});c.world.seasonAwards=c.world.seasonAwards.slice(0,20);
  }
- // Add awards to archived seasons after the existing 9.0.18 rollover has run.
+ // Add awards to archived seasons after the existing 1.0 rollover has run.
  const advanceSeason919=liveAdvanceDay;
  liveAdvanceDay=function(c){const before=c?season919(c):null,out=advanceSeason919(c),after=c?season919(c):null;if(c&&after>before){const archive=c.world?.seasons?.history?.find(s=>s.season===before);if(archive)seasonAwards919(c,before,archive.records||[]);liveSave(c)}return out};window.liveAdvanceDay=liveAdvanceDay;
 
@@ -6341,7 +6341,7 @@ render=function(html){
    const c=liveLoad();
    if(c&&win&&already&&activeId){
     const x=career919(c,activeId),p=liveProgress(activeId,c);
-    // Remove the fixed 9.0.18 repeat-opponent reward before applying the new cycle.
+    // Remove the fixed 1.0 repeat-opponent reward before applying the new cycle.
     p.xp=Math.min(Number(p.xp||0),beforeXp);
     x.popularity=Math.min(Number(x.popularity||20),beforePop);
     const cycle=(Number(x.repeatSupercardWins||0)++)%5;let reward;
@@ -6357,4 +6357,119 @@ render=function(html){
  }
 
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 1.0 — MONEY IN THE BANK / LADDER MATCH
+   Standalone Specialty Match mini-game. No Career integration.
+   ============================================================================= */
+(function(){
+ 'use strict';
+ const MITB_VERSION='1.0';
+ let MITB=null;
+ const byId=id=>WRESTLERS.find(w=>w.id===id);
+ const portrait=w=>imageWithFallback(w,'portrait','art-portrait','matchPortrait');
+ const full=w=>imageWithFallback(w,'full','art-full','quickMatch');
+ const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+ const shuffle=list=>{const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+ const score=w=>Number(w?.overall||80)+Number(w?.technique||80)*.22+Number(w?.speed||80)*.18;
+ const styleFor=w=>{
+  const id=String(w?.id||'');let n=0;for(const c of id)n+=c.charCodeAt(0);
+  return [
+   {name:'CLIMBING INSTINCT',desc:'Gain +1 extra climb progress once per match.',key:'climb'},
+   {name:'HARDCORE EDGE',desc:'Your first successful high-risk attack deals +1 damage.',key:'hardcore'},
+   {name:'RING GENERAL',desc:'Once per match, cancel a CPU attack against you.',key:'counter'},
+   {name:'IRON GRIP',desc:'Your first failed climb does not lose progress.',key:'grip'}
+  ][n%4];
+ };
+ const entrant=id=>({id,stamina:8,progress:0,down:0,abilityUsed:false,eliminated:false});
+ function card(w,action){return `<button type="button" class="lms-roster-card" onclick="${action}">${portrait(w)}<span><b>${w.name}</b><small>${w.title} · OVR ${w.overall}</small></span></button>`}
+ function active(){return MITB?.entrants?.filter(e=>!e.eliminated)||[]}
+ function player(){return MITB?.entrants?.find(e=>e.id===MITB.playerId)}
+ function cpuEntrants(){return active().filter(e=>e.id!==MITB.playerId)}
+ function wrestlerName(id){return byId(id)?.name||'Unknown'}
+ function log(text){MITB.log.push(text);if(MITB.log.length>12)MITB.log.shift()}
+ function latestLog(){return MITB.log.slice(-4).reverse().map((x,i)=>{const speaker=i%2===0?COMMENTATORS.play:COMMENTATORS.colour;const npcId=i%2===0?'mike-sullivan':'johnny-cannon';return `<div class="lms-commentary-line ${i%2===0?'mike':'johnny'}">${npcImage(npcId,'portrait')}<p>${commentatorLine(speaker,x)}</p></div>`}).join('')}
+ function progressBar(e){return `<div class="mitb-progress"><i style="width:${clamp(e.progress,0,10)*10}%"></i></div>`}
+ function staminaBar(e){return `<div class="mitb-stamina">${Array.from({length:8},(_,i)=>`<i class="${i<e.stamina?'active':''}"></i>`).join('')}</div>`}
+ function chooseCpuTargets(){return shuffle(WRESTLERS.filter(w=>w.id!==MITB.playerId)).slice(0,5).map(w=>entrant(w.id))}
+
+ const oldSpecialtyHome=window.specialtyMatchesHome;
+ window.specialtyMatchesHome=function(){
+  setActiveGameMode('specialty');
+  render(`<section class="panel specialty-home">${shellBack()}<div class="tv-kicker">SPECIALTY MATCHES · PLAYABLE TEST MODE</div><h1>CHOOSE A MATCH</h1><div class="specialty-match-grid"><article><div class="specialty-match-icon">10</div><h2>LAST MAN STANDING</h2><p>Outlast one opponent through judgement, momentum and resilience.</p><button class="btn live-primary" onclick="lastManStandingChoosePlayer()">PLAY LAST MAN STANDING</button></article><article><div class="specialty-match-icon ladder">▰</div><h2>MONEY IN THE BANK</h2><p>Six wrestlers. One ladder. Fight, climb and retrieve the contract.</p><button class="btn live-primary" onclick="moneyInTheBankChoosePlayer()">PLAY LADDER MATCH</button></article></div></section>`)
+ };
+
+ window.moneyInTheBankChoosePlayer=function(){
+  MITB=null;
+  render(`<section class="panel lms-select">${shellBack()}<div class="tv-kicker">MONEY IN THE BANK · LADDER MATCH</div><h1>CHOOSE YOUR WRESTLER</h1><p>Select the wrestler you want to control. Five opponents will be drawn automatically.</p><div class="lms-roster-grid">${WRESTLERS.map(w=>card(w,`moneyInTheBankPreview('${w.id}')`)).join('')}</div></section>`)
+ };
+ window.moneyInTheBankPreview=function(playerId){
+  const p=byId(playerId);if(!p)return moneyInTheBankChoosePlayer();
+  MITB={playerId,entrants:[entrant(playerId),...shuffle(WRESTLERS.filter(w=>w.id!==playerId)).slice(0,5).map(w=>entrant(w.id))]};
+  const ability=styleFor(p);
+  render(`<section class="panel mitb-preview"><button class="shell-back" onclick="moneyInTheBankChoosePlayer()">← CHANGE WRESTLER</button><div class="tv-kicker">SPECIALTY MATCH · MONEY IN THE BANK</div><h1>CLIMB. FIGHT. SURVIVE.</h1><div class="mitb-preview-grid">${MITB.entrants.map((e,i)=>{const w=byId(e.id);return `<article class="${i===0?'you':''}">${full(w)}<b>${w.name}</b><small>${i===0?'YOU':`CPU ${i}`}</small></article>`}).join('')}</div><div class="mitb-preview-rules"><p>Reach <b>10 climb progress</b> and survive the final retrieval attempt.</p><p>Attacks reduce stamina and can knock wrestlers off the ladder.</p><p>Your ability: <b>${ability.name}</b> — ${ability.desc}</p></div><button class="btn live-primary" onclick="moneyInTheBankStart()">START LADDER MATCH</button></section>`)
+ };
+ window.moneyInTheBankStart=function(){
+  if(!MITB?.playerId)return moneyInTheBankChoosePlayer();
+  MITB={...MITB,round:1,turn:'player',log:[],notice:'THE BELL RINGS · THE CONTRACT HANGS ABOVE THE RING',finished:false,winner:null,lastAction:null};
+  log('Six wrestlers enter and the ladder is immediately in play.');
+  moneyInTheBankRender();
+ };
+ function checkState(){
+  for(const e of MITB.entrants){
+   if(e.stamina<=0){e.stamina=3;e.progress=Math.max(0,e.progress-2);e.down=2;log(`${wrestlerName(e.id)} crashes to the floor and loses climbing position.`)}
+  }
+  const winner=MITB.entrants.find(e=>e.progress>=10&&e.down<=0);
+  if(winner){MITB.finished=true;MITB.winner=winner.id;return true}
+  return false;
+ }
+ function targetOptions(){return cpuEntrants().map(e=>`<button onclick="moneyInTheBankAttack('${e.id}')">${wrestlerName(e.id)}</button>`).join('')}
+ function playerControls(){
+  const p=player(),ability=styleFor(byId(p.id));
+  if(p.down>0)return `<div class="mitb-down"><b>YOU ARE DOWN</b><span>${p.down} turn${p.down===1?'':'s'} before you can act.</span><button class="btn live-primary" onclick="moneyInTheBankRecoverTurn()">CONTINUE</button></div>`;
+  return `<div class="mitb-actions"><button onclick="moneyInTheBankClimb()"><b>CLIMB</b><small>Gain progress. Risk being pulled down.</small></button><button onclick="moneyInTheBankOpenTargets()"><b>STRIKE</b><small>Attack a rival and reduce stamina.</small></button><button onclick="moneyInTheBankDefend()"><b>BRACE</b><small>Reduce incoming damage this round.</small></button><button onclick="moneyInTheBankHighRisk()"><b>HIGH RISK</b><small>Big reward, big chance of crashing.</small></button></div><div class="mitb-ability"><button ${p.abilityUsed?'disabled':''} onclick="moneyInTheBankUseAbility()"><b>${p.abilityUsed?'ABILITY USED':ability.name}</b><small>${ability.desc}</small></button></div><div id="mitbTargetPanel" class="mitb-targets" hidden><small>CHOOSE A TARGET</small>${targetOptions()}</div>`
+ }
+ window.moneyInTheBankRender=function(){
+  if(!MITB)return specialtyMatchesHome();if(MITB.finished)return moneyInTheBankResult();
+  const p=player();
+  render(`<section class="panel mitb-match"><div class="lms-match-top"><button class="shell-back" onclick="moneyInTheBankExit()">← MAIN MENU</button><span>ROUND <b>${MITB.round}</b></span><span>FIRST TO <b>10</b></span></div><div class="tv-kicker">MONEY IN THE BANK · LADDER MATCH</div><h1>REACH THE CONTRACT</h1><div class="mitb-ladder"><div class="mitb-briefcase">CONTRACT</div><div class="mitb-rungs">${Array.from({length:10},(_,i)=>`<i class="${i<Math.max(...MITB.entrants.map(e=>e.progress))?'lit':''}"></i>`).join('')}</div></div><div class="mitb-entrant-grid">${MITB.entrants.map(e=>{const w=byId(e.id);return `<article class="${e.id===MITB.playerId?'you':''} ${e.down>0?'down':''}">${portrait(w)}<div><small>${e.id===MITB.playerId?'YOU':'CPU'}</small><b>${w.name}</b>${progressBar(e)}<em>CLIMB ${e.progress}/10</em>${staminaBar(e)}<span>${e.down>0?`DOWN ${e.down}`:`STAMINA ${e.stamina}/8`}</span></div></article>`}).join('')}</div>${MITB.notice?`<div class="lms-notice">${MITB.notice}</div>`:''}${playerControls()}<div class="lms-commentary-heading">${commentaryDesk()}</div><div class="lms-commentary">${latestLog()}</div></section>`);
+  MITB.notice='';
+ };
+ window.moneyInTheBankOpenTargets=function(){const el=document.getElementById('mitbTargetPanel');if(el)el.hidden=!el.hidden};
+ function endPlayerTurn(){if(checkState())return moneyInTheBankRender();cpuRound();MITB.round++;moneyInTheBankRender()}
+ window.moneyInTheBankClimb=function(){const p=player();if(!p||p.down>0)return;const chance=clamp(.58+(Number(byId(p.id)?.technique||80)-80)/200-p.progress*.025,.28,.82);if(Math.random()<chance){const gain=Math.random()<.22?2:1;p.progress=clamp(p.progress+gain,0,10);log(`${wrestlerName(p.id)} climbs ${gain===2?'two rungs':'another rung'} toward the contract.`)}else{p.progress=Math.max(0,p.progress-1);p.stamina--;log(`${wrestlerName(p.id)} is dragged from the ladder and loses ground.`)}endPlayerTurn()};
+ window.moneyInTheBankAttack=function(targetId){const p=player(),t=MITB.entrants.find(e=>e.id===targetId);if(!p||!t||p.down>0)return;const power=Number(byId(p.id)?.power||80),damage=Math.random()<clamp(.48+(power-80)/180,.3,.75)?2:1;t.stamina-=damage;t.progress=Math.max(0,t.progress-(damage>1?1:0));MITB.notice=`${wrestlerName(p.id).toUpperCase()} DRIVES ${wrestlerName(t.id).toUpperCase()} AWAY FROM THE LADDER`;log(`${wrestlerName(p.id)} attacks ${wrestlerName(t.id)} for ${damage} stamina damage.`);endPlayerTurn()};
+ window.moneyInTheBankDefend=function(){const p=player();p.braced=true;p.stamina=clamp(p.stamina+1,0,8);log(`${wrestlerName(p.id)} braces beneath the ladder and prepares for the next attack.`);endPlayerTurn()};
+ window.moneyInTheBankHighRisk=function(){const p=player();if(Math.random()<.48){const targets=cpuEntrants();const t=targets[Math.floor(Math.random()*targets.length)];t.stamina-=3;t.progress=Math.max(0,t.progress-2);p.progress=clamp(p.progress+1,0,10);MITB.notice='HIGH-RISK ATTACK CONNECTS';log(`${wrestlerName(p.id)} wipes out ${wrestlerName(t.id)} and surges toward the contract.`)}else{p.stamina-=3;p.progress=Math.max(0,p.progress-2);p.down=1;MITB.notice='HIGH-RISK ATTACK MISSES';log(`${wrestlerName(p.id)} crashes hard after the gamble fails.`)}endPlayerTurn()};
+ window.moneyInTheBankRecoverTurn=function(){const p=player();p.down=Math.max(0,p.down-1);log(`${wrestlerName(p.id)} fights back to a vertical base.`);endPlayerTurn()};
+ window.moneyInTheBankUseAbility=function(){const p=player(),a=styleFor(byId(p.id));if(!p||p.abilityUsed)return;p.abilityUsed=true;if(a.key==='climb'){p.progress=clamp(p.progress+2,0,10);log(`${a.name} sends ${wrestlerName(p.id)} two rungs higher.`)}else if(a.key==='hardcore'){const t=cpuEntrants().sort((x,y)=>y.progress-x.progress)[0];t.stamina-=3;t.progress=Math.max(0,t.progress-1);log(`${a.name} crushes ${wrestlerName(t.id)} beside the ladder.`)}else if(a.key==='counter'){p.counterReady=true;log(`${wrestlerName(p.id)} is ready to counter the next attack.`)}else{p.gripReady=true;log(`${wrestlerName(p.id)} locks in an iron grip on the ladder.`)}moneyInTheBankRender()};
+ function cpuRound(){
+  for(const e of MITB.entrants){if(e.down>0)e.down=Math.max(0,e.down-1)}
+  const p=player();
+  for(const e of cpuEntrants()){
+   if(e.down>0)continue;
+   const w=byId(e.id),danger=Math.max(...MITB.entrants.filter(x=>x.id!==e.id).map(x=>x.progress));
+   let action='climb';
+   if(p.progress>=7&&Math.random()<.5)action='attackPlayer';
+   else if(e.stamina<=3&&Math.random()<.5)action='recover';
+   else if(danger-e.progress>=3&&Math.random()<.45)action='attackLeader';
+   else if(Math.random()<.22)action='brawl';
+   if(action==='climb'){
+    const chance=clamp(.5+(score(w)-95)/250-e.progress*.02,.26,.72);
+    if(Math.random()<chance){e.progress=clamp(e.progress+(Math.random()<.15?2:1),0,10);log(`${w.name} climbs toward the briefcase.`)}else{e.stamina--;e.progress=Math.max(0,e.progress-1);log(`${w.name} is knocked away from the ladder.`)}
+   }else if(action==='attackPlayer'){
+    if(p.counterReady){p.counterReady=false;log(`${wrestlerName(p.id)} counters ${w.name} and protects the climb.`)}else{let d=p.braced?1:2;p.braced=false;p.stamina-=d;p.progress=Math.max(0,p.progress-1);log(`${w.name} targets ${wrestlerName(p.id)} and halts the climb.`)}
+   }else if(action==='recover'){e.stamina=clamp(e.stamina+2,0,8);log(`${w.name} takes a moment to recover near ringside.`)}
+   else{const targets=MITB.entrants.filter(x=>x.id!==e.id&&x.down<=0).sort((a,b)=>b.progress-a.progress);const t=targets[0];if(t){t.stamina-=1+(Math.random()<.3?1:0);t.progress=Math.max(0,t.progress-1);log(`${w.name} knocks ${wrestlerName(t.id)} away from the ladder.`)}}
+   if(checkState())break;
+  }
+  p.braced=false;
+ }
+ window.moneyInTheBankResult=function(){
+  const winner=byId(MITB.winner),p=player(),win=MITB.winner===MITB.playerId;
+  render(`<section class="panel lms-result ${win?'win':'loss'}"><div class="tv-kicker">MONEY IN THE BANK · FINAL RESULT</div><h1>${win?'YOU RETRIEVED THE CONTRACT':`${winner.name.toUpperCase()} RETRIEVES THE CONTRACT`}</h1><div class="lms-result-art">${imageWithFallback(winner,'victory','art-full','resultVictory')}</div><h2>${winner.name}</h2><p>${winner.name} reaches the top of the ladder and pulls down the LEGACY contract.</p><div class="lms-result-stats"><span><small>YOUR CLIMB</small><b>${p.progress}/10</b></span><span><small>ROUNDS</small><b>${MITB.round}</b></span><span><small>STAMINA LEFT</small><b>${p.stamina}/8</b></span></div><button class="btn live-primary" onclick="moneyInTheBankStart()">REMATCH</button><button class="btn secondary" onclick="moneyInTheBankChoosePlayer()">CHOOSE ANOTHER WRESTLER</button><button class="btn secondary" onclick="specialtyMatchesHome()">SPECIALTY MATCHES</button></section>`)
+ };
+ window.moneyInTheBankExit=function(){MITB=null;home()};
+ window.LPW_MITB_VERSION=MITB_VERSION;
 })();

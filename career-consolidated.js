@@ -1,12 +1,12 @@
-/* LEGACY Pro Wrestling 9.2.0 — Consolidated Runtime
-   Canonical runtime entry point for the consolidated 9.2 build. */
+/* LEGACY Pro Wrestling 1.0 — Consolidated Runtime
+   Canonical runtime entry point for the consolidated 1.0 build. */
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.2 — CONSOLIDATED RUNTIME MODULE
+   LEGACY PRO WRESTLING 1.0 — CONSOLIDATED RUNTIME MODULE
    Mobile layout, canonical NPC progression, social/editorial redesigns,
    post-match career growth, show-brand sizing and dialogue expansion.
    ============================================================================= */
 (function(){
- const BUILD='9.2.0';
+ const BUILD='1.0';
  const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
  const choose=a=>a[Math.floor(Math.random()*a.length)];
  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -115,11 +115,11 @@
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.2 — CONSOLIDATED RUNTIME MODULE
-   Direct component corrections following 9.1 device testing.
+   LEGACY PRO WRESTLING 1.0 — CONSOLIDATED RUNTIME MODULE
+   Direct component corrections following 1.0 device testing.
    ============================================================================= */
 (function(){
- const BUILD='9.2.0';
+ const BUILD='1.0';
  const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
  const pick=a=>a[Math.floor(Math.random()*a.length)];
  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -247,12 +247,12 @@
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.2 — CONSOLIDATED RUNTIME MODULE
+   LEGACY PRO WRESTLING 1.0 — CONSOLIDATED RUNTIME MODULE
    Removes legacy component fallbacks and routes every Career QA entry point to
-   the approved 9.1 layouts.
+   the approved 1.0 layouts.
    ============================================================================= */
 (function(){
- const BUILD='9.2.0';
+ const BUILD='1.0';
  const pick=a=>a[Math.floor(Math.random()*a.length)];
  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
  const portrait=id=>typeof lpw836NpcVisual==='function'?lpw836NpcVisual(id,'portrait'):npcImage(id,'portrait');
@@ -363,11 +363,11 @@
 })();
 
 /* ================================================================
-   LEGACY Pro Wrestling 9.2 — Consolidated Runtime Module
+   LEGACY Pro Wrestling 1.0 — Consolidated Runtime Module
    ================================================================ */
 (()=>{
  'use strict';
- const BUILD='9.2.0';
+ const BUILD='1.0';
  const later=(fn,ms=0)=>setTimeout(fn,ms);
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const pick=a=>a?.length?a[Math.floor(Math.random()*a.length)]:'';
@@ -552,7 +552,7 @@
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.2 — CONSOLIDATED RUNTIME MODULE
+   LEGACY PRO WRESTLING 1.0 — CONSOLIDATED RUNTIME MODULE
    Rebuilds the actual .live-calendar-top element and clears all inherited
    header classes from earlier patches so the navigation cannot collapse.
    ============================================================================= */
@@ -563,7 +563,7 @@
     const top=screen&&screen.querySelector('.live-calendar-top');
     if(!top)return;
 
-    // Earlier 9.1.x patches added grid classes directly to this element. They
+    // Earlier 1.0.x patches added grid classes directly to this element. They
     // must be removed or they constrain the replacement header to one grid cell.
     [...top.classList].forEach(cls=>{if(/^lpw91\d*-career-header$/.test(cls)||cls==='lpw91-career-header')top.classList.remove(cls)});
     top.classList.add('lpw915-career-header');
@@ -590,10 +590,10 @@
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.2 — CONSOLIDATED RUNTIME MODULE
+   LEGACY PRO WRESTLING 1.0 — CONSOLIDATED RUNTIME MODULE
    ============================================================================= */
 (function(){
- const BUILD='9.2.0';
+ const BUILD='1.0';
 
  function repairCareerHeader916(){
   const top=document.querySelector('.live-calendar-screen .live-calendar-top');
@@ -658,12 +658,12 @@
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.2 — CONSOLIDATED RUNTIME MODULE
+   LEGACY PRO WRESTLING 1.0 — CONSOLIDATED RUNTIME MODULE
    Uses a requestAnimationFrame transform written as an inline !important value,
    so older transition CSS and reduced-motion overrides cannot suppress scaling.
    ============================================================================= */
 (function(){
- const BUILD='9.2.0';
+ const BUILD='1.0';
  const previousRun=window.gauntletLiveRunShowSegment;
  const DURATION=1550;
 
@@ -721,7 +721,7 @@
 })();
 /* Cold-boot parity: initial menu must use the same enhanced renderer as return navigation. */
 (function(){
- const VERSION='9.2.0';
+ const VERSION='1.0';
  function refreshHomeEnhancements(){
   try{
    if(typeof window.lpw90InjectSpecialtyMenu==='function')window.lpw90InjectSpecialtyMenu();
@@ -732,10 +732,40 @@
     const collection=[...nav.children].find(x=>/COLLECTION/i.test(x.textContent||''));nav.insertBefore(b,collection||null);
    }
    document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${VERSION}`);
-  }catch(e){console.error('9.2.0 home enhancement',e)}
+  }catch(e){console.error('1.0 home enhancement',e)}
  }
  const baseHome=window.home;
  if(typeof baseHome==='function')window.home=function(){const r=baseHome.apply(this,arguments);setTimeout(refreshHomeEnhancements,0);return r};
  window.addEventListener('load',()=>setTimeout(()=>{if(document.querySelector('.game-hub'))refreshHomeEnhancements()},80));
  window.LPW_CONSOLIDATED_RUNTIME_VERSION=VERSION;
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 1.0 — COMMENTARY DESK CONSOLIDATION
+   Presents Mike Sullivan and Johnny Cannon together at one broadcast desk with
+   their dialogue flowing beneath as a single television introduction.
+   ============================================================================= */
+(function(){
+ const BUILD='1.0';
+ window.gauntletLiveShowIntro=function(){
+  const c=liveLoad(),item=livePlanItem(c),firstShow=c.week===1&&c.day===0&&!c.world.lastResult,
+   venue=one(VENUES),attendance=Math.floor(rnd(11000,20500)).toLocaleString(),
+   show=liveIsSupercard(c)?liveCurrentSupercard(c).toUpperCase():liveShowName(c),
+   p=liveFounder(c.active),r=liveFeudOpponent(c);
+  let stories=[];if(!firstShow)stories=liveSimulateWorld(c);liveSave(c);
+  const card=firstShow
+   ?`<li>${p.name} makes an LPW debut tonight.</li><li>${r?`${r.name} is expected to make a presence felt tonight.`:'The LEGACY World Championship picture begins to take shape.'}</li>`
+   :stories.slice(0,3).map(s=>`<li>${cleanBroadcastText(s.text)}</li>`).join('');
+  const mike=firstShow
+   ?`Welcome to Monday Night Mayhem, LPW's flagship show—where rivalries begin and reputations are made.`
+   :`${p.name} enters tonight with a ${c.wins}-${c.losses} record, and every result now carries more weight.`;
+  const johnny=firstShow
+   ?`Everybody on this roster has something to prove, and somebody is going to make an unforgettable first impression.`
+   :r?`${r.name} is watching closely. One bad decision could change the entire rivalry.`
+   :'The pressure is rising, and nobody can afford to stand still.';
+  render(`<section class="panel live-show-intro lpw-show-open lpw837-show-open-b2 lpw921-show-open"><div class="show-intro-copy">${liveIsSupercard(c)?`<div class="lpw-ple-title">${show}</div>`:lpwShowLogo(show)}<button class="btn live-primary lpw837-start-first" onclick="gauntletLiveRunShowSegment()">START THE SHOW</button><div class="tv-kicker">LIVE FROM ${venue.toUpperCase()} · ${attendance} IN ATTENDANCE</div><section class="lpw921-commentary-desk" aria-label="LPW commentary desk"><div class="lpw921-commentators"><div class="lpw921-commentator">${npcImage('mike-sullivan','portrait')}<b>Mike Sullivan</b></div><div class="lpw921-commentator">${npcImage('johnny-cannon','portrait')}<b>Johnny Cannon</b></div></div><div class="lpw921-commentary-copy"><p><strong>Mike Sullivan</strong><span>${mike}</span></p><p><strong>Johnny Cannon</strong><span>${johnny}</span></p></div></section><div class="show-card-list"><small>TONIGHT ON LPW</small><ul>${card}</ul><b>YOUR SEGMENT · ${liveIsSupercard(c)?'FEUD FINALE':item.type==='segment'?liveSegmentTitle(item.segment):item.type.toUpperCase()+' MATCH'}</b></div></div></section>`);
+ };
+ window.TTG_APP_VERSION=BUILD;
+ window.LPW_GAMEPLAY_BUILD=BUILD;
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
 })();
