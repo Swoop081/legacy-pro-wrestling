@@ -139,7 +139,14 @@ function imageFallback(img,name){const wrap=img.closest('.card');if(!wrap)return
 function card(w,onclick='',compact=false,screen='card'){const upgraded=!!characterImageConfig(w),artType=compact&&upgraded?'portrait':'full',resolvedScreen=compact?'matchPortrait':screen;return `<article class="card character-tile${compact?' compact':''}${upgraded?' image-framework-card':' legacy-card'}" ${onclick?`onclick="${onclick}"`:''}>${imageWithFallback(w,artType,`art-${artType}`,resolvedScreen)}<div class="name">${w.name}<small>${w.title}</small></div></article>`}
 function render(x){
  const isCareerScreen=ACTIVE_GAME_MODE==='career';
+ const isWorldRecap=/lpw911-world-recap/.test(String(x||''));
  document.body.classList.toggle('career-mode',isCareerScreen);
+ document.body.classList.toggle('lpw-world-recap-view',isWorldRecap);
+ const globalHeader=document.querySelector('body > header');
+ if(globalHeader){
+  if(isWorldRecap)globalHeader.setAttribute('aria-hidden','true');
+  else globalHeader.removeAttribute('aria-hidden');
+ }
  document.body.classList.toggle('gauntlet-mode',ACTIVE_GAME_MODE==='gauntlet');
  app.classList.remove('screen-enter');
  app.innerHTML=x;
@@ -6472,4 +6479,40 @@ render=function(html){
  };
  window.moneyInTheBankExit=function(){MITB=null;home()};
  window.LPW_MITB_VERSION=MITB_VERSION;
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 1.0 — FIRST-MATCH ACHIEVEMENT LIMIT
+   Career matches use the dedicated Career milestone flow only. They no longer
+   trigger the legacy global achievement scanner in the same result sequence.
+   ============================================================================= */
+(function(){
+ const BUILD='1.0';
+ const FIX_KEY='lpw_1_0_career_achievement_cleanup_v1';
+
+ const legacyAchievementCheck=checkAchievements;
+ checkAchievements=function(){
+  const careerActive=!!(S?.liveMode||document.body.classList.contains('career-view'));
+  if(careerActive)return false;
+  return legacyAchievementCheck.apply(this,arguments);
+ };
+ window.checkAchievements=checkAchievements;
+
+ // Repair saves affected by the old first-match stacking bug. On a Career with
+ // only one completed match, legacy global unlocks came from that same result
+ // and are removed. The dedicated FIRST CAREER VICTORY remains in Career data.
+ try{
+  if(!localStorage.getItem(FIX_KEY)){
+   const c=typeof liveLoad==='function'?liveLoad():null;
+   const completed=Math.max(0,Number(c?.wins||0)+Number(c?.losses||0));
+   if(c&&completed<=1){
+    localStorage.removeItem(ACHIEVEMENT_KEY);
+   }
+   localStorage.setItem(FIX_KEY,'1');
+  }
+ }catch(e){}
+
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+ window.TTG_APP_VERSION=BUILD;
+ window.LPW_GAMEPLAY_BUILD=BUILD;
 })();

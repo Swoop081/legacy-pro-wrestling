@@ -3109,3 +3109,40 @@ body>.lpw904-show-bumper.lpw916-show-bumper .lpw-show-logo span,
 .mitb-entrant-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}.mitb-entrant-grid article{display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:center;border:1px solid #34425f;background:#0b1120;padding:9px}.mitb-entrant-grid article.you{border-color:#f2c14d}.mitb-entrant-grid article.down{opacity:.55}.mitb-entrant-grid img{width:86px;height:86px;object-fit:contain}.mitb-entrant-grid small,.mitb-entrant-grid b,.mitb-entrant-grid em,.mitb-entrant-grid span{display:block}.mitb-entrant-grid em,.mitb-entrant-grid span{font-size:.68rem;font-style:normal;margin-top:4px}.mitb-progress{height:9px;background:#151c2b;border:1px solid #43506a;margin-top:6px}.mitb-progress i{display:block;height:100%;background:linear-gradient(90deg,#8d5d0a,#f2c14d)}.mitb-stamina{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;margin-top:6px}.mitb-stamina i{height:5px;background:#252f43}.mitb-stamina i.active{background:#50c878}
 .mitb-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:14px}.mitb-actions button,.mitb-ability button,.mitb-targets button{background:#111d35;color:#fff;border:1px solid #50678e;padding:13px 8px}.mitb-actions b,.mitb-actions small,.mitb-ability b,.mitb-ability small{display:block}.mitb-actions small,.mitb-ability small{font-size:.68rem;margin-top:4px}.mitb-ability button{width:100%;margin-top:9px;border-color:#c79b2b}.mitb-targets{margin-top:9px;border:1px solid #4b5d7c;padding:10px}.mitb-targets small{display:block;margin-bottom:8px}.mitb-targets button{margin:3px}.mitb-down{text-align:center;border:1px solid #a53636;background:#2a1014;padding:14px}.mitb-down b,.mitb-down span{display:block;margin-bottom:6px}
 @media(max-width:700px){.specialty-match-grid{grid-template-columns:1fr}.mitb-preview-grid{grid-template-columns:repeat(3,1fr)}.mitb-preview-grid img{height:170px}.mitb-entrant-grid{grid-template-columns:1fr 1fr;gap:7px}.mitb-entrant-grid article{grid-template-columns:62px 1fr;padding:6px}.mitb-entrant-grid img{width:62px;height:62px}.mitb-entrant-grid b{font-size:.84rem}.mitb-actions{grid-template-columns:1fr 1fr}.mitb-actions button{padding:11px 6px}.mitb-match{padding-left:9px!important;padding-right:9px!important}}
+
+
+/* LEGACY 1.0 — World Recap top-layout correction */
+.lpw911-world-recap{padding-top:0!important;}
+.lpw911-recap-header{display:block!important;margin:0 0 10px!important;min-height:0!important;}
+.lpw911-recap-header .shell-back{margin:0!important;}
+.lpw911-recap-header img{display:none!important;}
+.lpw911-world-recap>.tv-kicker{margin:8px 0 0!important;}
+.lpw911-world-recap>h1{margin:12px 0 14px!important;}
+.lpw911-world-recap>.lpw911-recap-continue{margin:0 auto 16px!important;}
+@media(max-width:520px){.lpw911-world-recap{padding-top:0!important}.lpw911-recap-header{margin-bottom:8px!important}.lpw911-world-recap>.tv-kicker{margin-top:6px!important}.lpw911-world-recap>h1{margin:10px 0 12px!important}}
+
+
+/* LEGACY 1.0 — World Recap definitive mobile layout */
+.lpw911-world-recap{padding:10px 18px 28px!important;}
+.lpw911-world-recap>.lpw-recap-calendar{display:inline-block!important;margin:0 0 10px!important;}
+.lpw911-world-recap>.tv-kicker{margin:0 0 6px!important;}
+.lpw911-world-recap>h1{margin:0 0 12px!important;line-height:1!important;}
+.lpw911-world-recap>.lpw911-recap-continue{margin:0 auto 14px!important;}
+.lpw911-world-recap .lpw911-recap-header{display:none!important;}
+.lpw911-world-recap img[src=""],.lpw911-world-recap img:not([src]){display:none!important;}
+@media(max-width:520px){
+ .lpw911-world-recap{padding:6px 14px 24px!important;}
+ .lpw911-world-recap>.lpw-recap-calendar{margin-bottom:8px!important;padding:10px 12px!important;}
+ .lpw911-world-recap>.tv-kicker{margin-bottom:5px!important;}
+ .lpw911-world-recap>h1{font-size:2.45rem!important;margin-bottom:10px!important;}
+ .lpw911-world-recap>.lpw911-recap-continue{margin-bottom:12px!important;}
+}
+
+
+/* LEGACY 1.0 — verified World Recap shell isolation */
+body.lpw-world-recap-view > header,
+body:has(.lpw911-world-recap) > header{display:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;}
+body.lpw-world-recap-view > main,
+body:has(.lpw911-world-recap) > main{padding-top:6px!important;}
+body.lpw-world-recap-view .lpw911-world-recap{margin-top:0!important;padding-top:4px!important;}
+@media(max-width:520px){body.lpw-world-recap-view > main,body:has(.lpw911-world-recap) > main{padding:4px 10px 18px!important}.lpw911-world-recap{padding-top:2px!important}}
