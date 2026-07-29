@@ -3207,3 +3207,21 @@ body.lpw-world-recap-view .lpw911-world-recap{margin-top:0!important;padding-top
     margin:68px 0 6px!important;
   }
 }
+
+/* LEGACY 1.0 — World Recap compact header spacing */
+.lpw911-world-recap>.tv-kicker{
+  margin:-40px 0 6px!important;
+}
+.lpw911-world-recap>h1{
+  margin:0 0 12px!important;
+  padding-top:0!important;
+}
+@media(max-width:520px){
+  .lpw911-world-recap>.tv-kicker{
+    margin:-40px 0 6px!important;
+  }
+  .lpw911-world-recap>h1{
+    margin:0 0 10px!important;
+    padding-top:0!important;
+  }
+}
