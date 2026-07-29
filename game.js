@@ -1354,7 +1354,7 @@ render=function(x){_renderLPW7(x);const html=String(x);const career=html.include
 
 home=function(){
  clearStoryTimer();M=null;overlay.innerHTML='';document.body.classList.remove('career-view','classic-view');const w=featuredSuperstar();
- render(`<section class="game-hub lpw-home"><div class="hub-copy"><nav class="hub-menu"><button class="hub-option primary live-menu-option" onclick="gauntletLiveHome()"><b>CAREER</b><small>Pursue greatness in a never-ending Career Mode where the stakes change daily.</small></button><button class="hub-option" onclick="classicHome()"><b>TAG TEAM GAUNTLET</b><small>Run the Gauntlet as you try to build your dream team. One loss ends the run.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the roster and discover every wrestler in LEGACY Pro Wrestling.</small></button><button class="hub-option" onclick="achievementMenu()"><b>ACHIEVEMENTS</b><small>Career milestones and challenges.</small></button><button class="hub-option muted" onclick="optionsMenu()"><b>SETTINGS</b><small>Presentation and game options.</small></button></nav></div><article class="featured-superstar"><img class="lpw-feature-logo" src="assets/branding/lpw-logo-compact-400.webp" alt="LEGACY Pro Wrestling"><div class="live-chip">FEATURED WRESTLER</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)
+ render(`<section class="game-hub lpw-home"><div class="hub-copy"><nav class="hub-menu"><button class="hub-option primary live-menu-option" onclick="gauntletLiveHome()"><b>CAREER</b><small>Pursue greatness in a never-ending Career Mode where the stakes change daily.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the roster and discover every wrestler in LEGACY Pro Wrestling.</small></button><button class="hub-option" onclick="achievementMenu()"><b>ACHIEVEMENTS</b><small>Career milestones and challenges.</small></button><button class="hub-option muted" onclick="optionsMenu()"><b>SETTINGS</b><small>Presentation and game options.</small></button></nav></div><article class="featured-superstar"><img class="lpw-feature-logo" src="assets/branding/lpw-logo-compact-400.webp" alt="LEGACY Pro Wrestling"><div class="live-chip">FEATURED WRESTLER</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)
 };
 classicHome=function(){resetClassicState();S.previewCaptain=one(WRESTLERS);const captain=S.previewCaptain;render(`<section class="panel mode-landing"><div class="actions top-actions"><button class="btn" onclick="start()">START TAG TEAM GAUNTLET</button>${shellBack()}</div><div class="mode-landing-art">${imageWithFallback(captain,'full','art-full','classicLanding')}<div class="mode-preview-label"><small>YOUR STARTING WRESTLER</small><b>${captain.name}</b></div></div><div class="mode-landing-copy"><div class="tv-kicker">CLASSIC CHALLENGE MODE</div><h1>TAG TEAM GAUNTLET</h1><p>Your run begins with <strong>${captain.name}</strong>. Choose a partner and survive to the end. Lose once and the run is over.</p></div></section>`)};
 
@@ -3556,6 +3556,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const histSave=r=>{const h=histLoad();h.unshift(r);localStorage.setItem(BR_SAVE_KEY,JSON.stringify(h.slice(0,30)))};
 
  function installMenuButton(){
+  return; // Hidden during LEGACY alpha menu consolidation.
   const nav=document.querySelector('.hub-menu');
   if(!nav||document.getElementById('battleRoyalMenuButton'))return;
   const b=document.createElement('button');b.id='battleRoyalMenuButton';b.className='hub-option battle-royal-menu';
@@ -4382,6 +4383,7 @@ render=function(html){
  function drawDecisionCard(){let n=draw(),guard=0;while((n===1||n===10)&&guard++<20)n=draw();return n}
  function wrestlerCard(w,action){return `<button type="button" class="lms-roster-card" onclick="${action}">${portrait(w)}<span><b>${w.name}</b><small>${w.title} · OVR ${w.overall}</small></span></button>`}
  function installMenuButton(){
+  return; // Hidden during LEGACY alpha menu consolidation.
   const nav=document.querySelector('.hub-menu');
   if(!nav||document.getElementById('specialtyMatchesMenuButton'))return;
   const b=document.createElement('button');b.type='button';b.id='specialtyMatchesMenuButton';b.className='hub-option specialty-menu-option';b.onclick=()=>window.specialtyMatchesHome();
@@ -4464,7 +4466,7 @@ render=function(html){
  window.LPW_SPECIALTY_MATCHES_VERSION=LMS_VERSION;
 })();
 
-;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 1.0');
+;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 1.0.2');
 
 /* =============================================================================
    LEGACY PRO WRESTLING 1.0 — CAREER CHANNEL-TUNE ONBOARDING
@@ -4544,13 +4546,13 @@ render=function(html){
  window.LPW_CAREER_ONBOARDING_VERSION=ONBOARDING_VERSION;
 })();
 
-;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 1.0');
+;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 1.0.2');
 
 /* =============================================================================
    LEGACY PRO WRESTLING 1.0 — SHOW OPENERS, MATCH PSYCHOLOGY & CAREER MOMENTUM
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const clamp904=(n,min,max)=>Math.max(min,Math.min(max,n));
 
  function consecutiveResults(history=[]){
@@ -4700,7 +4702,7 @@ render=function(html){
    LEGACY PRO WRESTLING 1.0 — PRESENTATION & MATCH PREVIEW POLISH
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
 
  /* True viewport show bumpers: move them outside any transformed app container. */
  const render906=render;
@@ -4777,7 +4779,7 @@ render=function(html){
    LEGACY PRO WRESTLING 1.0 — DEBUT MOMENTUM & MONTH ONE PROTECTION
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const clamp907=(n,min,max)=>Math.max(min,Math.min(max,n));
  function firstCareerMonth(c){return !!c&&Number(c.month||1)===1}
  function debutMatchAvailable(c){
@@ -4877,7 +4879,7 @@ render=function(html){
    LEGACY PRO WRESTLING 1.0 — DAILY LIVING WORLD CAREER HUB
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
  const daySeed=c=>((Number(c.year||1)*372)+(Number(c.month||1)*31)+(Number(c.week||1)*7)+Number(c.day||0));
  const pick=(items,seed,offset=0)=>items[Math.abs(seed+offset)%items.length];
@@ -4947,7 +4949,7 @@ render=function(html){
    LEGACY PRO WRESTLING 1.0 — WORLD DEPTH, HOUSE SHOWS & TEST RESET
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const esc909=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
  const dayKey909=c=>`${Number(c?.year||1)}:${Number(c?.month||1)}:${Number(c?.week||1)}:${Number(c?.day||0)}`;
  const seed909=c=>(Number(c?.year||1)*10000)+(Number(c?.month||1)*500)+(Number(c?.week||1)*31)+Number(c?.day||0);
@@ -5096,7 +5098,7 @@ render=function(html){
    applying only the requested navigation, branding, broadcast and rank layout.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  function rankingRows(c){
   return typeof lpw8Rankings==='function'?lpw8Rankings(c):[...(c?.rankings||[])].sort((a,b)=>(Number(b.points)||0)-(Number(a.points)||0));
  }
@@ -5148,7 +5150,7 @@ render=function(html){
    LEGACY PRO WRESTLING 1.0 — TRUE RESET & PERSONAL-BEST BASELINE FIX
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
 
  // A personal best belongs to a completed previous Gauntlet run. Capture that
  // record when a new run starts so wins inside a freshly reset/current run do
@@ -5216,7 +5218,7 @@ render=function(html){
    LEGACY PRO WRESTLING 1.0 — TABLED PRESENTATION & MATCH STORY FIXES
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const clamp913=(n,min,max)=>Math.max(min,Math.min(max,n));
 
  // Let the control meter genuinely swing both ways, including the debut match.
@@ -5347,7 +5349,7 @@ render=function(html){
    and canonical Career momentum/popularity synchronisation.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const statKeys=new Set(['power','speed','technique','charisma','recovery']);
 
  function activeCareer914(c){
@@ -5493,7 +5495,7 @@ render=function(html){
    LEGACY PRO WRESTLING 1.0 — TAG PARTICIPATION, LEGAL CONTROL & MONTH FLOW
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
 
  function tagReady(){return !!(M&&S&&Array.isArray(S.team)&&Array.isArray(S.opp)&&S.team.length===2&&S.opp.length===2)}
  function ensureTagState(){
@@ -5661,7 +5663,7 @@ render=function(html){
    Player-readable decisions, accountable CPU scoring and less random finishes.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const clamp916=(n,min,max)=>Math.max(min,Math.min(max,n));
  let automaticBeat916=false;
 
@@ -5797,7 +5799,7 @@ render=function(html){
    choices to Match Psychology 2.3 and removes the legacy training split.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const clamp917=(n,min,max)=>Math.max(min,Math.min(max,Number(n)||0));
  const DEVELOPMENT_STATS=['power','speed','technique','charisma','resilience','versatility','finisher'];
  const STAT_EFFECTS={
@@ -6035,7 +6037,7 @@ render=function(html){
    long-term arcs and month-to-month continuity.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const STATS=['power','speed','technique','charisma','resilience','versatility','finisher'];
  const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
  const seasonOf=c=>Math.floor((Math.max(1,Number(c?.month)||1)-1)/12)+1;
@@ -6183,7 +6185,7 @@ render=function(html){
    momentum decay and varied long-term SuperCard rewards.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const clamp919=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
  const season919=c=>Math.floor((Math.max(1,Number(c?.month)||1)-1)/12)+1;
  const month919=c=>((Math.max(1,Number(c?.month)||1)-1)%12)+1;
@@ -6364,7 +6366,7 @@ render=function(html){
    trigger the legacy global achievement scanner in the same result sequence.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const FIX_KEY='lpw_1_0_career_achievement_cleanup_v1';
 
  const legacyAchievementCheck=checkAchievements;
@@ -6401,7 +6403,7 @@ render=function(html){
    the decision after that.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const previousGetDecision=getDecision;
  const PHASE_IDS=['opening','control','crisis','finish'];
 
@@ -6481,4 +6483,30 @@ render=function(html){
 
  window.LPW_DECISION_COOLDOWN_TURNS=1;
  window.LPW_DECISION_COOLDOWN_BUILD=BUILD;
+})();
+
+
+/* LEGACY Pro Wrestling 1.0.2 — Temporarily hide unfinished standalone modes. */
+(function(){
+  const hiddenLabels=['TAG TEAM GAUNTLET','20-PERSON BATTLE ROYAL','SPECIALTY MATCHES'];
+  function removeHiddenModeButtons(){
+    document.querySelectorAll('#battleRoyalMenuButton,#specialtyMatchesMenuButton').forEach(node=>node.remove());
+    document.querySelectorAll('.hub-menu button').forEach(button=>{
+      const label=(button.textContent||'').toUpperCase();
+      if(hiddenLabels.some(name=>label.includes(name)))button.remove();
+    });
+  }
+  const currentHome=window.home;
+  if(typeof currentHome==='function')window.home=function(){
+    const result=currentHome.apply(this,arguments);
+    removeHiddenModeButtons();
+    setTimeout(removeHiddenModeButtons,0);
+    setTimeout(removeHiddenModeButtons,100);
+    return result;
+  };
+  const unavailable=function(){window.home()};
+  window.classicHome=unavailable;
+  window.battleRoyalHome=unavailable;
+  window.specialtyMatchesHome=unavailable;
+  window.addEventListener('load',()=>setTimeout(removeHiddenModeButtons,120));
 })();

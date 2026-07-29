@@ -6,7 +6,7 @@
    post-match career growth, show-brand sizing and dialogue expansion.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
  const choose=a=>a[Math.floor(Math.random()*a.length)];
  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -119,7 +119,7 @@
    Direct component corrections following 1.0 device testing.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
  const pick=a=>a[Math.floor(Math.random()*a.length)];
  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -262,7 +262,7 @@
    the approved 1.0 layouts.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const pick=a=>a[Math.floor(Math.random()*a.length)];
  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
  const portrait=id=>typeof lpw836NpcVisual==='function'?lpw836NpcVisual(id,'portrait'):npcImage(id,'portrait');
@@ -377,7 +377,7 @@
    ================================================================ */
 (()=>{
  'use strict';
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const later=(fn,ms=0)=>setTimeout(fn,ms);
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const pick=a=>a?.length?a[Math.floor(Math.random()*a.length)]:'';
@@ -603,7 +603,7 @@
    LEGACY PRO WRESTLING 1.0 — CONSOLIDATED RUNTIME MODULE
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
 
  function repairCareerHeader916(){
   const top=document.querySelector('.live-calendar-screen .live-calendar-top');
@@ -673,7 +673,7 @@
    so older transition CSS and reduced-motion overrides cannot suppress scaling.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const previousRun=window.gauntletLiveRunShowSegment;
  const DURATION=1550;
 
@@ -731,16 +731,14 @@
 })();
 /* Cold-boot parity: initial menu must use the same enhanced renderer as return navigation. */
 (function(){
- const VERSION='1.0';
+ const VERSION='1.0.2';
  function refreshHomeEnhancements(){
   try{
-   if(typeof window.lpw90InjectSpecialtyMenu==='function')window.lpw90InjectSpecialtyMenu();
-   const nav=document.querySelector('.hub-menu');
-   if(nav&&!document.getElementById('specialtyMatchesMenuButton')&&typeof window.specialtyMatchesHome==='function'){
-    const b=document.createElement('button');b.type='button';b.id='specialtyMatchesMenuButton';b.className='hub-option specialty-menu-option';b.onclick=()=>window.specialtyMatchesHome();
-    b.innerHTML='<b>SPECIALTY MATCHES</b><small>Experience match types with completely different gameplay.</small>';
-    const collection=[...nav.children].find(x=>/COLLECTION/i.test(x.textContent||''));nav.insertBefore(b,collection||null);
-   }
+   document.querySelectorAll('#battleRoyalMenuButton,#specialtyMatchesMenuButton').forEach(node=>node.remove());
+   document.querySelectorAll('.hub-menu button').forEach(button=>{
+    const label=(button.textContent||'').toUpperCase();
+    if(label.includes('TAG TEAM GAUNTLET')||label.includes('20-PERSON BATTLE ROYAL')||label.includes('SPECIALTY MATCHES'))button.remove();
+   });
    document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${VERSION}`);
   }catch(e){console.error('1.0 home enhancement',e)}
  }
@@ -756,7 +754,7 @@
    their dialogue flowing beneath as a single television introduction.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  window.gauntletLiveShowIntro=function(){
   const c=liveLoad(),item=livePlanItem(c),firstShow=c.week===1&&c.day===0&&!c.world.lastResult,
    venue=one(VENUES),attendance=Math.floor(rnd(11000,20500)).toLocaleString(),
@@ -786,7 +784,7 @@
    engine remains responsible for preparing and opening every show.
    ============================================================================= */
 (function(){
- const BUILD='1.0';
+ const BUILD='1.0.2';
  const SELECTOR='.live-today .live-primary';
 
  function ensureShowPlan(c){
