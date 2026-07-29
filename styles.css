@@ -3297,3 +3297,7 @@ body.lpw-world-recap-view .lpw911-world-recap{margin-top:0!important;padding-top
 .live-today{position:relative!important;isolation:isolate!important}
 .live-today .live-primary.lpw10-begin-ready{position:relative!important;z-index:20!important;pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important}
 .live-today .live-primary.lpw10-begin-ready::before,.live-today .live-primary.lpw10-begin-ready::after{pointer-events:none!important}
+
+/* LEGACY 1.0 — Career Begin interaction layer */
+.live-calendar-screen .live-today.lpw10-begin-card-ready{position:relative!important;z-index:50!important;pointer-events:auto!important;isolation:isolate!important}
+.live-calendar-screen .live-today.lpw10-begin-card-ready .live-primary.lpw10-begin-ready{position:relative!important;z-index:51!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:rgba(255,255,255,.08)!important;cursor:pointer!important}

@@ -765,7 +765,7 @@
   let stories=[];if(!firstShow)stories=liveSimulateWorld(c);liveSave(c);
   const card=firstShow
    ?`<li>${p.name} makes an LPW debut tonight.</li><li>${r?`${r.name} is expected to make a presence felt tonight.`:'The LEGACY World Championship picture begins to take shape.'}</li>`
-   :stories.slice(0,3).map(s=>`<li>${cleanBroadcastText(s.text)}</li>`).join('');
+   :stories.slice(0,3).map(s=>`<li>${String(s?.text||'').replace(/<[^>]*>/g,'').trim()}</li>`).join('');
   const mike=firstShow
    ?`Welcome to Monday Night Mayhem, LPW's flagship show—where rivalries begin and reputations are made.`
    :`${p.name} enters tonight with a ${c.wins}-${c.losses} record, and every result now carries more weight.`;
@@ -782,13 +782,33 @@
 
 /* =============================================================================
    LEGACY PRO WRESTLING 1.0 — CANONICAL CAREER BEGIN CONTROL
-   One touch-safe route for the visible Career Begin button.
+   One route for click, touch and keyboard activation. The normal Career day
+   engine remains responsible for preparing and opening every show.
    ============================================================================= */
 (function(){
  const BUILD='1.0';
- function isThrowdown(c){
-  return !!c && Number(c.day)===3 && !liveIsSupercard(c);
+ const SELECTOR='.live-today .live-primary';
+
+ function ensureShowPlan(c){
+  if(!c||!(Number(c.day)===0||Number(c.day)===3||liveIsSupercard(c)))return;
+  c.world=c.world||{};
+  if(!Array.isArray(c.world.monthPlan)||!c.world.monthPlan.length){
+   if(typeof liveGenerateMonthlyPlan==='function')liveGenerateMonthlyPlan(c);
+  }
+  if(!Array.isArray(c.world.monthPlan))c.world.monthPlan=[];
+  if(!liveIsSupercard(c)&&typeof liveMonthSlot==='function'){
+   const slot=liveMonthSlot(c);
+   if(!c.world.monthPlan[slot]){
+    const rival=typeof liveFeudOpponent==='function'?liveFeudOpponent(c):null;
+    const fallback=rival||(typeof livePickDifferent==='function'?livePickDifferent(c,[c.active]):null);
+    c.world.monthPlan[slot]=fallback
+     ?{type:'singles',week:Number(c.week)||1,day:Number(c.day)||0,opponents:[fallback.id]}
+     :{type:'segment',week:Number(c.week)||1,day:Number(c.day)||0,segment:'promo'};
+   }
+  }
+  if(typeof liveSave==='function')liveSave(c);
  }
+
  window.legacyCareerBegin=function(event){
   if(event){event.preventDefault();event.stopPropagation();}
   if(window.__legacyCareerBeginBusy)return false;
@@ -796,45 +816,42 @@
   try{
    const c=typeof liveLoad==='function'?liveLoad():null;
    if(!c){if(typeof gauntletLiveHome==='function')gauntletLiveHome();return false;}
-   if(isThrowdown(c)){
-    c.world=c.world||{};
-    if(!Array.isArray(c.world.monthPlan)&&typeof liveGenerateMonthlyPlan==='function')liveGenerateMonthlyPlan(c);
-    liveSave(c);
-    if(typeof gauntletLiveShowIntro!=='function')throw new Error('Show introduction unavailable');
-    gauntletLiveShowIntro();
-    return false;
-   }
+   ensureShowPlan(c);
    if(typeof gauntletLiveBeginDay!=='function')throw new Error('Career day engine unavailable');
    gauntletLiveBeginDay();
-   return false;
   }catch(error){
    console.error('Career Begin failed:',error);
-   const button=document.querySelector('.live-today .live-primary');
-   if(button){button.disabled=false;button.textContent='BEGIN';}
-   return false;
+   const button=document.querySelector(SELECTOR);
+   if(button){button.disabled=false;button.textContent='BEGIN';button.setAttribute('aria-disabled','false');}
   }finally{
-   setTimeout(()=>{window.__legacyCareerBeginBusy=false},350);
+   setTimeout(()=>{window.__legacyCareerBeginBusy=false},500);
   }
+  return false;
  };
+
  function wireBegin(){
-  const button=document.querySelector('.live-today .live-primary');
+  const button=document.querySelector(SELECTOR);
   if(!button)return;
   button.type='button';
   button.disabled=false;
-  button.removeAttribute('onclick');
-  button.onclick=window.legacyCareerBegin;
-  if(!button.dataset.lpwTouchBound){
-   button.addEventListener('pointerup',window.legacyCareerBegin,{passive:false});
-   button.addEventListener('touchend',window.legacyCareerBegin,{passive:false});
-   button.dataset.lpwTouchBound='1';
-  }
-  button.classList.add('lpw10-begin-ready');
   button.setAttribute('aria-disabled','false');
+  button.setAttribute('onclick','return window.legacyCareerBegin(event)');
+  button.classList.add('lpw10-begin-ready');
+  const card=button.closest('.live-today');
+  if(card){card.classList.add('lpw10-begin-card-ready');card.dataset.lpwBeginCard='1';}
  }
+
+ function delegatedBegin(event){
+  const button=event.target&&event.target.closest?event.target.closest(SELECTOR):null;
+  if(button)return window.legacyCareerBegin(event);
+ }
+ document.addEventListener('click',delegatedBegin,true);
+ document.addEventListener('touchend',delegatedBegin,{capture:true,passive:false});
+
  const previousRender=window.render;
- if(typeof previousRender==='function')window.render=function(){const out=previousRender.apply(this,arguments);setTimeout(wireBegin,0);setTimeout(wireBegin,80);return out};
+ if(typeof previousRender==='function')window.render=function(){const out=previousRender.apply(this,arguments);queueMicrotask(wireBegin);setTimeout(wireBegin,60);return out};
  const previousCalendar=window.gauntletLiveCalendar;
- if(typeof previousCalendar==='function')window.gauntletLiveCalendar=function(){const out=previousCalendar.apply(this,arguments);setTimeout(wireBegin,0);return out};
+ if(typeof previousCalendar==='function')window.gauntletLiveCalendar=function(){const out=previousCalendar.apply(this,arguments);queueMicrotask(wireBegin);setTimeout(wireBegin,60);return out};
  document.addEventListener('DOMContentLoaded',wireBegin);
  window.LPW10_wireCareerBegin=wireBegin;
  window.TTG_APP_VERSION=BUILD;
