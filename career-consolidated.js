@@ -779,3 +779,53 @@
  window.LPW_GAMEPLAY_BUILD=BUILD;
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 1.0 — WORLD RECAP HEADER + FIRST THROWDOWN BEGIN FIX
+   Canonical final overrides. Keeps recap controls in one compact header row and
+   guarantees the first Week 1 Throwdown Begin action enters the show intro.
+   ============================================================================= */
+(function(){
+  const BUILD='1.0';
+
+  function markRecapLayout(){
+    const recap=document.querySelector('.lpw911-world-recap');
+    if(!recap)return;
+    recap.classList.add('lpw10-recap-final');
+    const brand=recap.querySelector(':scope > .lpw-career-brand');
+    if(brand)brand.classList.add('lpw10-recap-brand');
+  }
+
+  const previousRender=window.render;
+  if(typeof previousRender==='function'){
+    window.render=function(html){
+      const result=previousRender.apply(this,arguments);
+      setTimeout(markRecapLayout,0);
+      setTimeout(markRecapLayout,80);
+      return result;
+    };
+  }
+
+  const previousBegin=window.gauntletLiveBeginDay;
+  window.gauntletLiveBeginDay=function(){
+    const c=typeof window.liveLoad==='function'?window.liveLoad():null;
+    if(c&&Number(c.month)===1&&Number(c.week)===1&&Number(c.day)===3){
+      return window.gauntletLiveShowIntro();
+    }
+    return typeof previousBegin==='function'?previousBegin.apply(this,arguments):undefined;
+  };
+
+  document.addEventListener('click',function(event){
+    const button=event.target.closest('.live-today .live-primary');
+    if(!button)return;
+    const c=typeof window.liveLoad==='function'?window.liveLoad():null;
+    if(!(c&&Number(c.month)===1&&Number(c.week)===1&&Number(c.day)===3))return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    window.gauntletLiveShowIntro();
+  },true);
+
+  window.LPW10_markRecapLayout=markRecapLayout;
+  window.TTG_APP_VERSION=BUILD;
+  window.LPW_GAMEPLAY_BUILD=BUILD;
+})();

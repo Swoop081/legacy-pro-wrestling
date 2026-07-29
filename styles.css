@@ -3243,3 +3243,61 @@ body.lpw-world-recap-view .lpw911-world-recap{margin-top:0!important;padding-top
     padding-top:0!important;
   }
 }
+
+/* LEGACY 1.0 — canonical compact World Recap header */
+.lpw911-world-recap.lpw10-recap-final{
+  position:relative!important;
+  padding-top:8px!important;
+}
+.lpw911-world-recap.lpw10-recap-final>.lpw-career-brand,
+.lpw911-world-recap.lpw10-recap-final>.lpw10-recap-brand{
+  position:absolute!important;
+  top:8px!important;
+  right:12px!important;
+  width:112px!important;
+  max-width:28%!important;
+  max-height:72px!important;
+  height:auto!important;
+  margin:0!important;
+  z-index:20!important;
+}
+.lpw911-world-recap.lpw10-recap-final>.lpw-recap-calendar{
+  position:absolute!important;
+  top:8px!important;
+  left:10px!important;
+  right:auto!important;
+  margin:0!important;
+  z-index:21!important;
+  min-width:150px!important;
+}
+.lpw911-world-recap.lpw10-recap-final>.tv-kicker{
+  margin:86px 0 6px!important;
+}
+.lpw911-world-recap.lpw10-recap-final>h1{
+  margin:0 0 12px!important;
+  padding:0!important;
+}
+@media(max-width:520px){
+  .lpw911-world-recap.lpw10-recap-final{
+    padding-top:6px!important;
+  }
+  .lpw911-world-recap.lpw10-recap-final>.lpw-career-brand,
+  .lpw911-world-recap.lpw10-recap-final>.lpw10-recap-brand{
+    top:6px!important;
+    right:8px!important;
+    width:106px!important;
+    max-height:68px!important;
+  }
+  .lpw911-world-recap.lpw10-recap-final>.lpw-recap-calendar{
+    top:6px!important;
+    left:8px!important;
+    min-width:146px!important;
+    padding:10px 12px!important;
+  }
+  .lpw911-world-recap.lpw10-recap-final>.tv-kicker{
+    margin:80px 0 5px!important;
+  }
+  .lpw911-world-recap.lpw10-recap-final>h1{
+    margin:0 0 10px!important;
+  }
+}
