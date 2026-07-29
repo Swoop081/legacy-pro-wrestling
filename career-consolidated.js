@@ -781,81 +781,62 @@
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 1.0 — WORLD RECAP HEADER + FIRST THROWDOWN BEGIN FIX
-   Canonical final overrides. Keeps recap controls in one compact header row and
-   guarantees the first Week 1 Throwdown Begin action enters the show intro.
+   LEGACY PRO WRESTLING 1.0 — CANONICAL CAREER BEGIN CONTROL
+   One touch-safe route for the visible Career Begin button.
    ============================================================================= */
 (function(){
-  const BUILD='1.0';
-
-  function markRecapLayout(){
-    const recap=document.querySelector('.lpw911-world-recap');
-    if(!recap)return;
-    recap.classList.add('lpw10-recap-final');
-    const brand=recap.querySelector(':scope > .lpw-career-brand');
-    if(brand)brand.classList.add('lpw10-recap-brand');
-  }
-
-  const previousRender=window.render;
-  if(typeof previousRender==='function'){
-    window.render=function(html){
-      const result=previousRender.apply(this,arguments);
-      setTimeout(markRecapLayout,0);
-      setTimeout(markRecapLayout,80);
-      return result;
-    };
-  }
-
-  const previousBegin=window.gauntletLiveBeginDay;
-  window.gauntletLiveBeginDay=function(){
-    const c=typeof window.liveLoad==='function'?window.liveLoad():null;
-    if(c&&Number(c.month)===1&&Number(c.week)===1&&Number(c.day)===3){
-      return window.gauntletLiveShowIntro();
-    }
-    return typeof previousBegin==='function'?previousBegin.apply(this,arguments):undefined;
-  };
-
-  document.addEventListener('click',function(event){
-    const button=event.target.closest('.live-today .live-primary');
-    if(!button)return;
-    const c=typeof window.liveLoad==='function'?window.liveLoad():null;
-    if(!(c&&Number(c.month)===1&&Number(c.week)===1&&Number(c.day)===3))return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    window.gauntletLiveShowIntro();
-  },true);
-
-  window.LPW10_markRecapLayout=markRecapLayout;
-  window.TTG_APP_VERSION=BUILD;
-  window.LPW_GAMEPLAY_BUILD=BUILD;
-
-
- // Canonical Career Begin route. All Career days use the current day engine exactly once.
- window.careerBeginToday=function(event){
+ const BUILD='1.0';
+ function isThrowdown(c){
+  return !!c && Number(c.day)===3 && !liveIsSupercard(c);
+ }
+ window.legacyCareerBegin=function(event){
   if(event){event.preventDefault();event.stopPropagation();}
   if(window.__legacyCareerBeginBusy)return false;
   window.__legacyCareerBeginBusy=true;
   try{
-   if(typeof window.gauntletLiveBeginDay!=='function')throw new Error('Career day engine unavailable');
-   return window.gauntletLiveBeginDay();
+   const c=typeof liveLoad==='function'?liveLoad():null;
+   if(!c){if(typeof gauntletLiveHome==='function')gauntletLiveHome();return false;}
+   if(isThrowdown(c)){
+    c.world=c.world||{};
+    if(!Array.isArray(c.world.monthPlan)&&typeof liveGenerateMonthlyPlan==='function')liveGenerateMonthlyPlan(c);
+    liveSave(c);
+    if(typeof gauntletLiveShowIntro!=='function')throw new Error('Show introduction unavailable');
+    gauntletLiveShowIntro();
+    return false;
+   }
+   if(typeof gauntletLiveBeginDay!=='function')throw new Error('Career day engine unavailable');
+   gauntletLiveBeginDay();
+   return false;
   }catch(error){
    console.error('Career Begin failed:',error);
-   window.__legacyCareerBeginBusy=false;
+   const button=document.querySelector('.live-today .live-primary');
+   if(button){button.disabled=false;button.textContent='BEGIN';}
    return false;
   }finally{
-   setTimeout(function(){window.__legacyCareerBeginBusy=false},300);
+   setTimeout(()=>{window.__legacyCareerBeginBusy=false},350);
   }
  };
- function wireCanonicalBegin(){
+ function wireBegin(){
   const button=document.querySelector('.live-today .live-primary');
   if(!button)return;
   button.type='button';
-  button.setAttribute('onclick','return careerBeginToday(event)');
-  button.dataset.canonicalCareerBegin='1';
+  button.disabled=false;
+  button.removeAttribute('onclick');
+  button.onclick=window.legacyCareerBegin;
+  if(!button.dataset.lpwTouchBound){
+   button.addEventListener('pointerup',window.legacyCareerBegin,{passive:false});
+   button.addEventListener('touchend',window.legacyCareerBegin,{passive:false});
+   button.dataset.lpwTouchBound='1';
+  }
+  button.classList.add('lpw10-begin-ready');
+  button.setAttribute('aria-disabled','false');
  }
- const calendarForBegin=window.gauntletLiveCalendar;
- if(typeof calendarForBegin==='function'){
-  window.gauntletLiveCalendar=function(){const result=calendarForBegin.apply(this,arguments);setTimeout(wireCanonicalBegin,0);return result};
- }
- document.addEventListener('DOMContentLoaded',wireCanonicalBegin);
+ const previousRender=window.render;
+ if(typeof previousRender==='function')window.render=function(){const out=previousRender.apply(this,arguments);setTimeout(wireBegin,0);setTimeout(wireBegin,80);return out};
+ const previousCalendar=window.gauntletLiveCalendar;
+ if(typeof previousCalendar==='function')window.gauntletLiveCalendar=function(){const out=previousCalendar.apply(this,arguments);setTimeout(wireBegin,0);return out};
+ document.addEventListener('DOMContentLoaded',wireBegin);
+ window.LPW10_wireCareerBegin=wireBegin;
+ window.TTG_APP_VERSION=BUILD;
+ window.LPW_GAMEPLAY_BUILD=BUILD;
 })();

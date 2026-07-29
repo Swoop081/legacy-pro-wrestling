@@ -1,6 +1,6 @@
 /* LEGACY Pro Wrestling Service Worker 1.0 */
 const APP_VERSION = '1.0';
-const CACHE_NAME = 'legacy-pro-wrestling-1.0-audited-runtime';
+const CACHE_NAME = 'legacy-pro-wrestling-1.0-begin-touch-fix';
 const CRITICAL_FILES = ['index.html','game.js','career-consolidated.js','data.js','styles.css','version.json','manifest.webmanifest','service-worker.js','update-manager.js','assets/config/imageManager.js',''];
 
 self.addEventListener('install', event => { self.skipWaiting(); });

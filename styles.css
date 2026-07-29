@@ -3292,3 +3292,8 @@ body.lpw-world-recap-view .lpw911-world-recap{margin-top:0!important;padding-top
     margin:0 0 10px!important;
   }
 }
+
+/* LEGACY 1.0 canonical Career Begin touch target */
+.live-today{position:relative!important;isolation:isolate!important}
+.live-today .live-primary.lpw10-begin-ready{position:relative!important;z-index:20!important;pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important}
+.live-today .live-primary.lpw10-begin-ready::before,.live-today .live-primary.lpw10-begin-ready::after{pointer-events:none!important}
