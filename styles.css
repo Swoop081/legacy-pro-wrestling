@@ -3187,3 +3187,23 @@ body.lpw-world-recap-view .lpw911-world-recap{margin-top:0!important;padding-top
     margin-bottom:12px!important;
   }
 }
+
+/* LEGACY 1.0 — World Recap calendar top-left correction */
+.lpw911-world-recap>.lpw-recap-calendar{
+  top:10px!important;
+  left:14px!important;
+  right:auto!important;
+}
+.lpw911-world-recap>.tv-kicker{
+  margin:72px 0 6px!important;
+}
+@media(max-width:520px){
+  .lpw911-world-recap>.lpw-recap-calendar{
+    top:8px!important;
+    left:10px!important;
+    right:auto!important;
+  }
+  .lpw911-world-recap>.tv-kicker{
+    margin:68px 0 6px!important;
+  }
+}
