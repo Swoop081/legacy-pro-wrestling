@@ -2106,8 +2106,7 @@ window.gauntletLiveFounderSelect=gauntletLiveFounderSelect;
 Object.assign(SUPPORT_CAST,{
  'derek-pierce':{id:'derek-pierce',name:'Derek Pierce',role:'Dirt Sheet Writer',group:'Media'},
  'madison-price':{id:'madison-price',name:'Madison Price',role:'Director of Sponsorships',group:'Business'},
- 'noah-grant':{id:'noah-grant',name:'Noah Grant',role:'Broadcast Producer',group:'Broadcast Team'},
- 'marcus-steele':{id:'marcus-steele',name:'Marcus Steele',role:'Talent Relations Director',group:'Operations'},
+ 'noah-grant-talent-relations':{id:'noah-grant-talent-relations',name:'Noah Grant',role:'Talent Relations Director',group:'Operations'},
  'olivia-chase':{id:'olivia-chase',name:'Olivia Chase',role:'Live Events Coordinator',group:'Business'}
 });
 SUPPORT_CAST['ava-cross'].role='Social Media Correspondent';
@@ -2126,8 +2125,7 @@ const LPW836_TEAM=[
  ['dr-lena-hart','Chief Medical Officer','Manages injuries, recovery and medical clearance.'],
  ['ethan-brooks','Director of Competition','Oversees rankings, tournaments and SuperCard ring introductions.'],
  ['madison-price','Director of Sponsorships','Brings commercial offers, endorsements and brand opportunities.'],
- ['noah-grant','Broadcast Producer','Controls television placement, production requests and exposure.'],
- ['marcus-steele','Talent Relations Director','Manages locker-room morale, disputes and wrestler relations.'],
+ ['noah-grant-talent-relations','Talent Relations Director','Manages locker-room morale, disputes and wrestler relations.'],
  ['olivia-chase','Live Events Coordinator','Organises fan events, appearances and publicity opportunities.']
 ];
 
@@ -2135,6 +2133,16 @@ function lpw836Ensure(c){
  c.world=c.world||{};
  c.world.mediaArchive=Array.isArray(c.world.mediaArchive)?c.world.mediaArchive:[];
  c.world.metNpcs=c.world.metNpcs||{};
+ delete c.world.metNpcs['noah-grant'];
+ if(c.world.metNpcs&&c.world.metNpcs['marcus-steele']){c.world.metNpcs['noah-grant-talent-relations']=true;delete c.world.metNpcs['marcus-steele']}
+ if(c.world.lastDevelopmentNpc==='marcus-steele')c.world.lastDevelopmentNpc='noah-grant-talent-relations';
+ if(c.world.activePresenter==='marcus-steele')c.world.activePresenter='noah-grant-talent-relations';
+ if(c.world.npcUsage&&c.world.npcUsage['marcus-steele']){c.world.npcUsage['noah-grant-talent-relations']=(Number(c.world.npcUsage['noah-grant-talent-relations'])||0)+Number(c.world.npcUsage['marcus-steele']||0);delete c.world.npcUsage['marcus-steele']}
+ if(Array.isArray(c.world.eventHistory))c.world.eventHistory.forEach(e=>{if(e&&e.presenter==='marcus-steele')e.presenter='noah-grant-talent-relations'});
+ if(c.world.lastDevelopmentNpc==='noah-grant')c.world.lastDevelopmentNpc='raymond-briggs';
+ if(c.world.activePresenter==='noah-grant')c.world.activePresenter='raymond-briggs';
+ if(c.world.npcUsage&&c.world.npcUsage['noah-grant']){c.world.npcUsage['raymond-briggs']=(Number(c.world.npcUsage['raymond-briggs'])||0)+Number(c.world.npcUsage['noah-grant']||0);delete c.world.npcUsage['noah-grant']}
+ if(Array.isArray(c.world.eventHistory))c.world.eventHistory.forEach(e=>{if(e&&e.presenter==='noah-grant')e.presenter='raymond-briggs'});
  c.world.lastDevelopmentNpc=c.world.lastDevelopmentNpc||'';
  return c;
 }
@@ -2174,8 +2182,7 @@ function lpw836FirstMeeting(id,next){
  const c=liveLoad(),p=npc(id);if(!c.world.metNpcs[id]){c.world.metNpcs[id]=true;liveSave(c);const intro={
   'derek-pierce':'Some people call it journalism. Others call it stirring the pot. If it is worth talking about, it will probably appear in my Dirt Sheet Digest.',
   'madison-price':'Build your reputation and I will bring you opportunities that extend far beyond the ring.',
-  'noah-grant':'A great wrestler wins matches. A superstar creates unforgettable television.',
-  'marcus-steele':'Respect behind the curtain matters as much as performance under the lights.',
+  'noah-grant-talent-relations':'Respect behind the curtain matters as much as performance under the lights.',
   'olivia-chase':'Fans do not just watch LPW. They experience it, and I help create those moments.'
  }[id]||`I am ${p.name}. You will be hearing from my department as your career develops.`;
  return render(`<section class="panel live-world-screen lpw-npc-standard"><div class="tv-kicker">FIRST MEETING</div><h1>MEET THE TEAM</h1><div class="live-npc-scene large">${lpw836NpcVisual(id,'full')}<div><small>${p.role}</small><h2>${p.name}</h2><p>“${intro}”</p></div></div><button class="btn live-primary" onclick="${next}">CONTINUE</button></section>`)}
@@ -2223,8 +2230,8 @@ const LPW836_DEVELOPMENT=[
  {id:'veronica-vale',title:'GM MEETING',copy:'Veronica Vale wants to discuss your direction and expectations.',a:['ASK FOR AN OPPORTUNITY',{momentum:5},'Management appreciates the ambition.','A future opportunity may be influenced by this meeting.'],b:['FOCUS ON RESULTS',{popularity:3},'The professional response earns quiet respect.','Management will remember your discipline.']},
  {id:'leon-ward',title:'SECURITY BRIEFING',copy:'Leon has new information about a possible backstage incident.',a:['ESCALATE THE RESPONSE',{feud:6},'The situation becomes more personal.','Security expects further tension.'],b:['LET SECURITY HANDLE IT',{momentum:3},'The calm response protects your focus.','The incident may still resurface later.']},
  {id:'madison-price',title:'SPONSORSHIP OFFER',copy:'A sponsor wants to attach its name to your growing profile.',a:['ACCEPT THE CAMPAIGN',{popularity:6},'The campaign expands your visibility.','Commercial success may unlock larger offers.'],b:['PROTECT YOUR IMAGE',{momentum:3},'Fans respect the selective approach.','Your brand remains tightly controlled.']},
- {id:'noah-grant',title:'PRODUCTION MEETING',copy:'Noah wants a clear television objective for your next appearance.',a:['CHASE THE MAIN EVENT',{popularity:5},'Production sees main-event ambition.','Your television placement may improve.'],b:['FOCUS ON MATCH QUALITY',{momentum:4},'The broadcast team values the professional approach.','Future match presentation may reflect this choice.']},
- {id:'marcus-steele',title:'TALENT RELATIONS',copy:'Marcus asks you to help settle growing tension in the locker room.',a:['MEDIATE THE DISPUTE',{popularity:4},'The locker room appreciates your leadership.','Other wrestlers may remember who stepped forward.'],b:['STAY OUT OF IT',{momentum:2},'You preserve your own focus.','The unresolved tension may return.']},
+ {id:'raymond-briggs',title:'PRODUCTION MEETING',copy:'Raymond wants a clear objective for how you approach your next match.',a:['CHASE THE MAIN EVENT',{popularity:5},'Raymond sees main-event ambition.','Your television placement may improve.'],b:['FOCUS ON MATCH QUALITY',{momentum:4},'Raymond values the professional approach.','Future match presentation may reflect this choice.']},
+ {id:'noah-grant-talent-relations',title:'TALENT RELATIONS',copy:'Noah asks you to help settle growing tension in the locker room.',a:['MEDIATE THE DISPUTE',{popularity:4},'The locker room appreciates your leadership.','Other wrestlers may remember who stepped forward.'],b:['STAY OUT OF IT',{momentum:2},'You preserve your own focus.','The unresolved tension may return.']},
  {id:'olivia-chase',title:'LIVE EVENT OPPORTUNITY',copy:'Olivia offers a fan appearance before the next broadcast.',a:['MEET THE FANS',{popularity:6},'The appearance creates strong goodwill.','Fan support may carry into future shows.'],b:['PREPARE FOR THE RING',{momentum:3},'The extra preparation sharpens your focus.','The audience may question your absence.']},
  {id:'dr-lena-hart',title:'MEDICAL CHECK-IN',copy:'Dr. Hart reviews your condition and recovery plan.',a:['FOLLOW THE RECOVERY PLAN',{recovery:1},'The careful approach improves recovery.','Your long-term health is better protected.'],b:['REQUEST CLEARANCE',{momentum:3},'Your determination is clear.','Pushing too hard may carry future risk.']},
  {id:'ethan-brooks',title:'COMPETITION UPDATE',copy:'Ethan has information about rankings and upcoming match opportunities.',a:['PUSH FOR A HIGHER RANKING',{popularity:4},'Your ambition becomes part of the conversation.','Competition officials will track your next result closely.'],b:['EARN IT IN THE RING',{momentum:4},'The answer earns respect from competition officials.','Your next match will carry added significance.']}
@@ -3181,7 +3188,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
    ============================================================ */
 (function(){
  const BUILD='10';
- const NPC_IDS=['mike-sullivan','johnny-cannon','katie-morgan','veronica-vale','dr-lena-hart','coach-hank-dawson','leon-ward','raymond-briggs','ava-cross','derek-pierce','ethan-brooks','madison-price','noah-grant','marcus-steele','olivia-chase','tommy-sparks'];
+ const NPC_IDS=['mike-sullivan','johnny-cannon','katie-morgan','veronica-vale','dr-lena-hart','coach-hank-dawson','leon-ward','raymond-briggs','ava-cross','derek-pierce','ethan-brooks','madison-price','noah-grant-talent-relations','olivia-chase','tommy-sparks'];
  const PRESENTER_BY_SEGMENT={
   'commentary-confrontation':'mike-sullivan',interview:'katie-morgan','contract-signing':'veronica-vale',
   'medical-angle':'dr-lena-hart','backstage-attack':'leon-ward',promo:'katie-morgan',
@@ -3842,7 +3849,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
 /* ============================================================
    LEGACY PRO WRESTLING 8.5.3 — CAREER RECORD INTEGRITY HOTFIX
    One authoritative player record, single-application AI results,
-   live recap ranking, Camera Focus removal, and Noah Grant polish.
+   live recap ranking and Camera Focus removal.
    ============================================================ */
 (function(){
  const BUILD='8.5.3';
@@ -3943,21 +3950,6 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
   const prior=window[name];if(typeof prior!=='function')return;
   window[name]=function(){const c=liveLoad();if(c){reconcileActive(c);liveSave(c)}return prior.apply(this,arguments)};
  });
-
- /* Noah Grant: name first, role beneath in gold. */
- const dev0=lpw836CareerDevelopment;
- lpw836CareerDevelopment=function(){
-  const out=dev0();
-  setTimeout(()=>{
-   document.querySelectorAll('.live-npc-scene.large').forEach(scene=>{
-    const name=scene.querySelector('h2'),role=scene.querySelector('small');
-    if(name?.textContent.trim()==='Noah Grant'&&role){
-     const box=name.parentElement;box.insertBefore(name,role);
-     name.style.margin='0 0 6px';role.style.display='block';role.style.color='#f4c542';role.style.fontWeight='800';role.style.letterSpacing='.12em';role.style.textTransform='uppercase';
-    }
-   });
-  },0);return out;
- };
 
  window.LPW_CAREER_INTEGRITY_VERSION=BUILD;
 })();
@@ -5967,12 +5959,12 @@ render=function(html){
    const mods=c.world.careerModifiers;
    if(npcId==='veronica-vale')mods.managementOpportunity=1;
    if(npcId==='madison-price'&&/CAMPAIGN|SPONSOR/i.test(title))mods.socialReach=Math.min(3,(mods.socialReach||0)+1);
-   if(npcId==='noah-grant'&&/MAIN EVENT/i.test(title))mods.tvPlacement=Math.min(2,(mods.tvPlacement||0)+1);
-   if(npcId==='noah-grant'&&/QUALITY/i.test(title))mods.matchQualityBoost=1;
+   if(npcId==='raymond-briggs'&&/MAIN EVENT/i.test(title))mods.tvPlacement=Math.min(2,(mods.tvPlacement||0)+1);
+   if(npcId==='raymond-briggs'&&/QUALITY/i.test(title))mods.matchQualityBoost=1;
    if(npcId==='ethan-brooks')mods.competitionFocus=Math.min(2,(mods.competitionFocus||0)+1);
    if(npcId==='katie-morgan')mods.mediaConfidence=Math.min(2,(mods.mediaConfidence||0)+1);
    if(npcId==='olivia-chase')mods.fanGoodwill=Math.min(2,(mods.fanGoodwill||0)+1);
-   if(npcId==='marcus-steele')mods.lockerRoomRespect=Math.min(2,(mods.lockerRoomRespect||0)+1);
+   if(npcId==='noah-grant-talent-relations')mods.lockerRoomRespect=Math.min(2,(mods.lockerRoomRespect||0)+1);
    liveSave(c);
   }
   return outcome917.apply(this,arguments);
@@ -6400,4 +6392,93 @@ render=function(html){
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
  window.TTG_APP_VERSION=BUILD;
  window.LPW_GAMEPLAY_BUILD=BUILD;
+})();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 1.0 — ONE-TURN MATCH DECISION COOLDOWN
+   The complete three-card hand shown on one decision is unavailable on the
+   immediately following decision. Those cards return to the eligible pool on
+   the decision after that.
+   ============================================================================= */
+(function(){
+ const BUILD='1.0';
+ const previousGetDecision=getDecision;
+ const PHASE_IDS=['opening','control','crisis','finish'];
+
+ function activeWrestler(){return S?.team?.[M?.activeP]||null}
+ function cardKey(option){return String(option?.slug||option?.name||'').trim().toLowerCase()}
+ function normaliseOption(option){
+  const name=typeof lpwCleanDecisionName==='function'?lpwCleanDecisionName(option?.name||''):String(option?.name||'').trim();
+  return {...option,name};
+ }
+ function uniqueOptions(options){
+  const seen=new Set();
+  return (options||[]).map(normaliseOption).filter(option=>{
+   const key=cardKey(option);
+   if(!key||seen.has(key))return false;
+   seen.add(key);return true;
+  });
+ }
+ function jettCandidates(wrestler){
+  if(wrestler?.id!=='jett-valentine'||typeof JETT_DECISION_CARDS!=='object')return [];
+  return uniqueOptions(PHASE_IDS.flatMap(phase=>(JETT_DECISION_CARDS[phase]||[]).map(card=>({
+   ...card,desc:'',exclusive:true,
+   attr:Math.round(attributeValue(wrestler,card.action)),
+   image:`assets/decisions/jett-valentine/${card.slug}.webp`
+  }))));
+ }
+ function generalCandidates(wrestler,partner){
+  if(!wrestler)return [];
+  let candidates=[];
+  for(const phase of PHASE_IDS){
+   try{candidates.push(...(buildPersonalOptions(wrestler,phase)||[]))}catch(e){}
+  }
+  candidates.push({
+   action:'finisher',name:`Attempt ${wrestler.finisher}`,
+   desc:ACTION_META?.finisher?.desc||'',exclusive:true,
+   attr:Math.round(attributeValue(wrestler,'finisher'))
+  });
+  if(partner)candidates.push({
+   action:'tag',name:`Release ${partner.name}`,
+   desc:ACTION_META?.tag?.desc||'',exclusive:false,
+   attr:Math.round(attributeValue(wrestler,'tag'))
+  });
+  return uniqueOptions(candidates);
+ }
+ function shuffle(items){
+  const copy=[...items];
+  for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}
+  return copy;
+ }
+
+ getDecision=function(){
+  if(M?.waiting&&M?.currentDecision&&!M?.decisionOutcome)return M.currentDecision;
+
+  const decision=previousGetDecision();
+  if(!M||!decision)return decision;
+
+  const cooldown=new Set(Array.isArray(M.decisionCardCooldown)?M.decisionCardCooldown:[]);
+  const wrestler=activeWrestler();
+  const partner=S?.team?.length>1?S.team[1-M.activeP]:null;
+  const original=uniqueOptions(decision.options||[]);
+  const wider=wrestler?.id==='jett-valentine'?jettCandidates(wrestler):generalCandidates(wrestler,partner);
+  const eligible=uniqueOptions([...original,...shuffle(wider)]).filter(option=>!cooldown.has(cardKey(option)));
+
+  // A normal roster contains far more than six decisions. This defensive
+  // fallback preserves playability for incomplete custom data while still
+  // never reusing a card from the immediately previous hand.
+  const fallback=['Change the Rhythm','Create an Opening','Test Their Nerve','Break Their Momentum','Refuse to Fold','Take the Final Chance']
+   .map(name=>({action:'control',name,desc:'',exclusive:false,attr:75}))
+   .filter(option=>!cooldown.has(cardKey(option)));
+  const chosen=uniqueOptions([...eligible,...fallback]).slice(0,3).map((option,index)=>({...option,token:`choice-${index}`}));
+
+  if(chosen.length===3){
+   decision.options=chosen;
+   M.decisionCardCooldown=chosen.map(cardKey);
+  }
+  return decision;
+ };
+
+ window.LPW_DECISION_COOLDOWN_TURNS=1;
+ window.LPW_DECISION_COOLDOWN_BUILD=BUILD;
 })();
