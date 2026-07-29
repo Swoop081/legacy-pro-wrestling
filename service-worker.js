@@ -1,7 +1,7 @@
 /* LEGACY Pro Wrestling Service Worker 1.0 */
 const APP_VERSION = '1.0';
-const CACHE_NAME='lpw-1.0-recap5';
-const CRITICAL_FILES = ['index.html','game.js','career-consolidated.js','data.js','styles.css','version.json','manifest.webmanifest','service-worker.js','update-manager.js','assets/config/imageManager.js'];
+const CACHE_NAME='lpw-1.0-begin2';
+const CRITICAL_FILES = ['index.html','game.js','career-consolidated.js','data.js','styles.css','version.json','manifest.webmanifest','service-worker.js','update-manager.js','assets/config/imageManager.js','legacy-1.0-final-hotfix.js'];
 
 self.addEventListener('install', event => { self.skipWaiting(); });
 self.addEventListener('activate', event => {
