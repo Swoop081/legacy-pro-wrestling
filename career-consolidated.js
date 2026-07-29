@@ -828,4 +828,34 @@
   window.LPW10_markRecapLayout=markRecapLayout;
   window.TTG_APP_VERSION=BUILD;
   window.LPW_GAMEPLAY_BUILD=BUILD;
+
+
+ // Canonical Career Begin route. All Career days use the current day engine exactly once.
+ window.careerBeginToday=function(event){
+  if(event){event.preventDefault();event.stopPropagation();}
+  if(window.__legacyCareerBeginBusy)return false;
+  window.__legacyCareerBeginBusy=true;
+  try{
+   if(typeof window.gauntletLiveBeginDay!=='function')throw new Error('Career day engine unavailable');
+   return window.gauntletLiveBeginDay();
+  }catch(error){
+   console.error('Career Begin failed:',error);
+   window.__legacyCareerBeginBusy=false;
+   return false;
+  }finally{
+   setTimeout(function(){window.__legacyCareerBeginBusy=false},300);
+  }
+ };
+ function wireCanonicalBegin(){
+  const button=document.querySelector('.live-today .live-primary');
+  if(!button)return;
+  button.type='button';
+  button.setAttribute('onclick','return careerBeginToday(event)');
+  button.dataset.canonicalCareerBegin='1';
+ }
+ const calendarForBegin=window.gauntletLiveCalendar;
+ if(typeof calendarForBegin==='function'){
+  window.gauntletLiveCalendar=function(){const result=calendarForBegin.apply(this,arguments);setTimeout(wireCanonicalBegin,0);return result};
+ }
+ document.addEventListener('DOMContentLoaded',wireCanonicalBegin);
 })();
